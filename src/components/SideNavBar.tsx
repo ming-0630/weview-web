@@ -6,7 +6,7 @@ export interface SearchModalProps {
 
 const SideNavBar = (props: SearchModalProps) => {
     return (
-        <div className="drawer drawer-end absolute">
+        <div className="drawer drawer-end absolute overflow-y-auto">
             <input id="side-nav-drawer" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content">
                 {props.children}

@@ -6,6 +6,9 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    fontFamily: {
+      'sans': ["Rubik", "sans-serif"],
+    },
     extend: {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -20,6 +23,9 @@ module.exports = {
         white: {
           DEFAULT: '#F5F5F5'
         }
+      },
+      height: {
+        minusNav: 'calc(100vh - 7rem)'
       }
     },
   },

@@ -25,10 +25,10 @@ const SearchModal = (props: SearchModalProps) => {
     return (
         <div className={"bg-gray-dark w-full h-full absolute -translate-y-full opacity-0" + transitionClass}>
             <div className='flex flex-col py-4 w-2/5 m-auto'>
-                <div className='text-left text-white'>Search</div>
-                <div className='flex justify-between items-center mt-1'>
+                <div className='text-left text-white text-xs'>Search</div>
+                <div className='flex justify-between items-center'>
                     <div className='flex items-center w-full mr-4'>
-                        <select className="select select-sm select-ghost border-2 border-main leading-none bg-gray-dark focus:bg-gray-dark focus:outline-0 mr-4 text-white focus:text-white"
+                        <select className="select select-xs select-ghost border-2 border-main rounded-md leading-none bg-gray-dark focus:bg-gray-dark focus:outline-0 mr-4 text-white focus:text-white"
                             value={searchCategory}
                             onChange={e => setSearchCategory(e.target.value)}>
                             <option className='hover:bg-main'>All</option>
@@ -39,16 +39,16 @@ const SearchModal = (props: SearchModalProps) => {
                         </select>
                         <input type="text"
                             id="navSearchInput"
-                            className='appearance-none py-1 bg-transparent text-main font-medium text-xl focus-visible:outline-0 w-full'
+                            className='appearance-none py-1 bg-transparent text-main font-medium text-lg focus-visible:outline-0 w-full'
                             autoFocus
                             value={searchValue}
                             onChange={e => setSearchValue(e.target.value)} />
                     </div>
 
                     <div className='flex'>
-                        <MagnifyingGlassIcon className='fill-white h-6 cursor-pointer transition-colors hover:fill-main mr-3 '
+                        <MagnifyingGlassIcon className='fill-white h-5 cursor-pointer transition-colors hover:fill-main mr-3 '
                             onClick={() => { console.log(searchValue); console.log(searchCategory) }}></MagnifyingGlassIcon>
-                        <XMarkIcon className='fill-white h-6 cursor-pointer transition-colors hover:fill-red-500 mr-3'
+                        <XMarkIcon className='fill-white h-5 cursor-pointer transition-colors hover:fill-red-500 mr-3'
                             onClick={() => { props.setIsOpen(false) }}></XMarkIcon>
                     </div>
                 </div>

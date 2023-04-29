@@ -43,21 +43,21 @@ const NavBar = (props: NavBarProps) => {
     }
 
     const nav = (
-        <div className='bg-gray-dark w-full fixed h-28 z-10' ref={wrapperRef}>
-            <div className="relative">
+        <div className='bg-gray-dark w-full h-20 z-10' ref={wrapperRef}>
+            <div className="relative h-full items-center">
                 <SearchModal isOpen={searchIsOpen} setIsOpen={setSearchIsOpen} />
 
-                <div className='flex py-6'>
-                    <div className='flex-1 pl-20'>
+                <div className='flex h-full'>
+                    <div className='flex-1 pl-20 flex items-center'>
                         <a href="http://localhost:3000" target="_blank" rel="noreferrer" className='block w-16'>
-                            <Image src={WeViewLogo} className='w-16 h-16' alt='WeView Logo' />
+                            <Image src={WeViewLogo} className='w-10' alt='WeView Logo' />
                         </a>
                     </div>
 
-                    <div className='flex-1 pt-4 pr-20 flex justify-end'>
-                        <MagnifyingGlassIcon className='fill-main h-8 cursor-pointer transition-colors duration-300 hover:fill-white mr-3'
+                    <div className='flex-1 pr-20 flex justify-end items-center'>
+                        <MagnifyingGlassIcon className='fill-main h-7 cursor-pointer transition-colors duration-300 hover:fill-white mr-3'
                             onClick={toggleSearch}></MagnifyingGlassIcon>
-                        <Bars3Icon className='fill-main h-8 cursor-pointer transition-colors duration-300 hover:fill-white' onClick={toggleSideNav}></Bars3Icon>
+                        <Bars3Icon className='fill-main h-7 cursor-pointer transition-colors duration-300 hover:fill-white' onClick={toggleSideNav}></Bars3Icon>
                         <label htmlFor="side-nav-drawer" className="drawer-button hidden" ref={drawerButton}>Open drawer</label>
                     </div>
                 </div>

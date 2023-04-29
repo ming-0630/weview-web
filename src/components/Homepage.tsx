@@ -5,10 +5,11 @@ import Category from "@/enums/category_enum";
 import Product from "@/interfaces/product_interfaces";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import { ReactElement } from "react";
+import { ReactElement} from "react";
+import Carousel from "./Carousell";
 
 const page1 = (
-    <div className='flex h-full'>
+    <div className='flex h-[calc(100vh_-_5rem)]'>
         <div className='flex flex-col justify-center w-1/2 pl-40 mb-16'>
             <div className='text-7xl'>
                 <span>Welcome to &nbsp;</span><span className='text-main font-bold -ml-4'>WeView</span>
@@ -39,19 +40,23 @@ const testProduct: Product = {
 }
 
 for (let index = 0; index < 4; index++) {
-    trendingProducts.push(<ProductCard product={testProduct}></ProductCard>)
+    trendingProducts.push(<div className="w-64 h-[19rem] mr-10">
+        <ProductCard product={testProduct}></ProductCard>
+        </div>)
 
 }
 
 const page2 = (
-    <div className='flex flex-col h-screen items-center m-auto p-20 w-4/5'>
+    <div className='flex flex-col h-screen items-center m-auto pt-14 w-4/5'>
         <div className='flex flex-col w-full items-center'>
-            <span className='text-6xl'>Trending</span>
-            <span className='text-3xl mt-5 text-black/60'>Find out what's the recent buzz</span>
+            <span className='text-5xl'>Trending</span>
+            <span className='text-xl mt-5 text-black/60'>Find out what's the recent buzz</span>
         </div>
 
-        <div className='flex pt-12 justify-between w-full'>
+        <div className='flex flex-col justify-center w-full h-3/5 pt-8'>
+            <Carousel>
             {trendingProducts}
+            </Carousel>
         </div>
         <div className='flex pt-7 w-full justify-end'>
             <div className='cursor-pointer flex'>
@@ -80,8 +85,8 @@ const page3 = (
 const HomePage = () => {
 
     return (
-        <div className='h-full'>
-            <div className='bg-white pt-28 h-full'>
+        <div className=''>
+            <div className='bg-white'>
                 {page1}
             </div>
             <div className='bg-white bg-gradient-to-b from-main'>
