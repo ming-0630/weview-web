@@ -14,7 +14,7 @@ import computerCategoryBW from './../assets/computers_b&w.png';
 import Category from "@/enums/category_enum";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import Carousel from "./Carousell";
 
 const page1 = (
@@ -51,7 +51,7 @@ const testProduct = (index: number) => {
 }
 
 for (let index = 0; index < 10; index++) {
-    trendingProducts.push(<div className="w-[calc(100vw_*_20/100)] xl:w-[calc(100vw_*_15/100)]  h-[calc(100vw_*_20/100)] mx-10 p-3" key={index}>
+    trendingProducts.push(<div className="w-[calc(100vw_*_17/100)] 2xl:w-[calc(100vw_*_15/100)] h-[calc(100vw_*_22/100)] 2xl:h-[calc(100vw_*_20/100)] mx-3 2xl:mx-10 p-3" key={index}>
         <ProductCard product={testProduct(index)}></ProductCard>
     </div>)
 
@@ -65,7 +65,7 @@ const page2 = (
         </div>
 
         <div className='flex flex-col justify-center w-full h-3/5 pt-16'>
-            <Carousel align='start' slidesToScroll={4}>
+            <Carousel align='start' slidesToScroll={1}>
                 {trendingProducts}
             </Carousel>
         </div>
@@ -78,16 +78,25 @@ const page2 = (
     </div>
 )
 
-const page3 = (
-    <div className='flex flex-col w-5/6 items-center m-auto h-screen'>
+const HomePage = () => {
+    const [over, setOver] = useState(false)
+
+    return (
+        <div className='w-screen'>
+            <div className='bg-white'>
+                {page1}
+            </div>
+            <div className='bg-white bg-gradient-to-b from-main'>
+                {page2}
+                <div className='flex flex-col w-5/6 items-center m-auto h-screen'>
         <div className='flex flex-col w-full items-center'>
             <span className='text-5xl'>Categories</span>
         </div>
         <div className="mt-16 w-full flex h-4/5">
-            <div className=" m-2 w-1/3 relative"
-                onMouseEnter={() => { }}
-                onMouseLeave={() => { }}>
-                <Image src={smartphoneCategory} alt="Smartphone Image" fill className="object-cover" />
+            <div className=" m-2 w-1/3 relative">
+                <div className="h-full grayscale hover:grayscale-0 transition-all cursor-pointer after:absolute after:content-[''] after:bg-gradient-to-t after:from-white-500 after:inset-0 after:opacity-1 after:hover:opacity-0">
+                    <Image src={smartphoneCategory} alt="Smartphone Image" fill className="object-cover" />
+                </div>
                 <span className="text-main text-3xl font-medium absolute bottom-5 right-5 ">SMARTPHONES</span>
             </div>
 
@@ -116,18 +125,6 @@ const page3 = (
 
         </div>
     </div>
-)
-
-const HomePage = () => {
-
-    return (
-        <div className='w-screen'>
-            <div className='bg-white'>
-                {page1}
-            </div>
-            <div className='bg-white bg-gradient-to-b from-main'>
-                {page2}
-                {page3}
             </div>
 
         </div>

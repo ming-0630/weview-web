@@ -20,14 +20,14 @@ const ProductCard = (props: ProductCardProps) => {
 
     return (
         <div className='bg-white text-white w-full h-full rounded-xl flex flex-col hover:scale-105 transition cursor-pointer'>
-            <div className='h-2/3'>
-                <Image src={smartphone} alt="Product Name" className='w-[45%] m-auto mt-7' />
+            <div className='p-4 flex-1 flex justify-center'>
+                <Image src={smartphone} alt="Product Name" className='w-[45%] m-auto' />
             </div>
-            <div className='bg-main h-1/3 rounded-b-xl p-5 relative'>
+            <div className='bg-main rounded-b-xl p-5 pb-3 relative'>
                 <div className='flex justify-between items-start'>
                     <div className='flex flex-col'>
-                        <span className='font-medium text-lg'>{props.product.name}</span>
-                        <Link href={''}><span className='font-light hover:underline'>{Category[props.product.type].toUpperCase()}</span></Link>
+                        <span className='font-medium lg:text-lg !leading-snug inline-block'>{props.product.name}</span>
+                        <Link href={''}><span className='font-light hover:underline text-sm lg:text-md'>{Category[props.product.type].toUpperCase()}</span></Link>
                     </div>
                     <div className='flex items-center'>
                         <StarIcon className='w-5 h-5 mr-1 mb-1'></StarIcon>
