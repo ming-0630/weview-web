@@ -6,16 +6,12 @@ import musicCategory from './../assets/music.jpg';
 import allCategory from './../assets/all.jpg';
 import homeCategory from './../assets/home.jpg';
 import computerCategory from './../assets/computers.jpg';
-import smartphoneCategoryBW from './../assets/smartphone_b&w.png';
-import musicCategoryBW from './../assets/music_b&w.png';
-import allCategoryBW from './../assets/all_b&w.png';
-import homeCategoryBW from './../assets/home_b&w.png';
-import computerCategoryBW from './../assets/computers_b&w.png';
 import Category from "@/enums/category_enum";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { ReactElement, useState } from "react";
 import Carousel from "./Carousell";
+import CategoriesImage from "./CategoriesImage";
 
 const page1 = (
     <div className='flex h-[calc(100vh_-_5rem)]'>
@@ -51,14 +47,14 @@ const testProduct = (index: number) => {
 }
 
 for (let index = 0; index < 10; index++) {
-    trendingProducts.push(<div className="w-[calc(100vw_*_17/100)] 2xl:w-[calc(100vw_*_15/100)] h-[calc(100vw_*_22/100)] 2xl:h-[calc(100vw_*_20/100)] mx-3 2xl:mx-10 p-3" key={index}>
+    trendingProducts.push(<div className="mx-5 p-3" key={index}>
         <ProductCard product={testProduct(index)}></ProductCard>
     </div>)
 
 }
 
 const page2 = (
-    <div className='flex flex-col items-center m-auto py-24 w-5/6'>
+    <div className='flex flex-col items-center m-auto py-24 w-11/12 xl:w-5/6'>
         <div className='flex flex-col w-full items-center'>
             <span className='text-5xl'>Trending</span>
             <span className='text-xl mt-5 text-black/60'>Find out what's the recent buzz</span>
@@ -79,7 +75,6 @@ const page2 = (
 )
 
 const HomePage = () => {
-    const [over, setOver] = useState(false)
 
     return (
         <div className='w-screen'>
@@ -89,42 +84,45 @@ const HomePage = () => {
             <div className='bg-white bg-gradient-to-b from-main'>
                 {page2}
                 <div className='flex flex-col w-5/6 items-center m-auto h-screen'>
-        <div className='flex flex-col w-full items-center'>
-            <span className='text-5xl'>Categories</span>
-        </div>
-        <div className="mt-16 w-full flex h-4/5">
-            <div className=" m-2 w-1/3 relative">
-                <div className="h-full grayscale hover:grayscale-0 transition-all cursor-pointer after:absolute after:content-[''] after:bg-gradient-to-t after:from-white-500 after:inset-0 after:opacity-1 after:hover:opacity-0">
-                    <Image src={smartphoneCategory} alt="Smartphone Image" fill className="object-cover" />
-                </div>
-                <span className="text-main text-3xl font-medium absolute bottom-5 right-5 ">SMARTPHONES</span>
-            </div>
+                    <div className='flex flex-col w-full items-center'>
+                        <span className='text-5xl'>Categories</span>
+                    </div>
+                    <div className="mt-16 w-full flex h-4/5">
+                        <div className=" m-2 w-1/3">
+                            <CategoriesImage title='SMARTPHONES'>
+                                <Image src={smartphoneCategory} alt="Smartphone Image" fill className="object-cover" />
+                            </CategoriesImage>
+                        </div>
 
-            <div className="flex flex-col basis-2/3 h-full">
-                <div className="m-2 flex h-1/2">
-                    <div className="bg-red-500 basis-2/5 mr-4 relative">
-                        <Image src={musicCategory} alt="Music Image" fill className="object-cover" />
-                        <span className="text-main text-3xl font-medium absolute bottom-5 right-5 ">MUSIC</span>
-                    </div>
-                    <div className="bg-yellow-500 basis-3/5 relative">
-                        <Image src={computerCategory} alt="Computer Image" fill className="object-cover" />
-                        <span className="text-main text-3xl font-medium absolute bottom-5 right-5 ">COMPUTER</span>
-                    </div>
-                </div>
-                <div className="m-2 flex h-1/2">
-                    <div className="bg-red-500 basis-3/5 mr-4 relative">
-                        <Image src={homeCategory} alt="Home Appliances Image" fill className="object-cover" />
-                        <span className="text-main text-3xl font-medium absolute bottom-5 right-5 ">HOME APPLIANCES</span>
-                    </div>
-                    <div className="basis-2/5 relative">
-                        <Image src={allCategory} alt="All Categories Image" fill className="object-cover" />
-                        <span className="text-main text-3xl font-medium absolute bottom-5 right-5 ">ALL</span>
-                    </div>
-                </div>
-            </div>
+                        <div className="flex flex-col basis-2/3 h-full">
+                            <div className="m-2 flex h-1/2">
+                                <div className="bg-red-500 basis-2/5 mr-4 relative">
+                                    <CategoriesImage title="MUSIC">
+                                        <Image src={musicCategory} alt="Music Image" fill className="object-cover" />
+                                    </CategoriesImage>
+                                </div>
+                                <div className="bg-yellow-500 basis-3/5 relative">
+                                    <CategoriesImage title="COMPUTER">
+                                        <Image src={computerCategory} alt="Computer Image" fill className="object-cover" />
+                                    </CategoriesImage>
+                                </div>
+                            </div>
+                            <div className="m-2 flex h-1/2">
+                                <div className="bg-red-500 basis-3/5 mr-4 relative">
+                                    <CategoriesImage title="HOME APPLIANCES">
+                                        <Image src={homeCategory} alt="Home Appliances Image" fill className="object-cover" />
+                                    </CategoriesImage>
+                                </div>
+                                <div className="basis-2/5 relative">
+                                    <CategoriesImage title="ALL">
+                                        <Image src={allCategory} alt="All Categories Image" fill className="object-cover" />
+                                    </CategoriesImage>
+                                </div>
+                            </div>
+                        </div>
 
-        </div>
-    </div>
+                    </div>
+                </div>
             </div>
 
         </div>
