@@ -1,14 +1,14 @@
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon as PlusCircleIconFilled, StarIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import { useState } from 'react';
 import Category from '@/enums/category_enum';
 import Product from '@/interfaces/product_interfaces';
-import smartphone from './../assets/smartphone 1.png';
 
 export interface ProductCardProps {
     product: Product
+    image: StaticImageData
 }
 
 const ProductCard = (props: ProductCardProps) => {
@@ -19,9 +19,9 @@ const ProductCard = (props: ProductCardProps) => {
 
 
     return (
-        <div className='bg-white text-white w-full h-full rounded-xl flex flex-col hover:scale-105 transition cursor-pointer'>
+        <div className='bg-white text-white w-full rounded-xl flex flex-col hover:scale-105 transition cursor-pointer'>
             <div className='p-3 flex-1 flex justify-center'>
-                <Image src={smartphone} alt="Product Name" className='w-[45%] my-5 m-auto' />
+                <Image src={props.image} alt="Product Name" className='w-[45%] my-8 m-auto' />
             </div>
             <div className='bg-main rounded-b-xl p-5 relative'>
                 <div className='flex justify-between items-start'>

@@ -1,12 +1,14 @@
-import WeViewLogo from '../../public/WeViewLogo.png';
+import WeViewLogo from '/public/favicon.ico';
 import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { ReactNode, RefObject, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import SearchModal from './SearchModal';
 import SideNavBar from './SideNavBar';
+import Head from 'next/head';
 
 export interface NavBarProps {
     children?: ReactNode;
+    title?: string;
 }
 
 const NavBar = (props: NavBarProps) => {
@@ -43,7 +45,7 @@ const NavBar = (props: NavBarProps) => {
     }
 
     const nav = (
-        <div className='bg-gray-dark w-full h-20 z-10' ref={wrapperRef}>
+        <div className='bg-gray-dark w-full h-20 z-10 sticky top-0' ref={wrapperRef}>
             <div className="relative h-full items-center">
                 <SearchModal isOpen={searchIsOpen} setIsOpen={setSearchIsOpen} />
 
@@ -67,6 +69,9 @@ const NavBar = (props: NavBarProps) => {
 
     return (
         <SideNavBar>
+            <Head>
+                <title>{props.title ?? "WeView"}</title>
+            </Head>
             {nav}
             {props.children}
         </SideNavBar>

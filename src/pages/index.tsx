@@ -1,11 +1,11 @@
-import HomePage from "@/components/Homepage";
+import HomePage from "@/components/templates/home/HomePage";
+import NavBar from "@/components/layout/nav/NavBar";
+import DefaultPageLayout from "@/components/layout/DefaultPagesLayout";
 
 export default function Home() {
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between font-sans text-black`}
-    >
-        <HomePage></HomePage>
-    </main>
+    <DefaultPageLayout>
+      <HomePage></HomePage>
+    </DefaultPageLayout>
   )
 }
