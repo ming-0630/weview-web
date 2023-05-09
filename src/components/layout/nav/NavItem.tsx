@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link"
 import { ReactNode } from "react";
@@ -5,17 +6,24 @@ import { ReactNode } from "react";
 export interface NavItemProps {
     href: Url;
     icon: ReactNode;
-    title: string
+    title: string;
+    isNavItem?: boolean;
 }
 
 const NavItem = (props: NavItemProps) => {
+
+    const hoverStyling = classNames(
+        'rounded-lg p-2 flex flex-row items-center font-medium hover:text-main',
+        props.isNavItem ?? 'hover:bg-main/10 hover:text-main'
+    )
+
     return (
-        <Link href={props.href}>
-            <li className='rounded-lg flex flex-row items-center hover:bg-main/10 hover:text-main font-medium'>
+        <Link href={props.href} className="w-full">
+            <div className={hoverStyling}>
                 {props.icon}
                 {props.title}
-            </li>
-        </Link>)
+            </div>
+        </Link >)
 }
 
 export default NavItem
