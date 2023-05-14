@@ -14,6 +14,7 @@
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.1",
     "autoprefixer": "10.4.14",
+    "axios": "^1.4.0",
     "classnames": "^2.3.2",
     "daisyui": "^2.51.6",
     "embla-carousel-react": "^8.0.0-rc02",
@@ -23,7 +24,9 @@
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-toastify": "^9.1.2",
     "tailwindcss": "3.3.2",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "zustand": "^4.3.8"
   }
 }

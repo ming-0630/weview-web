@@ -5,6 +5,8 @@ import Image from 'next/image';
 import SearchModal from './SearchModal';
 import SideNavBar from './SideNavBar';
 import Head from 'next/head';
+import { useGlobalStore } from '@/states/global-states';
+import { toast } from 'react-toastify';
 
 export interface NavBarProps {
     children?: ReactNode;
@@ -40,10 +42,6 @@ const NavBar = (props: NavBarProps) => {
         setSearchIsOpen(true);
     }
 
-    const toggleSideNav = () => {
-        drawerButton.current!.click();
-    }
-
     const nav = (
         <div className='bg-gray-dark w-full h-20 z-10 sticky top-0' ref={wrapperRef}>
             <div className="relative h-full items-center">
@@ -59,7 +57,7 @@ const NavBar = (props: NavBarProps) => {
                     <div className='flex-1 pr-20 flex justify-end items-center'>
                         <MagnifyingGlassIcon className='fill-main h-7 cursor-pointer transition-colors duration-300 hover:fill-white mr-3'
                             onClick={toggleSearch}></MagnifyingGlassIcon>
-                        <Bars3Icon className='fill-main h-7 cursor-pointer transition-colors duration-300 hover:fill-white' onClick={toggleSideNav}></Bars3Icon>
+                        <Bars3Icon className='fill-main h-7 cursor-pointer transition-colors duration-300 hover:fill-white' onClick={useGlobalStore((state) => state.toggleNav)}></Bars3Icon>
                         <label htmlFor="side-nav-drawer" className="drawer-button hidden" ref={drawerButton}>Open drawer</label>
                     </div>
                 </div>

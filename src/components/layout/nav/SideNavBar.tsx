@@ -2,6 +2,7 @@ import { CubeIcon, HomeIcon } from '@heroicons/react/24/outline';
 import { ReactNode, useRef, useState } from 'react';
 import NavItem from './NavItem';
 import NavItemCollapse from './NavItemCollapse';
+import { GlobalState, useGlobalStore } from '@/states/global-states';
 
 
 export interface SearchModalProps {
@@ -9,11 +10,24 @@ export interface SearchModalProps {
 }
 
 const SideNavBar = (props: SearchModalProps) => {
-    const drawerToggle = useRef<HTMLInputElement>(null);
+    const navIsOpen = useGlobalStore((state) => state.navIsOpen)
+    const toggleNav = useGlobalStore((state) => state.toggleNav)
+    const toggleLogin = useGlobalStore((state) => state.toggleLogin)
+    const toggleRegister = useGlobalStore((state) => state.toggleRegister)
+
+    const openLoginModal = () => {
+        toggleNav();
+        toggleLogin();
+    }
+
+    const openRegisterModal = () => {
+        toggleNav();
+        toggleRegister();
+    }
 
     return (
         <div className="drawer drawer-end absolute overflow-y-auto">
-            <input id="side-nav-drawer" type="checkbox" className="drawer-toggle" ref={drawerToggle} />
+            <input type="checkbox" className="drawer-toggle" checked={navIsOpen} readOnly />
             <div className="drawer-content">
                 {props.children}
             </div>
@@ -22,8 +36,8 @@ const SideNavBar = (props: SearchModalProps) => {
                 <div className="menu p-4 w-72 lg:w-[21rem] bg-white text-base-content text-gray-dark">
                     {/* <!-- Sidebar content here --> */}
                     <div className='flex justify-center mt-3'>
-                        <label className='btn btn-primary mr-4 text-white' htmlFor='login-modal' onClick={() => { drawerToggle.current!.click() }}>Login</label>
-                        <label className='btn btn-outline btn-primary hover:text-white' htmlFor='register-modal' onClick={() => { drawerToggle.current!.click() }}>Register</label>
+                        <label className='btn btn-primary mr-4 text-white' onClick={openLoginModal}>Login</label>
+                        <label className='btn btn-outline btn-primary hover:text-white' onClick={openRegisterModal}>Register</label>
                     </div>
                     <div className='pt-8'>
                         <NavItem
