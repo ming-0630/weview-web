@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/states/auth-states"
+import { AuthTokens, useAuthStore } from "@/states/auth-states"
 import { createAxiosClient } from "./createAxiosClient"
 
 const REFRESH_TOKEN_URL = 'http://localhost:8080/api/v1/auth/refreshToken'
@@ -13,7 +13,7 @@ function getCurrentRefreshToken() {
 }
 
 
-function setRefreshedTokens(tokens: string) {
+function setRefreshedTokens(tokens: AuthTokens) {
     console.log('set tokens...')
     useAuthStore((state) => state.login)
 }

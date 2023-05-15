@@ -8,7 +8,7 @@ import classNames from "classnames";
 import PasswordInput from "@/components/ui/PasswordInput";
 import { LoginDto, login } from "@/services/user/services";
 import { toast } from "react-toastify";
-import { authTokens, useAuthStore } from "@/states/auth-states";
+import { AuthTokens, useAuthStore } from "@/states/auth-states";
 
 export interface LoginModalProps {
     children?: ReactNode;
@@ -31,7 +31,7 @@ const LoginModal = (props: LoginModalProps) => {
     const handleLogin = async () => {
         if (loginValues?.email && loginValues?.password) {
             const response = await login(loginValues);
-            const tokens: authTokens = response?.data;
+            const tokens: AuthTokens = response?.data;
             clientLogin(tokens)
         } else {
             toast.error("Empty Fields!")

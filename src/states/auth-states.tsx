@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 
-export interface authTokens {
+export interface AuthTokens {
     accessToken: string,
     refreshToken: string
 }
 
-function setTokensToLocalStorage(props: authTokens) {
+function setTokensToLocalStorage(props: AuthTokens) {
     localStorage.setItem("accessToken", props.accessToken);
     localStorage.setItem("refreshToken", props.refreshToken);
 }
@@ -19,7 +19,7 @@ export interface AuthState {
     accessToken: string | null,
     refreshToken: string | null,
     isLoggedIn: () => boolean,
-    login: (tokens: authTokens) => void,
+    login: (tokens: AuthTokens) => void,
     logout: () => void
 }
 
@@ -27,7 +27,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     accessToken: typeof window !== "undefined" ? localStorage.getItem("accessToken") : null,
     refreshToken: typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null,
     isLoggedIn: () => !!get().accessToken,
-    login: (tokens: authTokens) => {
+    login: (tokens: AuthTokens) => {
         setTokensToLocalStorage(tokens);
         set((state) => ({
             ...state,
