@@ -1,7 +1,7 @@
 import { AuthTokens, useAuthStore } from "@/states/auth-states"
 import { createAxiosClient } from "./createAxiosClient"
 
-const REFRESH_TOKEN_URL = 'http://localhost:8080/api/v1/auth/refreshToken'
+const REFRESH_TOKEN_URL = 'http://localhost:8080/api/auth/refreshtoken'
 const BASE_URL = 'http://localhost:8080/api'
 
 function getCurrentAccessToken() {

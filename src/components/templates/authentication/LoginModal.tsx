@@ -9,6 +9,7 @@ import PasswordInput from "@/components/ui/PasswordInput";
 import { LoginDto, login } from "@/services/user/services";
 import { toast } from "react-toastify";
 import { AuthTokens, useAuthStore } from "@/states/auth-states";
+import User from "@/interfaces/user_interface";
 
 export interface LoginModalProps {
     children?: ReactNode;
@@ -29,14 +30,44 @@ const LoginModal = (props: LoginModalProps) => {
     const clientLogin = useAuthStore((state) => state.login)
 
     const handleLogin = async () => {
-        if (loginValues?.email && loginValues?.password) {
-            const response = await login(loginValues);
-            const tokens: AuthTokens = response?.data;
-            clientLogin(tokens)
-        } else {
-            toast.error("Empty Fields!")
+        if (isPopulated()) {
+            const response = await login(loginValues!);
+            console.log(response);
+            if (response &&
+                response.status === 200 &&
+                response.data) {
+
+                const data = response.data;
+
+                const tokens: AuthTokens = {
+                    accessToken: data.accessToken,
+                    refreshToken: data.refreshToken
+                }
+
+                const userData = data.user;
+
+                const user: User = {
+                    id: userData.id,
+                    email: userData.email,
+                    username: userData.username,
+                    roles: userData.roles
+                }
+                clientLogin(tokens, user);
+                toast.success("Login Successful!");
+                toggleModal();
+            } else {
+                toast.error(response ? response.data.message : "");
+            }
         }
-        console.log(localStorage.getItem("accessToken"))
+    }
+
+    const isPopulated = () => {
+        if (loginValues?.email && loginValues?.password) {
+            return true;
+        } else {
+            toast.error("Empty Fields!");
+            return false;
+        }
     }
 
     return (

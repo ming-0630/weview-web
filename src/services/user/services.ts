@@ -27,14 +27,15 @@ export function register(props: RegisterDto) {
 export function login(creds: LoginDto) {
     let data = JSON.stringify(creds)
 
-    console.log(data)
-    return client.post(
+    const response = client.post(
         "auth/login",
         data,
         { authorization: false }
     ).catch((err) => {
         toast.error(err.response.data.message)
-    });
+    })
+
+    return response;
 }
 
 export function getProfile() {

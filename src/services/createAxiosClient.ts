@@ -74,8 +74,8 @@ export function createAxiosClient(props: axiosClientProps) {
             // Refresh token conditions
             if (
                 refreshToken &&
-                error.response?.status === 401 &&
-                error.response.data.message === "TokenExpiredError" &&
+                error.response?.status === 400 &&
+                error.response.data.message === "Expired JWT token" &&
                 originalRequest?.url !== props.refreshTokenUrl &&
                 originalRequest?._retry !== true
             ) {
@@ -114,8 +114,10 @@ export function createAxiosClient(props: axiosClientProps) {
 
             // Refresh token missing or expired => logout user...
             if (
-                error.response?.status === 401 &&
-                error.response?.data?.message === "TokenExpiredError"
+                error.response?.status === 403 &&
+                (error.response?.data?.message === "Refresh token is not in database!" ||
+                    error.response?.data?.message === "Refresh token expired."
+                )
             ) {
                 return handleError(error);
             }
