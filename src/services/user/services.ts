@@ -32,9 +32,14 @@ export function login(creds: LoginDto) {
         data,
         { authorization: false }
     ).catch((err) => {
-        toast.error(err.response.data.message)
+        if (err.response.data) {
+            toast.error(err.response.data.message)
+        } else if (err.response) {
+            toast.error(err.response)
+        } else {
+            toast.error(err)
+        }
     })
-
     return response;
 }
 

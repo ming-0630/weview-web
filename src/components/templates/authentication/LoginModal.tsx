@@ -11,11 +11,7 @@ import { toast } from "react-toastify";
 import { AuthTokens, useAuthStore } from "@/states/auth-states";
 import User from "@/interfaces/user_interface";
 
-export interface LoginModalProps {
-    children?: ReactNode;
-}
-
-const LoginModal = (props: LoginModalProps) => {
+const LoginModal = () => {
     const isShow = useGlobalStore((state) => state.loginIsOpen)
     const toggleModal = useGlobalStore((state) => state.toggleLogin)
     const toggleRegister = useGlobalStore((state) => state.toggleRegister)
@@ -32,7 +28,6 @@ const LoginModal = (props: LoginModalProps) => {
     const handleLogin = async () => {
         if (isPopulated()) {
             const response = await login(loginValues!);
-            console.log(response);
             if (response &&
                 response.status === 200 &&
                 response.data) {
@@ -55,8 +50,6 @@ const LoginModal = (props: LoginModalProps) => {
                 clientLogin(tokens, user);
                 toast.success("Login Successful!");
                 toggleModal();
-            } else {
-                toast.error(response ? response.data.message : "");
             }
         }
     }
@@ -72,8 +65,7 @@ const LoginModal = (props: LoginModalProps) => {
 
     return (
         <Modal isShow={isShow}
-            toggleModal={toggleModal}
-        >
+            toggleModal={toggleModal}>
             <div className="p-5 w-[30vw]">
                 <div className="flex items-center">
                     <div className='w-10 h-10 relative'>

@@ -5,22 +5,25 @@ const REFRESH_TOKEN_URL = 'http://localhost:8080/api/auth/refreshtoken'
 const BASE_URL = 'http://localhost:8080/api'
 
 function getCurrentAccessToken() {
-    return useAuthStore((state) => state.accessToken)
+    return useAuthStore.getState().accessToken
 }
 
 function getCurrentRefreshToken() {
-    return useAuthStore((state) => state.refreshToken)
+    return useAuthStore.getState().refreshToken
 }
 
 
 function setRefreshedTokens(tokens: AuthTokens) {
     console.log('set tokens...')
-    useAuthStore((state) => state.login)
+    const login = useAuthStore.getState().login
+    const user = useAuthStore.getState().loggedInUser
+    login(tokens, user!)
 }
 
 async function logout() {
     console.log('logout...')
-    useAuthStore((state) => state.logout)
+    const logout = useAuthStore.getState().logout
+    logout()
 }
 
 export const client = createAxiosClient({

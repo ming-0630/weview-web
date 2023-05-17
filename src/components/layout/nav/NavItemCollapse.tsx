@@ -1,27 +1,42 @@
+import { useGlobalStore } from "@/states/global-states";
+import OutsideAlerter from "@/utils/OutsideAlerter";
+import classNames from "classnames";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link"
-import { ReactNode } from "react";
+import { ReactNode, RefObject, useEffect, useRef, useState } from "react";
 
 export interface NavItemProps {
     title: string;
     icon: ReactNode;
+    className?: string;
     children: ReactNode;
 }
 
+
 const NavItemCollapse = (props: NavItemProps) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const navIsOpen = useGlobalStore((state) => state.navIsOpen)
+
+    useEffect(() => {
+        if (!navIsOpen) {
+            setIsOpen(false);
+        }
+    }, [navIsOpen])
+
+    const toggleOpen = () => {
+        setIsOpen((prev) => { return !prev })
+    }
+
     return (
-        <div tabIndex={0} className="collapse collapse-arrow !visible 
-        rounded-lg font-medium 
-        focus:bg-main/10 focus:text-main">
-            <div className="collapse-title flex items-center p-2 rounded-lg
-            hover:bg-main/10 hover:text-main">
+        <div className={classNames("collapse collapse-arrow !visible rounded-lg font-medium", !isOpen && "hover:bg-main/10 hover:text-main")} onClick={toggleOpen}>
+            <input type="checkbox" className="peer" checked={isOpen} onChange={() => { }} />
+            <div className={classNames("collapse-title flex items-center px-2 py-0 rounded-lg", isOpen && "bg-main/10 text-main mb-3", props.className)}>
                 {props.icon}
                 {props.title}
             </div>
-            <div className="collapse-content rounded-lg mt-3 text-black">
-                <div tabIndex={0}>
-                    {props.children}
-                </div>
+            <div className={classNames("collapse-content rounded-lg text-black")}>
+                {props.children}
             </div>
         </div>
     )

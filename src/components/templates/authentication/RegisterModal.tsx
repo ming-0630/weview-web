@@ -7,11 +7,7 @@ import { useGlobalStore } from "@/states/global-states";
 import registerImage from '../../../assets/discuss.png';
 import PasswordInput from "@/components/ui/PasswordInput";
 
-export interface RegisterModalProps {
-    children?: ReactNode;
-}
-
-const RegisterModal = (props: RegisterModalProps) => {
+const RegisterModal = () => {
     const isShow = useGlobalStore((state) => state.registerIsOpen)
     const toggleModal = useGlobalStore((state) => state.toggleRegister)
 

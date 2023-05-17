@@ -24,8 +24,8 @@ const processQueue = (error: AxiosError | Error | null) => {
 
 export interface axiosClientProps {
     options: CreateAxiosDefaults<any>,
-    getCurrentAccessToken: () => string | null,
-    getCurrentRefreshToken: () => string | null,
+    getCurrentAccessToken: any,
+    getCurrentRefreshToken: any,
     refreshTokenUrl: string,
     logout: () => void,
     setRefreshedTokens: (tokens: AuthTokens) => void,
@@ -116,12 +116,10 @@ export function createAxiosClient(props: axiosClientProps) {
             if (
                 error.response?.status === 403 &&
                 (error.response?.data?.message === "Refresh token is not in database!" ||
-                    error.response?.data?.message === "Refresh token expired."
-                )
+                    error.response?.data?.message === "Refresh token expired.")
             ) {
                 return handleError(error);
             }
-
             // Any status codes that falls outside the range of 2xx cause this function to trigger
             // Do something with response error
             return Promise.reject(error);

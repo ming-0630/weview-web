@@ -1,4 +1,5 @@
 import User from '@/interfaces/user_interface';
+import { toast } from 'react-toastify';
 import { create } from 'zustand'
 
 export interface AuthTokens {
@@ -46,6 +47,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
             refreshToken: null,
             loggedInUser: undefined
         }));
+        toast.success("Logout successful!")
     },
     loggedInUser: undefined
 }))
