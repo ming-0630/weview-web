@@ -6,7 +6,7 @@ import SearchModal from './SearchModal';
 import SideNavBar from './SideNavBar';
 import Head from 'next/head';
 import { useGlobalStore } from '@/states/global-states';
-import { toast } from 'react-toastify';
+import OutsideAlerter from '@/utils/OutsideAlerter';
 
 export interface NavBarProps {
     children?: ReactNode;
@@ -18,25 +18,11 @@ const NavBar = (props: NavBarProps) => {
     const drawerButton = useRef<HTMLLabelElement>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    useOutsideAlerter(wrapperRef);
-
-    function useOutsideAlerter(ref: RefObject<HTMLDivElement>) {
-        useEffect(() => {
-            function handleClickOutside(event: { target: any; }) {
-                if (ref != null) {
-                    if (ref.current && !ref.current!.contains(event.target)) {
-                        setSearchIsOpen(false);
-                    }
-                }
-            }
-            // Bind the event listener
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => {
-                // Unbind the event listener on clean up
-                document.removeEventListener("mousedown", handleClickOutside);
-            };
-        }, [ref]);
-    }
+    OutsideAlerter({
+        ref: wrapperRef,
+        isOpen: searchIsOpen,
+        setFunction: () => { setSearchIsOpen(false) }
+    });
 
     const toggleSearch = () => {
         setSearchIsOpen(true);
