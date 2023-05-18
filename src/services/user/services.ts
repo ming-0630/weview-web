@@ -3,6 +3,7 @@ import { client } from "../axiosClient";
 
 export interface RegisterDto {
     email: string,
+    username: string,
     password: string
 }
 
@@ -12,14 +13,11 @@ export interface LoginDto {
 }
 
 export function register(props: RegisterDto) {
-    let data = JSON.stringify({
-        "email": "user1",
-        "password": "password"
-    })
+    let data = JSON.stringify(props)
 
     return client.post(
         "auth/register",
-        { data },
+        data,
         { authorization: false }
     );
 }
@@ -41,6 +39,28 @@ export function login(creds: LoginDto) {
         }
     })
     return response;
+}
+
+export function getUserImage(id: string) {
+    let data = JSON.stringify(id)
+
+    const response = client.get(
+        "/getProfilePic", {
+        params: {
+            id: id
+        }, responseType: "blob",
+    }).catch((err) => {
+        console.log(err);
+        // if (err.response.data) {
+        //     toast.error(err.response.data.message)
+        // } else if (err.response) {
+        //     toast.error(err.response)
+        // } else {
+        //     toast.error(err)
+        // }
+    });
+
+    return response
 }
 
 export function getProfile() {

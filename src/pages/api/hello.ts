@@ -1,13 +1,21 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
+// import { getUserImage } from "@/services/user/services";
+// import { useAuthStore } from "@/states/auth-states";
 
-type Data = {
-  name: string
-}
+// export const getServerSideProps = async () => {
+//   const user = useAuthStore((state) => state.loggedInUser)
+//   if (user) {
+//     try {
+//       const response = await getUserImage(user.id);
+//       return {
+//         props: {
+//           image: response.data
+//         },
+//       }
+//     } catch {
+//       return {
+//         props: {}
+//       };
+//     }
+//   }
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  res.status(200).json({ name: 'John Doe' })
-}
+// }

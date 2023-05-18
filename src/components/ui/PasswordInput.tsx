@@ -3,8 +3,6 @@ import classNames from "classnames";
 import { ReactNode, useEffect, useState } from "react";
 
 export interface PasswordInputProps {
-    // isShow: boolean;
-    // setIsShow: (...args: any) => void
     isRepeat?: boolean;
     classnames?: string;
     value?: string;

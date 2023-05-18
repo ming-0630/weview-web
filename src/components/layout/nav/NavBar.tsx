@@ -18,11 +18,14 @@ const NavBar = (props: NavBarProps) => {
     const drawerButton = useRef<HTMLLabelElement>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
+    const global = useGlobalStore((state) => { return state });
+
     OutsideAlerter({
         ref: wrapperRef,
         isOpen: searchIsOpen,
         setFunction: () => { setSearchIsOpen(false) }
     });
+
 
     const toggleSearch = () => {
         setSearchIsOpen(true);
@@ -43,7 +46,7 @@ const NavBar = (props: NavBarProps) => {
                     <div className='flex-1 pr-20 flex justify-end items-center'>
                         <MagnifyingGlassIcon className='fill-main h-7 cursor-pointer transition-colors duration-300 hover:fill-white mr-3'
                             onClick={toggleSearch}></MagnifyingGlassIcon>
-                        <Bars3Icon className='fill-main h-7 cursor-pointer transition-colors duration-300 hover:fill-white' onClick={useGlobalStore((state) => state.toggleNav)}></Bars3Icon>
+                        <Bars3Icon className='fill-main h-7 cursor-pointer transition-colors duration-300 hover:fill-white' onClick={() => { global.toggleNav() }}></Bars3Icon>
                         <label htmlFor="side-nav-drawer" className="drawer-button hidden" ref={drawerButton}>Open drawer</label>
                     </div>
                 </div>

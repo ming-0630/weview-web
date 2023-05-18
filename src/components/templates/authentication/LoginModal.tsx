@@ -1,7 +1,7 @@
 import Modal from "@/components/ui/Modal";
 import Image from 'next/image';
 import WeViewLogo from '/public/favicon.ico';
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useGlobalStore } from "@/states/global-states";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import classNames from "classnames";
@@ -21,7 +21,7 @@ const LoginModal = () => {
         toggleRegister();
     }
 
-    const [loginValues, setLoginValues] = useState<LoginDto>()
+    const [loginValues, setLoginValues] = useState<LoginDto>({ email: "", password: "" })
 
     const clientLogin = useAuthStore((state) => state.login)
 
@@ -62,6 +62,12 @@ const LoginModal = () => {
             return false;
         }
     }
+
+    useEffect(() => {
+        if (!isShow) {
+            setLoginValues({ email: "", password: "" })
+        }
+    }, [isShow])
 
     return (
         <Modal isShow={isShow}

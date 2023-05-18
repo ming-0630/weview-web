@@ -6,25 +6,27 @@ import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useGlobalStore } from "@/states/global-states";
 import WeViewLogo from '/public/favicon.ico';
 import { useAuthStore } from "@/states/auth-states";
-import ConfirmModal from "@/components/templates/authentication/LogoutConfirmModal";
+import ConfirmModal from "@/components/templates/authentication/ConfirmModal";
+import { GetServerSideProps } from "next";
+import { client } from "@/services/axiosClient";
 
 export interface LoggedInSideNavProps {
     username: string;
-    image: string | StaticImageData
+    image: string | StaticImageData | any
 }
 
 const LoggedInSideNav = (props: LoggedInSideNavProps) => {
-    const toggleLogout = useGlobalStore((state) => state.toggleLogout)
+    const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
+    const toggleNav = useGlobalStore((state) => state.toggleNav)
     const logout = useAuthStore((state) => state.logout)
 
     return (
         <div className="h-full flex flex-col">
-            <ConfirmModal title={"Warning"} description={"Are you sure you want to logout?"} onClickYes={logout}></ConfirmModal>
             <div className="flex justify-center items-center mb-1">
                 <Image src={WeViewLogo} alt="WeView logo" width={50}></Image>
             </div>
             <NavItemCollapse title={props.username}
-                icon={<Image src={props.image} alt="User Profile Pic" width={40} className='m-4 mr-6'></Image>}
+                icon={<Image src={props.image} alt="User Profile Pic" width={40} height={40} className='m-4 mr-6'></Image>}
                 className='text-xl'
             >
                 <NavItem
@@ -98,7 +100,14 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
                 icon={<ChartBarSquareIcon className='w-6 m-3'></ChartBarSquareIcon>}
                 isNavItem
             ></NavItem>
-            <div className="btn btn-error text-white hover:brightness-95 justify-self-end mt-auto" onClick={toggleLogout}>Logout</div>
+            <div className="btn btn-error text-white hover:brightness-95 justify-self-end mt-auto" onClick={() => {
+                toggleConfirm({
+                    title: "Confirm Logout?",
+                    description: "Are you sure you want to logout?",
+                    onClickYes: () => { logout(); toggleConfirm(); }
+                });
+                toggleNav();
+            }}>Logout</div>
         </div>
     )
 }

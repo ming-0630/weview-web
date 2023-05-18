@@ -3,6 +3,7 @@ import LoginModal from "../templates/authentication/LoginModal";
 import RegisterModal from "../templates/authentication/RegisterModal";
 import NavBar from "./nav/NavBar";
 import { ScriptProps } from "next/script";
+import ConfirmModal from "../templates/authentication/ConfirmModal";
 
 const DefaultPageLayout = ({ children }: ScriptProps) => {
 
@@ -21,6 +22,7 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
                 pauseOnHover
                 theme="light"
             />
+            <ConfirmModal></ConfirmModal>
             <LoginModal></LoginModal>
             <RegisterModal></RegisterModal>
             <NavBar>
