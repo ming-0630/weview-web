@@ -26,8 +26,10 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
                 <Image src={WeViewLogo} alt="WeView logo" width={50}></Image>
             </div>
             <NavItemCollapse title={props.username}
-                icon={<Image src={props.image} alt="User Profile Pic" width={40} height={40} className='m-4 mr-6'></Image>}
-                className='text-xl'
+                icon={<div className="rounded-full border-main border-2 ml-4 mr-6 w-12 h-12 relative">
+                    <Image src={props.image} alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
+                </div>}
+                className='text-xl !p-3'
             >
                 <NavItem
                     title='My Profile'

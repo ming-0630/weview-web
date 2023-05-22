@@ -88,19 +88,19 @@ const page3 = (
 
             <div className="flex flex-col basis-2/3 h-full">
                 <div className="m-2 flex h-1/2">
-                    <div className="bg-red-500 basis-2/5 mr-4 relative">
+                    <div className="basis-2/5 mr-4 relative">
                         <CategoriesImage title="MUSIC">
                             <Image src={musicCategory} alt="Music Image" fill className="object-cover" />
                         </CategoriesImage>
                     </div>
-                    <div className="bg-yellow-500 basis-3/5 relative">
+                    <div className="basis-3/5 relative">
                         <CategoriesImage title="COMPUTER">
                             <Image src={computerCategory} alt="Computer Image" fill className="object-cover" />
                         </CategoriesImage>
                     </div>
                 </div>
                 <div className="m-2 flex h-1/2">
-                    <div className="bg-red-500 basis-3/5 mr-4 relative">
+                    <div className="basis-3/5 mr-4 relative">
                         <CategoriesImage title="HOME APPLIANCES">
                             <Image src={homeCategory} alt="Home Appliances Image" fill className="object-cover" />
                         </CategoriesImage>

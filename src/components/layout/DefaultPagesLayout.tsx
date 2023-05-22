@@ -4,9 +4,30 @@ import RegisterModal from "../templates/authentication/RegisterModal";
 import NavBar from "./nav/NavBar";
 import { ScriptProps } from "next/script";
 import ConfirmModal from "../templates/authentication/ConfirmModal";
+import { ThemeProvider } from "@emotion/react";
+import { createTheme } from "@mui/material";
+
+declare module '@mui/material/styles' {
+    interface Theme {
+        palette: {
+            primary: {
+                main: string;
+                contrastText: string;
+            };
+        }
+
+    }
+}
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#40AF93',
+            contrastText: '#FFFFFF'
+        }
+    }
+});
 
 const DefaultPageLayout = ({ children }: ScriptProps) => {
-
     return (
         <main
             className='flex min-h-screen flex-col items-center justify-between font-sans text-black'>
@@ -22,14 +43,17 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
                 pauseOnHover
                 theme="light"
             />
-            <ConfirmModal></ConfirmModal>
-            <LoginModal></LoginModal>
-            <RegisterModal></RegisterModal>
-            <NavBar>
-                <div className='w-full bg-white'>
-                    {children}
-                </div>
-            </NavBar>
+            <ThemeProvider theme={theme}>
+                <ConfirmModal></ConfirmModal>
+                <LoginModal></LoginModal>
+                <RegisterModal></RegisterModal>
+                <NavBar>
+                    <div className='w-full bg-white'>
+                        {children}
+                    </div>
+                </NavBar>
+            </ThemeProvider>
+
         </main>
 
     );

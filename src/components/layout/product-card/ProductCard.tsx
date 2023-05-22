@@ -5,10 +5,12 @@ import Image, { StaticImageData } from 'next/image';
 import { useState } from 'react';
 import Category from '@/enums/category_enum';
 import Product from '@/interfaces/product_interfaces';
+import classNames from 'classnames';
 
 export interface ProductCardProps {
     product: Product
     image: StaticImageData
+    hasBorder?: boolean
 }
 
 const ProductCard = (props: ProductCardProps) => {
@@ -19,11 +21,13 @@ const ProductCard = (props: ProductCardProps) => {
 
 
     return (
-        <div className='bg-white text-white w-full rounded-xl flex flex-col hover:scale-105 transition cursor-pointer'>
+        <div className={classNames('text-stone-900 w-full rounded-xl flex flex-col hover:scale-105 transition cursor-pointer rounded-2xl overflow-hidden bg-gradient-to-t from-main via-white via-40% drop-shadow-xl',
+            props.hasBorder && ''
+        )}>
             <div className='p-3 flex-1 flex justify-center'>
                 <Image src={props.image} alt="Product Name" className='w-[45%] my-8 m-auto' />
             </div>
-            <div className='bg-main rounded-b-xl p-5 relative'>
+            <div className='p-5 relative'>
                 <div className='flex justify-between items-start'>
                     <div className='flex flex-col mr-3'>
                         <span className='font-medium lg:text-lg !leading-snug inline-block'>{props.product.name}</span>

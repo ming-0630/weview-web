@@ -95,7 +95,7 @@ const RegisterModal = () => {
         <Modal isShow={isShow}
             toggleModal={toggleModal}>
             <div className="flex h-[75vh] w-full">
-                <div className="px-7 lg:px-10 py-7 flex flex-col h-full md:w-1/2 overflow-y-auto">
+                <div className="px-7 lg:px-10 py-7 flex flex-col h-full lg:w-1/2 overflow-y-auto">
                     <div className="flex items-center flex-none">
                         <div className='w-10 h-10 relative'>
                             <Image src={WeViewLogo} alt='WeView Logo' fill />
@@ -104,41 +104,41 @@ const RegisterModal = () => {
                     </div>
 
                     <div className="pt-5 flex flex-col grow justify-around">
-                        <div className="flex flex-col">
+                        <div className="flex flex-col mb-3">
                             <label className="mb-1">Email</label>
                             <input type="text" placeholder="Email" className="input input-md input-primary input-bordered border-3 bg-white w-full"
                                 value={registerValues.email}
                                 onChange={(e) => { setRegisterValues({ ...registerValues, email: e.target.value }) }} />
                         </div>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col mb-3">
                             <label className="mb-1">Display Name</label>
                             <input type="text" placeholder="Display Name" className="input input-md input-primary input-bordered border-3 bg-white w-full"
                                 value={registerValues.name}
                                 onChange={(e) => { setRegisterValues({ ...registerValues, name: e.target.value }) }} />
                         </div>
-                        <div>
+                        <div className="mb-3">
                             <PasswordInput
                                 value={registerValues.password}
                                 onChange={(e) => { setRegisterValues({ ...registerValues, password: e.target.value }) }}
                             ></PasswordInput>
                         </div>
-                        <div>
+                        <div className="mb-3">
                             <PasswordInput isRepeat
                                 value={registerValues.repeatPassword}
                                 onChange={(e) => { setRegisterValues({ ...registerValues, repeatPassword: e.target.value }) }}
                             ></PasswordInput>
                         </div>
 
-                        <div className="flex justify-between items-center">
-                            <label className="cursor-pointer text-black/50 text-sm hover:text-main" onClick={login}>Already have an account? Click here!</label>
+                        <div className="flex justify-between items-center mb-3 ">
+                            <label className="cursor-pointer text-black/50 mr-5 text-sm hover:text-main" onClick={login}>Already have an account? Click here!</label>
                             <label className='btn btn-primary mr-4 text-white'
                                 onClick={handleRegister}>Register</label>
                         </div>
                     </div>
                 </div>
 
-                <div className="h-full overflow-hidden w-0 md:w-1/2">
-                    <Image src={registerImage} alt={"Register Image"} className="h-full object-cover object-right"></Image>
+                <div className="h-full overflow-hidden w-0 lg:w-1/2">
+                    <Image src={registerImage} alt={"Register Image"} className="h-full object-cover object-right-top"></Image>
                 </div>
             </div>
         </Modal >

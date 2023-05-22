@@ -1,3 +1,4 @@
+import { useGlobalStore } from "@/states/global-states";
 import classNames from "classnames";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link"
@@ -11,6 +12,7 @@ export interface NavItemProps {
 }
 
 const NavItem = (props: NavItemProps) => {
+    const toggleNav = useGlobalStore((state) => state.toggleNav)
 
     const hoverStyling = classNames(
         'rounded-lg p-2 flex flex-row items-center font-medium hover:text-main',
@@ -18,7 +20,7 @@ const NavItem = (props: NavItemProps) => {
     )
 
     return (
-        <Link href={props.href} className="w-full">
+        <Link href={props.href} className="w-full" onClick={toggleNav}>
             <div className={hoverStyling}>
                 {props.icon}
                 {props.title}

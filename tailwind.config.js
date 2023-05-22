@@ -22,7 +22,8 @@ module.exports = {
           dark: '#1E1E1E'
         },
         white: {
-          DEFAULT: '#F5F5F5'
+          DEFAULT: '#F5F5F5',
+          plain: '#FFFFFF'
         }
       },
       height: {
@@ -45,6 +46,8 @@ module.exports = {
           "error": "#F87272",
         },
       },
+      "cupcake",
+      "dark"
     ],
   },
   plugins: [require("daisyui")],

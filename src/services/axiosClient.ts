@@ -1,5 +1,6 @@
 import { AuthTokens, useAuthStore } from "@/states/auth-states"
 import { createAxiosClient } from "./createAxiosClient"
+import { toast } from "react-toastify"
 
 const REFRESH_TOKEN_URL = 'http://localhost:8080/api/auth/refreshtoken'
 const BASE_URL = 'http://localhost:8080/api'
@@ -21,7 +22,7 @@ function setRefreshedTokens(tokens: AuthTokens) {
 }
 
 async function logout() {
-    console.log('logout...')
+    toast('Logging out...')
     const logout = useAuthStore.getState().logout
     logout()
 }
