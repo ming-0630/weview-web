@@ -94,8 +94,8 @@ const RegisterModal = () => {
     return (
         <Modal isShow={isShow}
             toggleModal={toggleModal}>
-            <div className="flex h-[65vh] w-50vw]">
-                <div className="px-10 py-7 w-1/2 flex flex-col h-full">
+            <div className="flex h-[75vh] w-full">
+                <div className="px-7 lg:px-10 py-7 flex flex-col h-full md:w-1/2 overflow-y-auto">
                     <div className="flex items-center flex-none">
                         <div className='w-10 h-10 relative'>
                             <Image src={WeViewLogo} alt='WeView Logo' fill />
@@ -137,8 +137,8 @@ const RegisterModal = () => {
                     </div>
                 </div>
 
-                <div className="w-1/2 h-full overflow-hidden">
-                    <Image src={registerImage} alt={"Register Image"}></Image>
+                <div className="h-full overflow-hidden w-0 md:w-1/2">
+                    <Image src={registerImage} alt={"Register Image"} className="h-full object-cover object-right"></Image>
                 </div>
             </div>
         </Modal >

@@ -23,8 +23,11 @@ const SideNavBar = (props: SideNavBarProps) => {
 
     const [img, setImg] = useState("");
 
-    let image;
     useEffect(() => {
+        getImage();
+    }, [user])
+
+    const getImage = () => {
         if (user) {
             const fetchData = async () => {
                 const response = await getUserImage(user.id);
@@ -38,7 +41,7 @@ const SideNavBar = (props: SideNavBarProps) => {
             }
             fetchData().catch(console.error)
         }
-    }, [user])
+    }
 
     const wrapperRef = useRef<HTMLDivElement>(null);
     OutsideAlerter({
@@ -57,7 +60,6 @@ const SideNavBar = (props: SideNavBarProps) => {
                 <label htmlFor="side-nav-drawer" className="drawer-overlay"></label>
                 <div className="menu p-4 w-72 lg:w-[21rem] bg-white text-base-content text-gray-dark" ref={wrapperRef}>
                     {/* <!-- Sidebar content here --> */}
-                    <img src={img}></img>
                     {user ? <LoggedInSideNav username={user.username} image={user && img ? img : blankUserImage}></LoggedInSideNav>
                         : <SideNavItems></SideNavItems>
                     }

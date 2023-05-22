@@ -72,7 +72,7 @@ const LoginModal = () => {
     return (
         <Modal isShow={isShow}
             toggleModal={toggleModal}>
-            <div className="p-5 w-[30vw]">
+            <div className="p-5 w-[70vw] sm:w-[50vw] lg:w-[40vw] w-[30vw]">
                 <div className="flex items-center">
                     <div className='w-10 h-10 relative'>
                         <Image src={WeViewLogo} alt='WeView Logo' fill />

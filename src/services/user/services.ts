@@ -42,22 +42,16 @@ export function login(creds: LoginDto) {
 }
 
 export function getUserImage(id: string) {
-    let data = JSON.stringify(id)
-
     const response = client.get(
         "/getProfilePic", {
         params: {
             id: id
         }, responseType: "blob",
-    }).catch((err) => {
-        console.log(err);
-        // if (err.response.data) {
-        //     toast.error(err.response.data.message)
-        // } else if (err.response) {
-        //     toast.error(err.response)
-        // } else {
-        //     toast.error(err)
-        // }
+    }).catch(async (err) => {
+        console.log(err.response.data);
+        const error = await err.response.data.text();
+        const msg = JSON.parse(error).message;
+        toast.error(msg);
     });
 
     return response

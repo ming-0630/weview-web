@@ -15,9 +15,9 @@ import CategoriesImage from "./Categories/CategoriesImage";
 
 const page1 = (
     <div className='flex h-[calc(100vh_-_5rem)]'>
-        <div className='flex flex-col justify-center w-1/2 pl-40 mb-16'>
+        <div className='flex flex-col justify-center w-1/2 pl-20 lg:pl-40 mb-16 flex justify-start'>
             <div className='text-4xl lg:text-6xl xl:text-7xl'>
-                <span>Welcome to &nbsp;</span><span className='text-main font-bold -ml-4'>WeView</span>
+                <div>Welcome to &nbsp;</div><div className='text-main font-bold'>WeView</div>
             </div>
             <div className='font-light text-xl lg:text-2xl xl:text-3xl mt-3'>
                 <span>Your one-stop review platform for all tech products and electronics</span>
