@@ -1,4 +1,4 @@
-import ProductCard from "@/components/layout/product-card/ProductCard";
+import ProductCard from "@/components/layout/product-card/ProductCardV1";
 import SearchInput from "@/components/ui/SearchInput";
 import smartphone from '../../../assets/smartphone 1.png';
 import smartphoneCategory from '../../../assets/smartphone.jpg';

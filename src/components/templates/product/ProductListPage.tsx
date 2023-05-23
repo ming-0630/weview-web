@@ -1,10 +1,14 @@
-import ProductCard from "@/components/layout/product-card/ProductCard";
+import ProductCard from "@/components/layout/product-card/ProductCardV1";
 import Category from "@/enums/category_enum";
 import { ReactElement, useState } from "react";
 import smartphone from '../../../assets/smartphone 1.png';
+import smartphone2 from '../../../assets/smartphone 2.png';
 import { Pagination, Slider, ThemeProvider, createTheme } from "@mui/material";
 import { ArrowLeftCircleIcon, ChevronLeftIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import ProductCardV2 from "@/components/layout/product-card/ProductCardV2";
+import ProductCardV3 from "@/components/layout/product-card/ProductCardV3";
+import ProductCardOri from "@/components/layout/product-card/ProductCardOri";
 
 const ProductListPage = () => {
     const [sortCategory, setSortCategory] = useState("");
@@ -16,7 +20,7 @@ const ProductListPage = () => {
     };
 
     const handleFilter = () => {
-
+        // Api Call
     }
 
     const trendingProducts: ReactElement[] = [];
@@ -28,11 +32,28 @@ const ProductListPage = () => {
         }
     }
 
-    for (let index = 0; index < 10; index++) {
+    for (let index = 0; index < 3; index++) {
         trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
-            <ProductCard product={testProduct(index)} image={smartphone} hasBorder></ProductCard>
+            <ProductCardOri product={testProduct(index)} image={smartphone2} hasBorder></ProductCardOri>
         </div>)
+    }
 
+    for (let index = 0; index < 3; index++) {
+        trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
+            <ProductCard product={testProduct(index)} image={smartphone2} hasBorder></ProductCard>
+        </div>)
+    }
+
+    for (let index = 0; index < 3; index++) {
+        trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
+            <ProductCardV2 product={testProduct(index)} image={smartphone2} hasBorder></ProductCardV2>
+        </div>)
+    }
+
+    for (let index = 0; index < 3; index++) {
+        trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
+            <ProductCardV3 product={testProduct(index)} image={smartphone2} hasBorder></ProductCardV3>
+        </div>)
     }
 
     return (
@@ -42,17 +63,17 @@ const ProductListPage = () => {
                     <Link href={""}>
                         <div><ArrowLeftCircleIcon className="text-main w-12"></ArrowLeftCircleIcon></div>
                     </Link>
-                    <div className='text-main text-5xl font-medium drop-shadow-sm'>Product List</div>
+                    <div className='text-main text-3xl xl:text-5xl font-medium drop-shadow-sm'>Product List</div>
                 </div>
                 <hr className="border-none h-1 bg-main/50 w-1/4 self-end rounded-full"></hr>
 
                 <div className="flex items-center justify-end my-5">
                     <div className="flex">
                         <div data-theme="cupcake" className="flex items-center mr-5">
-                            <label className="mr-3 text-lg">Sort By:</label>
+                            <label className="mr-3 text-md xl:text-lg">Sort By:</label>
                             <select
                                 title="Sort by: "
-                                className="select border-2 border-main rounded-xl leading-none 
+                                className="select select-sm xl:select-md border-2 border-main rounded-xl leading-none 
                             focus:outline-0 text-gray-black focus:text-gray-black text-lg"
                                 value={sortCategory}
                                 onChange={e => setSortCategory(e.target.value)}>

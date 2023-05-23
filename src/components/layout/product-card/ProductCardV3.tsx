@@ -13,7 +13,7 @@ export interface ProductCardProps {
     hasBorder?: boolean
 }
 
-const ProductCard = (props: ProductCardProps) => {
+const ProductCardV3 = (props: ProductCardProps) => {
     const outlinePlus = <PlusCircleIcon className='w-9'></PlusCircleIcon>
     const filledPlus = <PlusCircleIconFilled className='w-9'></PlusCircleIconFilled>
 
@@ -21,10 +21,11 @@ const ProductCard = (props: ProductCardProps) => {
 
 
     return (
-        <div className={classNames('text-stone-900 w-full rounded-xl flex flex-col hover:scale-105 transition cursor-pointer rounded-2xl overflow-hidden bg-gradient-to-t from-main via-white via-40% drop-shadow-xl',
+        <div className={classNames('text-white-plain w-full rounded-xl flex flex-col hover:scale-105 transition cursor-pointer rounded-2xl overflow-hidden',
+            'bg-main from-main to-white-plain to-40% drop-shadow-xl',
             props.hasBorder && ''
         )}>
-            <div className='p-3 flex-1 flex justify-center'>
+            <div className='p-3 flex-1 flex justify-center bg-white-plain m-2 rounded-lg'>
                 <Image src={props.image} alt="Product Name" className='w-[45%] my-8 m-auto' />
             </div>
             <div className='p-5 relative'>
@@ -51,4 +52,4 @@ const ProductCard = (props: ProductCardProps) => {
     );
 }
 
-export default ProductCard;
+export default ProductCardV3;
