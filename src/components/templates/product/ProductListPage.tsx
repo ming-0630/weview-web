@@ -32,29 +32,29 @@ const ProductListPage = () => {
         }
     }
 
-    for (let index = 0; index < 3; index++) {
-        trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
-            <ProductCardOri product={testProduct(index)} image={smartphone2} hasBorder></ProductCardOri>
-        </div>)
-    }
+    // for (let index = 0; index < 10; index++) {
+    //     trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
+    //         <ProductCardOri product={testProduct(index)} image={smartphone2} hasBorder></ProductCardOri>
+    //     </div>)
+    // }
 
-    for (let index = 0; index < 3; index++) {
-        trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
+    for (let index = 0; index < 10; index++) {
+        trendingProducts.push(<div className="my-5 w-[17rem] 2xl:basis-1/5" key={index}>
             <ProductCard product={testProduct(index)} image={smartphone2} hasBorder></ProductCard>
         </div>)
     }
 
-    for (let index = 0; index < 3; index++) {
-        trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
-            <ProductCardV2 product={testProduct(index)} image={smartphone2} hasBorder></ProductCardV2>
-        </div>)
-    }
+    // for (let index = 0; index < 3; index++) {
+    //     trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
+    //         <ProductCardV2 product={testProduct(index)} image={smartphone2} hasBorder></ProductCardV2>
+    //     </div>)
+    // }
 
-    for (let index = 0; index < 3; index++) {
-        trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
-            <ProductCardV3 product={testProduct(index)} image={smartphone2} hasBorder></ProductCardV3>
-        </div>)
-    }
+    // for (let index = 0; index < 10; index++) {
+    //     trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
+    //         <ProductCardV3 product={testProduct(index)} image={smartphone2} hasBorder></ProductCardV3>
+    //     </div>)
+    // }
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)] p-10 bg-white">
