@@ -9,9 +9,10 @@ import computerCategory from '../../../assets/computers.jpg';
 import Category from "@/enums/category_enum";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import Carousel from "../../ui/Carousell";
 import CategoriesImage from "./Categories/CategoriesImage";
+import Link from "next/link";
 
 const page1 = (
     <div className='flex h-[calc(100vh_-_5rem)]'>
@@ -47,31 +48,30 @@ const testProduct = (index: number) => {
 }
 
 for (let index = 0; index < 10; index++) {
-    trendingProducts.push(<div className="mx-5 p-3 w-72" key={index}>
-        <ProductCard product={testProduct(index)} image={smartphone}></ProductCard>
-    </div>)
+    trendingProducts.push(
+        <Link href={"/product-details-page"} className="mx-5 p-3 w-72" key={index}>
+            <ProductCard product={testProduct(index)} image={smartphone}></ProductCard>
+        </Link>)
 
 }
 
-const page2 = (
-    <div className='flex flex-col items-center m-auto py-32 w-11/12 xl:w-5/6'>
-        <div className='flex flex-col w-full items-center'>
-            <span className='text-5xl'>Trending</span>
-            <span className='text-xl mt-5 text-black/60'>Find out what's the recent buzz</span>
-        </div>
-
-        <div className='flex flex-col justify-center w-full h-3/5 pt-16'>
-            <Carousel align='start' slidesToScroll={1}>
-                {trendingProducts}
-            </Carousel>
-        </div>
-        <div className='flex w-full justify-end mr-16 pt-12'>
-            <div className='cursor-pointer flex text-xl'>
-                <span>View All</span> <ChevronRightIcon className='w-5 ml-2' ></ChevronRightIcon>
-            </div>
-        </div>
-
+const page2 = (<div className='flex flex-col items-center m-auto py-32 w-11/12 xl:w-5/6'>
+    <div className='flex flex-col w-full items-center'>
+        <span className='text-5xl'>Trending</span>
+        <span className='text-xl mt-5 text-black/60'>Find out what's the recent buzz</span>
     </div>
+
+    <div className='flex flex-col justify-center w-full h-3/5 pt-16'>
+        <Carousel align='start' slidesToScroll={1}>
+            {trendingProducts}
+        </Carousel>
+    </div>
+    <div className='flex w-full justify-end mr-16 pt-12'>
+        <div className='cursor-pointer flex text-xl'>
+            <span>View All</span> <ChevronRightIcon className='w-5 ml-2' ></ChevronRightIcon>
+        </div>
+    </div>
+</div>
 )
 
 const page3 = (
