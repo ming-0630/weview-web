@@ -58,7 +58,7 @@ const LoginModal = () => {
         if (loginValues?.email && loginValues?.password) {
             return true;
         } else {
-            toast.error("Empty Fields!");
+            CustomToastError("Empty Fields!");
             return false;
         }
     }

@@ -38,7 +38,7 @@ const RegisterModal = () => {
         if (registerValues?.email && registerValues?.password && registerValues?.name && registerValues?.repeatPassword) {
             return true;
         } else {
-            toast.error("Empty Fields!");
+            CustomToastError("Empty Fields!");
             return false;
         }
     }
@@ -47,7 +47,7 @@ const RegisterModal = () => {
         if (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(registerValues.email)) {
             return true;
         } else {
-            toast.error("Email is invalid!");
+            CustomToastError("Email is invalid!");
             return false;
         }
     }
@@ -56,7 +56,7 @@ const RegisterModal = () => {
         if (registerValues?.password === registerValues?.repeatPassword) {
             return true;
         } else {
-            toast.error("Repeated Password is not same!");
+            CustomToastError("Repeated Password is not same!");
             return false;
         }
     }

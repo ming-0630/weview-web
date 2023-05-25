@@ -31,18 +31,18 @@ const ProductCardV1 = (props: ProductCardProps) => {
                 <div className='flex flex-col justify-between items-start text-main'>
                     <div className='flex flex-col mr-3'>
                         <span className='font-bold lg:text-lg !leading-snug inline-block'>{props.product.name}</span>
-                        <Link href={''}><span className='font-light hover:underline text-sm lg:text-md '>{Category[props.product.type].toUpperCase()}</span></Link>
+                        <Link href={''}><span className='font-light hover:underline text-sm lg:text-md '>{props.product.type}</span></Link>
                     </div>
                     <div className='flex items-center justify-between w-full'>
                         <div className='flex items-center text-yellow-500'>
                             <StarIcon className='w-5 h-5 mr-1 '></StarIcon>
-                            <span className='text-lg'>{(Math.round(props.product.rating * 100) / 100).toFixed(2)}</span>
+                            <span className='text-lg'>{props.product.rating ? (Math.round(props.product.rating * 100) / 100).toFixed(2) : "0.00"}</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div className='flex flex-grow justify-center bg-white-plain'>
-                <Image src={props.image} alt="Product Name" className='w-[45%] object-contain' />
+                <Image src={props.image} width={200} height={200} alt="Product Name" className='w-[45%] object-contain' />
             </div>
             <div className='flex items-center mt-7 justify-between'>
                 <div className='flex items-center'>

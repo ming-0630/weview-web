@@ -36,8 +36,8 @@ const SideNavItems = () => {
                 icon={<HomeIcon className='w-6 m-3'></HomeIcon>}
             ></NavItem>
             <NavItem
-                title='Trending'
-                href={'/product-list-page'}
+                title='Trending / New Product'
+                href={'/temp-new-product-page'}
                 icon={<ArrowTrendingUpIcon className='w-6 m-3'></ArrowTrendingUpIcon>}
             ></NavItem>
             <NavItem

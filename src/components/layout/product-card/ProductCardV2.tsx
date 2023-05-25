@@ -32,7 +32,7 @@ const ProductCardV1 = (props: ProductCardProps) => {
                 <div className='flex justify-between items-start'>
                     <div className='flex flex-col mr-3'>
                         <span className='font-medium lg:text-lg !leading-snug inline-block'>{props.product.name}</span>
-                        <Link href={''}><span className='font-light hover:underline text-sm lg:text-md'>{Category[props.product.type].toUpperCase()}</span></Link>
+                        <Link href={''}><span className='font-light hover:underline text-sm lg:text-md'>{Category[props.product.type]}</span></Link>
                     </div>
                     <div className='flex flex-col items-end'>
                         <div className='flex items-center'>

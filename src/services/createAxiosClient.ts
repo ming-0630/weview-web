@@ -38,6 +38,7 @@ export function createAxiosClient(props: axiosClientProps) {
         (config) => {
             if (config.authorization !== false) {
                 const token = props.getCurrentAccessToken();
+
                 if (token) {
                     config.headers.Authorization = "Bearer " + token;
                 }

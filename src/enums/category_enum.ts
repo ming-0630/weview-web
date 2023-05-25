@@ -1,8 +1,9 @@
 enum Category {
-    Smartphones,
-    Music,
-    Computers,
-    HomeAppliances,
+    NONE,
+    SMARTPHONES,
+    MUSIC,
+    COMPUTERS,
+    HOMEAPPLIANCES,
 }
 
 export default Category

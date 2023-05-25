@@ -1,6 +1,6 @@
 import ProductCard from "@/components/layout/product-card/ProductCardV1";
 import Category from "@/enums/category_enum";
-import { ReactElement, useState } from "react";
+import { Key, ReactElement, useEffect, useState } from "react";
 import smartphone from '../../../assets/smartphone 1.png';
 import smartphone2 from '../../../assets/smartphone 2.png';
 import { Pagination, Slider, ThemeProvider, createTheme } from "@mui/material";
@@ -9,10 +9,46 @@ import Link from "next/link";
 import ProductCardV2 from "@/components/layout/product-card/ProductCardV2";
 import ProductCardV3 from "@/components/layout/product-card/ProductCardV3";
 import ProductCardOri from "@/components/layout/product-card/ProductCardOri";
+import { client } from "@/services/axiosClient";
+import { getProductPreview } from "@/services/product/services";
+import Product from "@/interfaces/product_interfaces";
 
 const ProductListPage = () => {
     const [sortCategory, setSortCategory] = useState("");
     const [ratingRange, setRatingRange] = useState<number[]>([0, 5]);
+
+    const [products, setProducts] = useState<any[]>([]);
+
+    const getProduct = () => {
+        const fetchData = async () => {
+            const response = await getProductPreview();
+
+            if (response) {
+                setProducts(response.data);
+            }
+        }
+        fetchData().catch(console.error)
+    }
+
+    // const trendingProducts: ReactElement[] = [];
+    useEffect(() => {
+        getProduct();
+
+        //         if (products) {
+        //             products.map((product: any, index: Key | null | undefined) => {
+
+
+
+
+        //                 )
+
+        //             console.log(productDetails);
+        //             console.log(trendingProducts)
+        //         });
+        // }
+    }, [])
+
+
 
     const handleRatingChange = (event: Event, newValue: number | number[]) => {
         setRatingRange(newValue as number[]);
@@ -23,38 +59,21 @@ const ProductListPage = () => {
         // Api Call
     }
 
-    const trendingProducts: ReactElement[] = [];
-    const testProduct = (index: number) => {
-        return {
-            name: 'iPhone 14 Pro ' + index,
-            type: Category.Smartphones,
-            rating: 0
-        }
-    }
+    // const testProduct = (index: number) => {
+    //     return {
+    //         name: 'iPhone 14 Pro ' + index,
+    //         type: Category.SMARTPHONES,
+    //         rating: 0
+    //     }
+    // }
+
 
     // for (let index = 0; index < 10; index++) {
-    //     trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
-    //         <ProductCardOri product={testProduct(index)} image={smartphone2} hasBorder></ProductCardOri>
+    //     trendingProducts.push(<div className="my-5 w-[17rem] 2xl:basis-1/5" key={index}>
+    //         <ProductCard product={testProduct(index)} image={smartphone2} hasBorder></ProductCard>
     //     </div>)
     // }
 
-    for (let index = 0; index < 10; index++) {
-        trendingProducts.push(<div className="my-5 w-[17rem] 2xl:basis-1/5" key={index}>
-            <ProductCard product={testProduct(index)} image={smartphone2} hasBorder></ProductCard>
-        </div>)
-    }
-
-    // for (let index = 0; index < 3; index++) {
-    //     trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
-    //         <ProductCardV2 product={testProduct(index)} image={smartphone2} hasBorder></ProductCardV2>
-    //     </div>)
-    // }
-
-    // for (let index = 0; index < 10; index++) {
-    //     trendingProducts.push(<div className="my-5 w-[17rem]" key={index}>
-    //         <ProductCardV3 product={testProduct(index)} image={smartphone2} hasBorder></ProductCardV3>
-    //     </div>)
-    // }
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)] p-10 bg-white">
@@ -112,9 +131,31 @@ const ProductListPage = () => {
                 </div>
 
                 <div className="flex flex-wrap justify-around gap-5">
-                    {trendingProducts}
+                    {/* {products.map((product: any) => {
+                        let productDetails: Product = {
+                            name: product.name,
+                            type: product.category,
+                        };
+                        <div className="my-5 w-[17rem] 2xl:basis-1/5" key={product.id}>
+                            <ProductCard product={productDetails} image={product.coverImage} hasBorder></ProductCard>
+                        </div>
+                    })} */
+
+                        products.map(product => {
+                            let productDetails: Product = {
+                                name: product.name,
+                                type: product.category,
+                            };
+                            return (
+                                <div className="my-5 w-[17rem] 2xl:basis-1/5" key={product.id}>
+                                    <ProductCard product={productDetails} image={product.coverImage} hasBorder></ProductCard>
+                                </div>
+                            )
+                        })
+
+                    }
                 </div>
-                <div className="self-center mt-5">
+                <div className="self-center mt-10">
                     <Pagination count={10} color="primary" size="large" />
                 </div>
 
