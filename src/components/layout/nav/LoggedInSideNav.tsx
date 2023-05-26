@@ -106,7 +106,7 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
                 toggleConfirm({
                     title: "Confirm Logout?",
                     description: "Are you sure you want to logout?",
-                    onClickYes: () => { logout(); toggleConfirm(); }
+                    onClickYes: () => { toggleConfirm(); logout(); }
                 });
                 toggleNav();
             }}>Logout</div>

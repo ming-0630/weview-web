@@ -37,7 +37,7 @@ const ProductCardOri = (props: ProductCardProps) => {
                     <div className='flex flex-col items-end'>
                         <div className='flex items-center'>
                             <StarIcon className='w-5 h-5 mr-1 mb-1'></StarIcon>
-                            <span className='text-lg'>{(Math.round(props.product.rating * 100) / 100).toFixed(2)}</span>
+                            <span className='text-lg'>{props.product.rating ? (Math.round(props.product.rating * 100) / 100).toFixed(2) : "0.00"}</span>
                         </div>
                         <div className='rounded-full inline-block cursor-pointer mt-3'
                             onMouseEnter={() => { setIcon(filledPlus) }}

@@ -37,7 +37,7 @@ const NewProductForm = () => {
         data.append("name", formData.name);
         data.append("description", formData.description);
         data.append("category", Category[formData.category]);
-        data.append("year", formData.releaseYear.toString());
+        data.append("releaseYear", formData.releaseYear.toString());
 
         const response = await addProduct(data);
 

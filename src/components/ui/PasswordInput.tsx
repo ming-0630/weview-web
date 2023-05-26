@@ -7,6 +7,7 @@ export interface PasswordInputProps {
     classnames?: string;
     value?: string;
     onChange?: (...args: any) => void
+    disabled?: boolean;
 }
 
 const PasswordInput = (props: PasswordInputProps) => {
@@ -22,7 +23,8 @@ const PasswordInput = (props: PasswordInputProps) => {
                     placeholder="Password"
                     className={"input input-primary input-md input-bordered bg-white w-full"}
                     value={props.value}
-                    onChange={props.onChange} />
+                    onChange={props.onChange}
+                    disabled={props.disabled} />
                 {isShow ? <EyeIcon className={showHidePasswordClasses} onClick={() => { setIsShow(!isShow) }}></EyeIcon>
                     : <EyeSlashIcon className={showHidePasswordClasses} onClick={() => { setIsShow(!isShow) }}></EyeSlashIcon>
                 }

@@ -31,9 +31,10 @@ export function login(creds: LoginDto) {
         data,
         { authorization: false }
     ).catch((err) => {
-        if (err.response.data) {
-            CustomToastError(err.response.data.message)
-        } else if (err.response) {
+        if (err.response && err.response.data) {
+            console.log(err.response.data.message);
+            CustomToastError(err.response.data.message);
+        } else if (err && err.response) {
             CustomToastError(err.response)
         } else {
             CustomToastError(err)

@@ -10,15 +10,22 @@ import { LoginDto, login } from "@/services/user/services";
 import { toast } from "react-toastify";
 import { AuthTokens, useAuthStore } from "@/states/auth-states";
 import User from "@/interfaces/user_interface";
+import CustomToastError from "@/utils/CustomToastError";
+import { LoadingButton } from "@mui/lab";
 
 const LoginModal = () => {
     const isShow = useGlobalStore((state) => state.loginIsOpen)
     const toggleModal = useGlobalStore((state) => state.toggleLogin)
     const toggleRegister = useGlobalStore((state) => state.toggleRegister)
+    const [isLoading, setIsLoading] = useState(false);
 
-    const register = () => {
-        toggleModal();
-        toggleRegister();
+    const register = (e: any) => {
+        if (!isLoading) {
+            toggleModal();
+            toggleRegister();
+        } else {
+            e.stopPropagation();
+        }
     }
 
     const [loginValues, setLoginValues] = useState<LoginDto>({ email: "", password: "" })
@@ -27,6 +34,7 @@ const LoginModal = () => {
 
     const handleLogin = async () => {
         if (isPopulated()) {
+            setIsLoading(true);
             const response = await login(loginValues!);
             if (response &&
                 response.status === 200 &&
@@ -51,7 +59,9 @@ const LoginModal = () => {
                 toast.success("Login Successful!");
                 toggleModal();
             }
+            setIsLoading(false);
         }
+
     }
 
     const isPopulated = () => {
@@ -71,6 +81,7 @@ const LoginModal = () => {
 
     return (
         <Modal isShow={isShow}
+            isLoading={isLoading}
             toggleModal={toggleModal}>
             <div className="p-5 w-[70vw] sm:w-[50vw] lg:w-[40vw] xl:w-[30vw]">
                 <div className="flex items-center">
@@ -85,20 +96,30 @@ const LoginModal = () => {
                         <label className="mb-1">Email</label>
                         <input type="text" placeholder="Email" className="input input-md input-primary input-bordered border-3 bg-white w-full"
                             value={loginValues?.email}
-                            onChange={(e) => { setLoginValues({ ...loginValues, email: e.target.value }) }} />
+                            onChange={(e) => { setLoginValues({ ...loginValues, email: e.target.value }) }}
+                            disabled={isLoading} />
                     </div>
 
                     <div>
                         <PasswordInput classnames="mt-5"
                             value={loginValues?.password}
-                            onChange={(e) => { setLoginValues({ ...loginValues, password: e.target.value }) }}></PasswordInput>
+                            onChange={(e) => { setLoginValues({ ...loginValues, password: e.target.value }) }}
+                            disabled={isLoading}
+                        ></PasswordInput>
                     </div>
 
                     <div className="flex justify-between items-center mt-5">
-                        <label className="cursor-pointer text-black/50 text-sm hover:text-main" onClick={register}>Don't have an account? Click here!</label>
+                        <label className="cursor-pointer text-black/50 text-sm hover:text-main"
+                            onClick={register}>Don't have an account? Click here!</label>
 
-                        <label className='btn btn-primary mr-4 text-white'
-                            onClick={handleLogin}>Login</label>
+                        <LoadingButton
+                            variant="contained"
+                            loading={isLoading}
+                            className="bg-main px-5 py-3 rounded-lg"
+                            onClick={handleLogin}>
+                            <span>
+                                Login
+                            </span></LoadingButton>
 
                     </div>
                 </div>

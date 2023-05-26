@@ -14,6 +14,9 @@ declare module '@mui/material/styles' {
                 main: string;
                 contrastText: string;
             };
+        },
+        typography: {
+            fontFamily: string;
         }
 
     }
@@ -24,7 +27,9 @@ const theme = createTheme({
             main: '#40AF93',
             contrastText: '#FFFFFF'
         }
-    }
+    }, typography: {
+        fontFamily: 'Rubik',
+    },
 });
 
 const DefaultPageLayout = ({ children }: ScriptProps) => {

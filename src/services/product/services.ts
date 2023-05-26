@@ -1,19 +1,10 @@
-import { CreateProduct } from "@/components/templates/product/NewProductForm";
-import Category from "@/enums/category_enum";
 import { client } from "../axiosClient";
-import { headers } from "next/dist/client/components/headers";
-import { toast } from "react-toastify";
 import { base64StringToBlob } from "blob-util";
 import CustomToastError from "@/utils/CustomToastError";
 
-// export interface ProductDto {
-//     product: CreateProduct
-//     images: File[]
-// }
-
 export function addProduct(props: FormData) {
 
-    // console.table([...props]);
+    console.table([...props]);
     const response = client.post(
         "/product/add",
         props,
@@ -23,11 +14,10 @@ export function addProduct(props: FormData) {
             },
         },
     ).catch((err) => {
-        console.log(err);
-        if (err.response.data) {
+        if (err.response && err.response.data) {
             console.log(err.response.data.message);
             CustomToastError(err.response.data.message);
-        } else if (err.response) {
+        } else if (err && err.response) {
             CustomToastError(err.response)
         } else {
             CustomToastError(err)
@@ -38,12 +28,9 @@ export function addProduct(props: FormData) {
 }
 
 export function getProductPreview() {
-
-    // console.table([...props]);
     const response = client.get(
         "/product/getPreview",
     ).then((res) => {
-        console.log(res);
         if (res.data) {
             res.data.forEach((product: any) => {
                 const blob = base64StringToBlob(product.coverImage);

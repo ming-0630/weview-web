@@ -28,7 +28,7 @@ export const useGlobalStore = create<GlobalState>()((set) => ({
         set((state) => ({
             ...state,
             confirmIsOpen: !state.confirmIsOpen,
-            confirmDetails: confirmDetails
+            confirmDetails: !state.confirmIsOpen ? confirmDetails : state.confirmDetails
         }))
     },
     // modalIsOpen: () => {
