@@ -1,14 +1,14 @@
 import Modal from "@/components/ui/Modal";
 import Image from 'next/image';
 import WeViewLogo from '/public/favicon.ico';
-import { ReactNode, useEffect, useState } from "react";
-import Link from "next/link";
-import { useGlobalStore } from "@/states/global-states";
+import { useEffect, useState } from "react";
+import { useGlobalStore } from "@/states/globalStates";
 import registerImage from '../../../assets/discuss.png';
 import PasswordInput from "@/components/ui/PasswordInput";
 import { toast } from "react-toastify";
-import { useAuthStore } from "@/states/auth-states";
 import { RegisterDto, register } from "@/services/user/services";
+import CustomToastError from "@/utils/CustomToastError";
+import { LoadingButton } from "@mui/lab";
 
 interface registerInput {
     email: string,
@@ -21,6 +21,7 @@ const RegisterModal = () => {
     const isShow = useGlobalStore((state) => state.registerIsOpen)
     const toggleModal = useGlobalStore((state) => state.toggleRegister)
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
+    const [isLoading, setIsLoading] = useState(false);
 
     const [registerValues, setRegisterValues] = useState<registerInput>({
         email: "",
@@ -29,9 +30,13 @@ const RegisterModal = () => {
         repeatPassword: "",
     })
 
-    const login = () => {
-        toggleModal();
-        toggleLogin();
+    const login = (e: any) => {
+        if (!isLoading) {
+            toggleModal();
+            toggleLogin();
+        } else {
+            e.stopPropagation();
+        }
     }
 
     const isPopulated = () => {
@@ -62,6 +67,7 @@ const RegisterModal = () => {
     }
 
     const handleRegister = async () => {
+        setIsLoading(true);
         if (isPopulated() && isEmailValid() && isPasswordValid()) {
             const newUser: RegisterDto = {
                 email: registerValues.email,
@@ -78,6 +84,7 @@ const RegisterModal = () => {
                 toggleModal();
             }
         }
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -93,7 +100,9 @@ const RegisterModal = () => {
 
     return (
         <Modal isShow={isShow}
-            toggleModal={toggleModal}>
+            toggleModal={toggleModal}
+            isLoading={isLoading}
+        >
             <div className="flex h-[75vh] w-full">
                 <div className="px-7 lg:px-10 py-7 flex flex-col h-full lg:w-1/2 overflow-y-auto">
                     <div className="flex items-center flex-none">
@@ -131,8 +140,15 @@ const RegisterModal = () => {
 
                         <div className="flex justify-between items-center mb-3 ">
                             <label className="cursor-pointer text-black/50 mr-5 text-sm hover:text-main" onClick={login}>Already have an account? Click here!</label>
-                            <label className='btn btn-primary mr-4 text-white'
-                                onClick={handleRegister}>Register</label>
+                            <LoadingButton
+                                variant="contained"
+                                loading={isLoading}
+                                className="bg-main px-5 py-3 rounded-lg"
+                                onClick={handleRegister}>
+                                <span>
+                                    Register
+                                </span>
+                            </LoadingButton>
                         </div>
                     </div>
                 </div>

@@ -3,7 +3,7 @@ import NavItem from "./NavItem"
 import WeViewLogo from '/public/favicon.ico';
 import NavItemCollapse from "./NavItemCollapse"
 import Image, { StaticImageData } from 'next/image';
-import { useGlobalStore } from "@/states/global-states";
+import { useGlobalStore } from "@/states/globalStates";
 
 const SideNavItems = () => {
     const toggleNav = useGlobalStore((state) => state.toggleNav)
@@ -29,7 +29,7 @@ const SideNavItems = () => {
                 <label className='btn btn-outline btn-primary hover:text-white' onClick={openRegisterModal}>Register</label>
             </div>
 
-            <hr className="border-none h-0.5 text-black/10 bg-black/10 rounded my-2"></hr>
+            <hr className="border-none h-0.5 bg-black/10 rounded my-2"></hr>
             <NavItem
                 title='Home'
                 href={'/'}
@@ -42,7 +42,7 @@ const SideNavItems = () => {
             ></NavItem>
             <NavItem
                 title='All Products'
-                href={'/product-list-page'}
+                href={'/products/all'}
                 icon={<CubeIcon className='w-6 m-3'></CubeIcon>}
             ></NavItem>
             <NavItemCollapse
@@ -50,25 +50,25 @@ const SideNavItems = () => {
                 icon={<Squares2X2Icon className='w-6 m-3'></Squares2X2Icon>}>
                 <NavItem
                     title='Smartphones'
-                    href={'/product-list-page'}
+                    href={'/products/smartphones'}
                     icon={<DevicePhoneMobileIcon className='w-6 m-3'></DevicePhoneMobileIcon>}
                     isNavItem
                 ></NavItem>
                 <NavItem
                     title='Music'
-                    href={'/product-list-page'}
+                    href={'/products/music'}
                     icon={<MusicalNoteIcon className='w-6 m-3'></MusicalNoteIcon>}
                     isNavItem
                 ></NavItem>
                 <NavItem
                     title='Computers'
-                    href={'/product-list-page'}
+                    href={'/products/computers'}
                     icon={<ComputerDesktopIcon className='w-6 m-3'></ComputerDesktopIcon>}
                     isNavItem
                 ></NavItem>
                 <NavItem
                     title='Home Appliances'
-                    href={'/product-list-page'}
+                    href={'/products/homeappliances'}
                     icon={<BoltIcon className='w-6 m-3'></BoltIcon>}
                     isNavItem
                 ></NavItem>

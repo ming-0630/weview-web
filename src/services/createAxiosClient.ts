@@ -1,4 +1,4 @@
-import { AuthTokens } from '@/states/auth-states';
+import { AuthTokens } from '@/states/authStates';
 import axios, { AxiosError, CreateAxiosDefaults } from 'axios';
 
 declare module "axios" {

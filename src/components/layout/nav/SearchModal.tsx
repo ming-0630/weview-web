@@ -1,5 +1,8 @@
+import SearchInput from '@/components/ui/SearchInput';
+import Category from '@/enums/categoryEnum';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import classNames from 'classnames';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 export interface SearchModalProps {
@@ -9,11 +12,36 @@ export interface SearchModalProps {
 
 const SearchModal = (props: SearchModalProps) => {
     const [searchValue, setSearchValue] = useState("");
-    const [searchCategory, setSearchCategory] = useState("");
+    const [searchCategory, setSearchCategory] = useState(0);
+
+    const router = useRouter();
+
+    const handleKeyPress = (e: any) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+            props.setIsOpen(false);
+        }
+    }
+
+    const handleSearch = () => {
+        if (searchCategory) {
+            router.push(
+                {
+                    pathname: '/products/' + Category[searchCategory].toLowerCase() + '/' + searchValue,
+                }
+            );
+        } else {
+            router.push(
+                {
+                    pathname: '/products/all/' + searchValue,
+                }
+            );
+        }
+    }
 
     useEffect(() => {
         setSearchValue("");
-        setSearchCategory("All");
+        setSearchCategory(Category.ALL);
         const input = document.getElementById("navSearchInput");
         input?.focus();
     }, [props.isOpen]);
@@ -30,24 +58,25 @@ const SearchModal = (props: SearchModalProps) => {
                     <div className='flex items-center w-full mr-4'>
                         <select className="select select-xs select-ghost border-2 border-main rounded-md leading-none bg-gray-dark focus:bg-gray-dark focus:outline-0 mr-4 text-white focus:text-white"
                             value={searchCategory}
-                            onChange={e => setSearchCategory(e.target.value)}>
-                            <option className='hover:bg-main'>All</option>
-                            <option>Computers</option>
-                            <option>Home</option>
-                            <option>Music</option>
-                            <option>Smartphones</option>
+                            onChange={e => { setSearchCategory(+e.target.value) }}>
+                            <option className='hover:bg-main' value={Category.ALL}>ALL</option>
+                            <option value={Category.SMARTPHONES}>SMARTPHONES</option>
+                            <option value={Category.MUSIC}>MUSIC</option>
+                            <option value={Category.COMPUTERS}>COMPUTERS</option>
+                            <option value={Category.HOMEAPPLIANCES}>HOME APPLIANCES</option>
                         </select>
                         <input type="text"
                             id="navSearchInput"
                             className='appearance-none py-1 bg-transparent text-main font-medium text-lg focus-visible:outline-0 w-full'
                             autoFocus
                             value={searchValue}
-                            onChange={e => setSearchValue(e.target.value)} />
+                            onChange={e => setSearchValue(e.target.value)}
+                            onKeyUp={handleKeyPress.bind(this)} />
                     </div>
 
                     <div className='flex'>
                         <MagnifyingGlassIcon className='fill-white h-5 cursor-pointer transition-colors hover:fill-main mr-3 '
-                            onClick={() => { console.log(searchValue); console.log(searchCategory) }}></MagnifyingGlassIcon>
+                            onClick={handleSearch}></MagnifyingGlassIcon>
                         <XMarkIcon className='fill-white h-5 cursor-pointer transition-colors hover:fill-red-500 mr-3'
                             onClick={() => { props.setIsOpen(false) }}></XMarkIcon>
                     </div>

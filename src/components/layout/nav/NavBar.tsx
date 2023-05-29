@@ -5,7 +5,7 @@ import Image from 'next/image';
 import SearchModal from './SearchModal';
 import SideNavBar from './SideNavBar';
 import Head from 'next/head';
-import { useGlobalStore } from '@/states/global-states';
+import { useGlobalStore } from '@/states/globalStates';
 import OutsideAlerter from '@/utils/OutsideAlerter';
 
 export interface NavBarProps {

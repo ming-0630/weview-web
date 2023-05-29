@@ -3,7 +3,7 @@ import { PlusCircleIcon as PlusCircleIconFilled, } from '@heroicons/react/24/sol
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import Product from '@/interfaces/product_interfaces';
+import Product from '@/interfaces/productInterface';
 import classNames from 'classnames';
 
 export interface ProductCardProps {

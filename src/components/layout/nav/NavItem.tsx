@@ -1,4 +1,4 @@
-import { useGlobalStore } from "@/states/global-states";
+import { useGlobalStore } from "@/states/globalStates";
 import classNames from "classnames";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link"

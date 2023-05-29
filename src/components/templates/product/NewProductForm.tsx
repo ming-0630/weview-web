@@ -3,7 +3,7 @@ import { Pagination, Slider, ThemeProvider, createTheme } from "@mui/material";
 import { ArrowLeftCircleIcon, ChevronLeftIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useState } from "react";
-import Category from "@/enums/category_enum";
+import Category from "@/enums/categoryEnum";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { addProduct } from "@/services/product/services";
@@ -30,7 +30,7 @@ const NewProductForm = () => {
         const data = new FormData();
         if (files) {
             files.forEach(file => {
-                data.append('images', file)
+                data.append('uploadedImages', file)
             });
         }
 

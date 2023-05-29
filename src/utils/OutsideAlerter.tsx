@@ -1,4 +1,4 @@
-import { useGlobalStore } from "@/states/global-states";
+import { useGlobalStore } from "@/states/globalStates";
 import { RefObject, useEffect } from "react";
 
 export interface outsideAlerterProps {

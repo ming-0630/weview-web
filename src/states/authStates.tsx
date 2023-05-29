@@ -1,4 +1,4 @@
-import User from '@/interfaces/user_interface';
+import User from '@/interfaces/userInterface';
 import { toast } from 'react-toastify';
 import { create } from 'zustand'
 

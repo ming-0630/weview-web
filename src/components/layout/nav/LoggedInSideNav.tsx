@@ -3,9 +3,9 @@ import NavItem from "./NavItem"
 import NavItemCollapse from "./NavItemCollapse"
 import Image, { StaticImageData } from 'next/image';
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
-import { useGlobalStore } from "@/states/global-states";
+import { useGlobalStore } from "@/states/globalStates";
 import WeViewLogo from '/public/favicon.ico';
-import { useAuthStore } from "@/states/auth-states";
+import { useAuthStore } from "@/states/authStates";
 import ConfirmModal from "@/components/templates/authentication/ConfirmModal";
 import { GetServerSideProps } from "next";
 import { client } from "@/services/axiosClient";

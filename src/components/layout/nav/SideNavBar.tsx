@@ -1,13 +1,11 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { useGlobalStore } from '@/states/global-states';
-import { useAuthStore } from '@/states/auth-states';
+import { useGlobalStore } from '@/states/globalStates';
+import { useAuthStore } from '@/states/authStates';
 import blankUserImage from '../../../assets/blank_user.png'
 import OutsideAlerter from '@/utils/OutsideAlerter';
 import LoggedInSideNav from './LoggedInSideNav';
 import SideNavItems from './SideNavItems';
 import { getUserImage } from '@/services/user/services';
-import { Base64 } from 'js-base64';
-import { base64StringToBlob } from 'blob-util';
 
 
 export interface SideNavBarProps {

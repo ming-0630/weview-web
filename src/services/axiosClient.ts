@@ -1,4 +1,4 @@
-import { AuthTokens, useAuthStore } from "@/states/auth-states"
+import { AuthTokens, useAuthStore } from "@/states/authStates"
 import { createAxiosClient } from "./createAxiosClient"
 import { toast } from "react-toastify"
 

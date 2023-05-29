@@ -1,6 +1,7 @@
 import { client } from "../axiosClient";
 import { base64StringToBlob } from "blob-util";
 import CustomToastError from "@/utils/CustomToastError";
+import Category from "@/enums/categoryEnum";
 
 export function addProduct(props: FormData) {
 
@@ -14,25 +15,31 @@ export function addProduct(props: FormData) {
             },
         },
     ).catch((err) => {
+        console.log(err)
         if (err.response && err.response.data) {
-            console.log(err.response.data.message);
-            CustomToastError(err.response.data.message);
-        } else if (err && err.response) {
-            CustomToastError(err.response)
+            CustomToastError(err.response.data.message)
         } else {
             CustomToastError(err)
         }
+
     });
 
     return response
 }
 
-export function getProductPreview() {
+export function getAllProductPreview(pageNum: number, sortBy?: string, direction?: string) {
     const response = client.get(
-        "/product/getPreview",
+        "/product/getAllPreview",
+        {
+            params: {
+                pageNum: pageNum,
+                sortBy: sortBy,
+                direction: direction
+            }
+        }
     ).then((res) => {
-        if (res.data) {
-            res.data.forEach((product: any) => {
+        if (res.data && res.data.productDTOs) {
+            res.data.productDTOs.forEach((product: any) => {
                 const blob = base64StringToBlob(product.coverImage);
                 const img = URL.createObjectURL(blob);
                 product.coverImage = img;
@@ -40,8 +47,108 @@ export function getProductPreview() {
         }
         return res;
     }).catch((err) => {
-        CustomToastError(err)
-    });
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
 
+    });
+    return response
+}
+
+export function getCategoryPreview(category: Category, pageNum: number,
+    sortBy?: string, direction?: string) {
+    const response = client.get(
+        "/product/getCategoryPreview", {
+        params: {
+            category: Category[category],
+            pageNum: pageNum,
+            sortBy: sortBy,
+            direction: direction
+        }
+    }
+    ).then((res) => {
+        if (res.data && res.data.productDTOs) {
+            res.data.productDTOs.forEach((product: any) => {
+                const blob = base64StringToBlob(product.coverImage);
+                const img = URL.createObjectURL(blob);
+                product.coverImage = img;
+            });
+        }
+        return res;
+    }).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response
+}
+
+export function getSearchProduct(keyword: string, category: Category, pageNum: number,
+    sortBy?: string, direction?: string) {
+    const response = client.get(
+        "/product/search",
+        {
+            params: {
+                keyword: keyword,
+                category: Category[category],
+                pageNum: pageNum,
+                sortBy: sortBy,
+                direction: direction
+            }
+        },
+    ).then((res) => {
+        if (res.data && res.data.productDTOs) {
+            res.data.productDTOs.forEach((product: any) => {
+                const blob = base64StringToBlob(product.coverImage);
+                const img = URL.createObjectURL(blob);
+                product.coverImage = img;
+            });
+        }
+        return res;
+    }).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response
+}
+
+export function getProductDetails(id: string) {
+    const response = client.get(
+        "/product/details",
+        {
+            params: {
+                id: id
+            }
+        },
+    ).then((res) => {
+        if (res.data && res.data.productDTOs) {
+            res.data.productDTOs.forEach((product: any) => {
+                const blob = base64StringToBlob(product.coverImage);
+                const img = URL.createObjectURL(blob);
+                product.coverImage = img;
+            });
+        }
+        return res;
+    }).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
     return response
 }

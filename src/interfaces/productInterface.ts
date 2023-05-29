@@ -1,4 +1,4 @@
-import Category from "@/enums/category_enum";
+import Category from "@/enums/categoryEnum";
 
 // interface Product {
 //     name?: string,

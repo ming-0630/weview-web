@@ -2,14 +2,14 @@ import Modal from "@/components/ui/Modal";
 import Image from 'next/image';
 import WeViewLogo from '/public/favicon.ico';
 import { ReactNode, useEffect, useState } from "react";
-import { useGlobalStore } from "@/states/global-states";
+import { useGlobalStore } from "@/states/globalStates";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import classNames from "classnames";
 import PasswordInput from "@/components/ui/PasswordInput";
 import { LoginDto, login } from "@/services/user/services";
 import { toast } from "react-toastify";
-import { AuthTokens, useAuthStore } from "@/states/auth-states";
-import User from "@/interfaces/user_interface";
+import { AuthTokens, useAuthStore } from "@/states/authStates";
+import User from "@/interfaces/userInterface";
 import CustomToastError from "@/utils/CustomToastError";
 import { LoadingButton } from "@mui/lab";
 

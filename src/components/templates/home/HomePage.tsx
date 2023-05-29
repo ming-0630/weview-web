@@ -1,4 +1,4 @@
-import ProductCard from "@/components/layout/product-card/ProductCardOri";
+import ProductCard from "@/components/layout/productCard/ProductCardOri";
 import SearchInput from "@/components/ui/SearchInput";
 import smartphone from '../../../assets/smartphone 1.png';
 import smartphoneCategory from '../../../assets/smartphone.jpg';
@@ -6,12 +6,12 @@ import musicCategory from '../../../assets/music.jpg';
 import allCategory from '../../../assets/all.jpg';
 import homeCategory from '../../../assets/home.jpg';
 import computerCategory from '../../../assets/computers.jpg';
-import Category from "@/enums/category_enum";
+import Category from "@/enums/categoryEnum";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { ReactElement, useEffect, useState } from "react";
 import Carousel from "../../ui/Carousell";
-import CategoriesImage from "./Categories/CategoriesImage";
+import CategoriesImage from "./categories/CategoriesImage";
 import Link from "next/link";
 
 const page1 = (
@@ -42,7 +42,7 @@ const trendingProducts: ReactElement[] = [];
 const testProduct = (index: number) => {
     return {
         name: 'iPhone 14 Pro ' + index,
-        type: Category.Smartphones,
+        type: Category.SMARTPHONES,
         rating: 0
     }
 }
@@ -81,34 +81,45 @@ const page3 = (
         </div>
         <div className="mt-16 w-full flex h-4/5">
             <div className=" m-2 w-1/3">
-                <CategoriesImage title='SMARTPHONES'>
-                    <Image src={smartphoneCategory} alt="Smartphone Image" fill className="object-cover" />
-                </CategoriesImage>
+                <Link href={"/products/smartphones"}>
+                    <CategoriesImage title='SMARTPHONES'>
+                        <Image src={smartphoneCategory} alt="Smartphone Image" fill className="object-cover" />
+                    </CategoriesImage>
+                </Link>
             </div>
 
             <div className="flex flex-col basis-2/3 h-full">
                 <div className="m-2 flex h-1/2">
                     <div className="basis-2/5 mr-4 relative">
-                        <CategoriesImage title="MUSIC">
-                            <Image src={musicCategory} alt="Music Image" fill className="object-cover" />
-                        </CategoriesImage>
+                        <Link href={"/products/music"}>
+                            <CategoriesImage title="MUSIC">
+                                <Image src={musicCategory} alt="Music Image" fill className="object-cover" />
+                            </CategoriesImage>
+                        </Link>
                     </div>
                     <div className="basis-3/5 relative">
-                        <CategoriesImage title="COMPUTER">
-                            <Image src={computerCategory} alt="Computer Image" fill className="object-cover" />
-                        </CategoriesImage>
+                        <Link href={"/products/computers"}>
+                            <CategoriesImage title="COMPUTER">
+                                <Image src={computerCategory} alt="Computer Image" fill className="object-cover" />
+                            </CategoriesImage>
+                        </Link>
                     </div>
                 </div>
                 <div className="m-2 flex h-1/2">
                     <div className="basis-3/5 mr-4 relative">
-                        <CategoriesImage title="HOME APPLIANCES">
-                            <Image src={homeCategory} alt="Home Appliances Image" fill className="object-cover" />
-                        </CategoriesImage>
+                        <Link href={"/products/homeappliances"}>
+                            <CategoriesImage title="HOME APPLIANCES">
+                                <Image src={homeCategory} alt="Home Appliances Image" fill className="object-cover" />
+                            </CategoriesImage>
+                        </Link>
                     </div>
                     <div className="basis-2/5 relative">
-                        <CategoriesImage title="ALL">
-                            <Image src={allCategory} alt="All Categories Image" fill className="object-cover" />
-                        </CategoriesImage>
+                        <Link href={"/products/all"}>
+                            <CategoriesImage title="ALL">
+                                <Image src={allCategory} alt="All Categories Image" fill className="object-cover" />
+                            </CategoriesImage>
+                        </Link>
+
                     </div>
                 </div>
             </div>
