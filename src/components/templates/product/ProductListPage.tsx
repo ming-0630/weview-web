@@ -161,9 +161,8 @@ const ProductListPage = (props: ProductListPageProps) => {
                     {products.map(product => {
                         return (
                             <div className="my-5 w-[15rem] xl:w-[19rem] 3xl:basis-1/5 h-[20rem] xl:h-[23rem]" key={product.productId}>
-                                <Link href={"/products/details/" + product.productId}>
-                                    <ProductCard product={product} hasBorder></ProductCard>
-                                </Link>
+
+                                <ProductCard product={product} hasBorder></ProductCard>
                             </div>
                         )
                     })

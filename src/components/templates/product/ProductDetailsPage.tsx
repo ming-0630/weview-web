@@ -3,6 +3,7 @@ import Product from "@/interfaces/productInterface";
 import { getProductDetails } from "@/services/product/services";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface ProductDetailsPageProps {
@@ -41,7 +42,11 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                     </div>
                     <div className="flex flex-col grow gap-2 text-white">
                         <span className="text-7xl font-semibold">{product?.name}</span>
-                        <span className="text-3xl font-medium uppercase opacity-70">{product?.category}</span>
+                        <Link href={'/products/' + product?.category?.toString().toLowerCase()} className="mt-2">
+                            <span className='font-medium text-3xl hover:underline uppercase opacity-70'>
+                                {product?.category && product.category}
+                            </span>
+                        </Link>
                         <hr className="border-none h-1 bg-white/50 rounded my-2"></hr>
                         <div className="flex justify-between">
                             <div className="flex flex-col gap-1 items-center">
