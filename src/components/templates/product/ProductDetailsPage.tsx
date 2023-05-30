@@ -71,7 +71,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                 </div>
             </div>
 
-            <div className="flex flex-col p-10 items-center min-h-[calc(100vh_-_5rem)]">
+            <div className="flex flex-col p-10 items-center min-h-[calc(100vh_-_5rem)] justify-center">
                 <div className="font-semibold text-4xl mb-6">Product Details</div>
                 <div className="relative w-[45%] h-2">
                     <Image src={FadedLine} fill alt={""}></Image>
@@ -96,10 +96,11 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                 </div>
             </div>
             <div className="w-full relative overflow-hidden">
-                <div className="h-[20vh]">
+                <div className="h-[20vh] relative flex w-full">
                     <ProductDetailsBg className="w-full absolute object-contain" viewBox="0 0 1920 1080"></ProductDetailsBg>
+                    <span className="text-white text-7xl font-semibold relative self-center m-auto">Reviews</span>
                 </div>
-                <div className="bg-white h-screen rounded-xl relative">
+                <div className="bg-white h-screen rounded-3xl relative">
                     test
                 </div>
             </div>
