@@ -46,14 +46,12 @@ const LoginModal = () => {
                     accessToken: data.accessToken,
                     refreshToken: data.refreshToken
                 }
-
-                const userData = data.user;
-
                 const user: User = {
-                    id: userData.id,
-                    email: userData.email,
-                    username: userData.username,
-                    roles: userData.roles
+                    id: data.user.id,
+                    email: data.user.email,
+                    username: data.user.username,
+                    roles: data.user.roles,
+                    userImage: data.userImage
                 }
                 clientLogin(tokens, user);
                 toast.success("Login Successful!");

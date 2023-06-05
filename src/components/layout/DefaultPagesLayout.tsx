@@ -53,7 +53,7 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
                 <LoginModal></LoginModal>
                 <RegisterModal></RegisterModal>
                 <NavBar>
-                    <div className='w-full bg-white'>
+                    <div className='w-full bg-white !scroll-smooth'>
                         {children}
                     </div>
                 </NavBar>

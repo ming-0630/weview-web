@@ -11,7 +11,7 @@ interface ProductListPageProps {
     searchString?: string | string[];
 }
 
-interface SortProps {
+export interface SortProps {
     by: string,
     direction: string
 }
@@ -161,7 +161,6 @@ const ProductListPage = (props: ProductListPageProps) => {
                     {products.map(product => {
                         return (
                             <div className="my-5 w-[15rem] xl:w-[19rem] 3xl:basis-1/5 h-[20rem] xl:h-[23rem]" key={product.productId}>
-
                                 <ProductCard product={product} hasBorder></ProductCard>
                             </div>
                         )

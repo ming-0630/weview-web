@@ -133,12 +133,12 @@ export function getProductDetails(id: string) {
             }
         },
     ).then((res) => {
-        if (res.data && res.data.productDTOs) {
-            res.data.productDTOs.forEach((product: any) => {
-                const blob = base64StringToBlob(product.coverImage);
-                const img = URL.createObjectURL(blob);
-                product.coverImage = img;
-            });
+        if (res.data && res.data.images) {
+            res.data.images.forEach((img: any, i: number) => {
+                const blob = base64StringToBlob(img);
+                const obj = URL.createObjectURL(blob);
+                res.data.images[i] = obj;
+            })
         }
         return res;
     }).catch((err) => {

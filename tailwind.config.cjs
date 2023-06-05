@@ -4,7 +4,7 @@ module.exports = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    'node_modules/react-toastify/dist/ReactToastify.css'
+    'node_modules/react-toastify/dist/ReactToastify.css',
   ],
   theme: {
     fontFamily: {
@@ -28,6 +28,13 @@ module.exports = {
       },
       height: {
         minusNav: 'calc(100vh - 7rem)'
+      },
+      dropShadow: {
+        white: [
+          '1px 3px 5px rgb(255 255 255 / 0.2)',
+          '1px 4px 5px rgb(255 255 255 / 0.2 )'
+        ]
+
       }
     },
   },
@@ -46,6 +53,7 @@ module.exports = {
           "error": "#F87272",
         },
       },
+      "corporate",
       "cupcake",
       "dark"
     ],

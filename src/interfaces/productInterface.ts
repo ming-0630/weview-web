@@ -15,7 +15,7 @@ export interface Product {
     date_created?: any
     date_updated?: any
     coverImage?: string
-    images?: any
+    images?: string[]
     reviews?: any
 }
 

@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import { client } from "../axiosClient";
 import CustomToastError from "@/utils/CustomToastError";
+import { base64StringToBlob } from "blob-util";
 
 export interface RegisterDto {
     email: string,
@@ -30,16 +31,33 @@ export function login(creds: LoginDto) {
         "auth/login",
         data,
         { authorization: false }
-    ).catch((err) => {
+    ).then((res) => {
+        if (res.data && res.data.user && res.data.userImage) {
+            const blob = base64StringToBlob(res.data.userImage);
+            const img = URL.createObjectURL(blob);
+            res.data.userImage = img;
+        }
+        return res;
+    }).catch((err) => {
+        console.log(err)
         if (err.response && err.response.data) {
-            console.log(err.response.data.message);
-            CustomToastError(err.response.data.message);
-        } else if (err && err.response) {
-            CustomToastError(err.response)
+            CustomToastError(err.response.data.message)
         } else {
             CustomToastError(err)
         }
-    })
+
+    });
+
+    // .catch((err) => {
+    //     if (err.response && err.response.data) {
+    //         console.log(err.response.data.message);
+    //         CustomToastError(err.response.data.message);
+    //     } else if (err && err.response) {
+    //         CustomToastError(err.response)
+    //     } else {
+    //         CustomToastError(err)
+    //     }
+    // })
     return response;
 }
 
