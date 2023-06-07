@@ -4,33 +4,34 @@ import RegisterModal from "../templates/authentication/RegisterModal";
 import NavBar from "./nav/NavBar";
 import { ScriptProps } from "next/script";
 import ConfirmModal from "../templates/authentication/ConfirmModal";
-import { ThemeProvider } from "@emotion/react";
-import { createTheme } from "@mui/material";
 
-declare module '@mui/material/styles' {
-    interface Theme {
-        palette: {
-            primary: {
-                main: string;
-                contrastText: string;
-            };
-        },
-        typography: {
-            fontFamily: string;
-        }
+// declare module '@mui/material/styles' {
+//     interface Theme {
+//         palette: {
+//             primary: {
+//                 main: string;
+//                 contrastText: string;
+//             },
+//             secondary: {
+//                 main: string;
+//             }
+//         },
+//         typography: {
+//             fontFamily: string;
+//         }
 
-    }
-}
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: '#40AF93',
-            contrastText: '#FFFFFF'
-        }
-    }, typography: {
-        fontFamily: 'Rubik',
-    },
-});
+//     }
+// }
+// const theme = createTheme({
+//     palette: {
+//         primary: {
+//             main: '#40AF93',
+//             contrastText: '#FFFFFF'
+//         }
+//     }, typography: {
+//         fontFamily: 'Rubik',
+//     },
+// });
 
 const DefaultPageLayout = ({ children }: ScriptProps) => {
     return (
@@ -48,17 +49,14 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
                 pauseOnHover
                 theme="light"
             />
-            <ThemeProvider theme={theme}>
-                <ConfirmModal></ConfirmModal>
-                <LoginModal></LoginModal>
-                <RegisterModal></RegisterModal>
-                <NavBar>
-                    <div className='w-full bg-white !scroll-smooth'>
-                        {children}
-                    </div>
-                </NavBar>
-            </ThemeProvider>
-
+            <ConfirmModal></ConfirmModal>
+            <LoginModal></LoginModal>
+            <RegisterModal></RegisterModal>
+            <NavBar>
+                <div className='w-full bg-white !scroll-smooth'>
+                    {children}
+                </div>
+            </NavBar>
         </main>
 
     );

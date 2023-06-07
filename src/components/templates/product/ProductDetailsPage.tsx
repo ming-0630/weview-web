@@ -2,18 +2,18 @@ import FadedLine from "@/components/ui/FadedLine";
 import ProductDetailsBg from "@/components/ui/ProductDetailsBg";
 import Product from "@/interfaces/productInterface";
 import { getProductDetails } from "@/services/product/services";
-import { ArrowDownCircleIcon, ArrowDownIcon, ArrowUpCircleIcon, FlagIcon } from "@heroicons/react/24/outline";
+import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { BarElement, CategoryScale, Chart, Legend, LineElement, LinearScale, PointElement, Title, Tooltip } from "chart.js";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { SortProps } from "./ProductListPage";
-import Stars from "@/components/ui/Stars";
 import { useAuthStore } from "@/states/authStates";
 import ReviewBlock from "../review/ReviewBlock";
 import Carousel from "@/components/ui/Carousell";
 import Image from "next/image";
+import { Rating } from "@mantine/core";
 
 interface ProductDetailsPageProps {
     id: string | string[]
@@ -149,7 +149,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-5">
                                     <div className="text-main font-bold text-6xl">5.00</div>
-                                    <Stars></Stars>
+                                    <Rating defaultValue={5}></Rating>
                                 </div>
                                 <div className="text-main">Based on 6969 Reviews</div>
                             </div>

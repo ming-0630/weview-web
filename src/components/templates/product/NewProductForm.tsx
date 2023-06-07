@@ -1,12 +1,8 @@
-
-import { Pagination, Slider, ThemeProvider, createTheme } from "@mui/material";
-import { ArrowLeftCircleIcon, ChevronLeftIcon } from "@heroicons/react/24/solid";
-import Link from "next/link";
 import { useState } from "react";
 import Category from "@/enums/categoryEnum";
-import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { addProduct } from "@/services/product/services";
+import { YearPicker } from "@mantine/dates";
 
 export interface CreateProduct {
     name: string,
@@ -41,7 +37,9 @@ const NewProductForm = () => {
 
         const response = await addProduct(data);
 
-        console.log(data);
+        for (var pair of data.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
     }
 
     const handleUpload = (fileList?: FileList) => {
@@ -87,18 +85,9 @@ const NewProductForm = () => {
 
                 <div>
                     <label className="mb-1">Release Year</label>
-                    <DatePicker
-                        sx={{
-                            '.MuiInputBase-root': {
-                                borderRadius: '0.5rem'
-                            }
-                        }}
-                        views={['year']}
-                        value={dayjs().year(formData.releaseYear)}
-                        onChange={e => {
-                            setFormData({ ...formData, releaseYear: dayjs(e).year() })
-                        }}
-                    />
+                    <YearPicker value={dayjs().year(formData.releaseYear).toDate()} onChange={e => {
+                        setFormData({ ...formData, releaseYear: dayjs(e).year() })
+                    }} />
                 </div>
 
                 <div>

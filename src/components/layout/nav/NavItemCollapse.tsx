@@ -1,8 +1,5 @@
 import { useGlobalStore } from "@/states/globalStates";
-import OutsideAlerter from "@/utils/OutsideAlerter";
 import classNames from "classnames";
-import { Url } from "next/dist/shared/lib/router/router";
-import Link from "next/link"
 import { ReactNode, RefObject, useEffect, useRef, useState } from "react";
 
 export interface NavItemProps {

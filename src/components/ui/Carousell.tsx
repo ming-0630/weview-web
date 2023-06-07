@@ -2,7 +2,7 @@ import useEmblaCarousel, { EmblaCarouselType, EmblaOptionsType } from "embla-car
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import classNames from "classnames";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import { indigo } from "@mui/material/colors";
+
 // Define the props
 type Props = PropsWithChildren & EmblaOptionsType & {
   hasButtons?: boolean;

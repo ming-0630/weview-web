@@ -8,7 +8,9 @@ import PasswordInput from "@/components/ui/PasswordInput";
 import { toast } from "react-toastify";
 import { RegisterDto, register } from "@/services/user/services";
 import CustomToastError from "@/utils/CustomToastError";
-import { LoadingButton } from "@mui/lab";
+import { Button } from "@/components/ui/Button";
+import { useDisclosure } from "@mantine/hooks";
+import { LoadingOverlay } from "@mantine/core";
 
 interface registerInput {
     email: string,
@@ -21,7 +23,8 @@ const RegisterModal = () => {
     const isShow = useGlobalStore((state) => state.registerIsOpen)
     const toggleModal = useGlobalStore((state) => state.toggleRegister)
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
-    const [isLoading, setIsLoading] = useState(false);
+
+    const [isLoading, { toggle }] = useDisclosure(false);
 
     const [registerValues, setRegisterValues] = useState<registerInput>({
         email: "",
@@ -67,7 +70,7 @@ const RegisterModal = () => {
     }
 
     const handleRegister = async () => {
-        setIsLoading(true);
+        toggle();
         if (isPopulated() && isEmailValid() && isPasswordValid()) {
             const newUser: RegisterDto = {
                 email: registerValues.email,
@@ -84,7 +87,7 @@ const RegisterModal = () => {
                 toggleModal();
             }
         }
-        setIsLoading(false);
+        toggle();
     }
 
     useEffect(() => {
@@ -103,6 +106,7 @@ const RegisterModal = () => {
             toggleModal={toggleModal}
             isLoading={isLoading}
         >
+            <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <div className="flex h-[75vh] w-full">
                 <div className="px-7 lg:px-10 py-7 flex flex-col h-full lg:w-1/2 overflow-y-auto">
                     <div className="flex items-center flex-none">
@@ -140,15 +144,7 @@ const RegisterModal = () => {
 
                         <div className="flex justify-between items-center mb-3 ">
                             <label className="cursor-pointer text-black/50 mr-5 text-sm hover:text-main" onClick={login}>Already have an account? Click here!</label>
-                            <LoadingButton
-                                variant="contained"
-                                loading={isLoading}
-                                className="bg-main px-5 py-3 rounded-lg"
-                                onClick={handleRegister}>
-                                <span>
-                                    Register
-                                </span>
-                            </LoadingButton>
+                            <Button onClick={handleRegister}>Register</Button>
                         </div>
                     </div>
                 </div>

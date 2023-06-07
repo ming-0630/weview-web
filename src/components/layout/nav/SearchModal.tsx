@@ -1,4 +1,3 @@
-import SearchInput from '@/components/ui/SearchInput';
 import Category from '@/enums/categoryEnum';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import classNames from 'classnames';

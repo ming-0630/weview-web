@@ -1,6 +1,6 @@
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import classNames from "classnames";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 
 export interface ModalProps {
     isShow: boolean;

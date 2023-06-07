@@ -1,23 +1,24 @@
 import Modal from "@/components/ui/Modal";
 import Image from 'next/image';
 import WeViewLogo from '/public/favicon.ico';
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGlobalStore } from "@/states/globalStates";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
-import classNames from "classnames";
 import PasswordInput from "@/components/ui/PasswordInput";
 import { LoginDto, login } from "@/services/user/services";
 import { toast } from "react-toastify";
 import { AuthTokens, useAuthStore } from "@/states/authStates";
 import User from "@/interfaces/userInterface";
 import CustomToastError from "@/utils/CustomToastError";
-import { LoadingButton } from "@mui/lab";
+import { useDisclosure } from "@mantine/hooks";
+import { LoadingOverlay } from "@mantine/core";
+import { Button } from "@/components/ui/Button";
 
 const LoginModal = () => {
     const isShow = useGlobalStore((state) => state.loginIsOpen)
     const toggleModal = useGlobalStore((state) => state.toggleLogin)
     const toggleRegister = useGlobalStore((state) => state.toggleRegister)
-    const [isLoading, setIsLoading] = useState(false);
+
+    const [isLoading, handlers] = useDisclosure(false);
 
     const register = (e: any) => {
         if (!isLoading) {
@@ -33,8 +34,8 @@ const LoginModal = () => {
     const clientLogin = useAuthStore((state) => state.login)
 
     const handleLogin = async () => {
+        handlers.open();
         if (isPopulated()) {
-            setIsLoading(true);
             const response = await login(loginValues!);
             if (response &&
                 response.status === 200 &&
@@ -57,9 +58,8 @@ const LoginModal = () => {
                 toast.success("Login Successful!");
                 toggleModal();
             }
-            setIsLoading(false);
         }
-
+        handlers.close();
     }
 
     const isPopulated = () => {
@@ -81,6 +81,7 @@ const LoginModal = () => {
         <Modal isShow={isShow}
             isLoading={isLoading}
             toggleModal={toggleModal}>
+            <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <div className="p-5 w-[70vw] sm:w-[50vw] lg:w-[40vw] xl:w-[30vw]">
                 <div className="flex items-center">
                     <div className='w-10 h-10 relative'>
@@ -110,20 +111,12 @@ const LoginModal = () => {
                         <label className="cursor-pointer text-black/50 text-sm hover:text-main"
                             onClick={register}>Don't have an account? Click here!</label>
 
-                        <LoadingButton
-                            variant="contained"
-                            loading={isLoading}
-                            className="bg-main px-5 py-3 rounded-lg"
-                            onClick={handleLogin}>
-                            <span>
-                                Login
-                            </span></LoadingButton>
-
+                        <Button onClick={handleLogin}>Login</Button>
                     </div>
                 </div>
 
             </div>
-        </Modal >
+        </Modal>
     )
 }
 

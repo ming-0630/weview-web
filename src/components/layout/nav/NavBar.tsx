@@ -1,6 +1,6 @@
 import WeViewLogo from '/public/favicon.ico';
 import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { ReactNode, RefObject, useEffect, useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import Image from 'next/image';
 import SearchModal from './SearchModal';
 import SideNavBar from './SideNavBar';

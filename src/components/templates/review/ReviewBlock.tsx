@@ -8,7 +8,7 @@ import CommentBlock from "./CommentBlock";
 import FadedLine from "@/components/ui/FadedLine";
 import Review from "@/interfaces/reviewInterface";
 import dayjs from "dayjs";
-import { Rating } from "@mui/material";
+import { Rating } from "@mantine/core";
 
 export interface ReviewBlockProps {
     className?: string;
@@ -28,7 +28,6 @@ const ReviewBlock = (props: ReviewBlockProps) => {
             </div>
             <div className="grow flex flex-col gap-3">
                 <div className="flex gap-4 items-center">
-                    {/* <Stars></Stars> */}
                     <Rating
                         value={props.review?.rating ?? 3}
                         readOnly

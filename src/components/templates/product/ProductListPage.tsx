@@ -1,10 +1,10 @@
 import ProductCard from "@/components/layout/productCard/ProductCardV1";
 import Category from "@/enums/categoryEnum";
-import { ChangeEvent, useEffect, useState } from "react";
-import { LinearProgress, Pagination, Slider } from "@mui/material";
+import { useEffect, useState } from "react";
 import { getAllProductPreview, getCategoryPreview, getSearchProduct } from "@/services/product/services";
 import Product from "@/interfaces/productInterface";
-import Link from "next/link";
+import { LoadingOverlay, Pagination, RangeSlider, Slider } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
 interface ProductListPageProps {
     category?: string | string[];
@@ -18,17 +18,18 @@ export interface SortProps {
 
 const ProductListPage = (props: ProductListPageProps) => {
     const [sortCategory, setSortCategory] = useState<SortProps>({ by: "name", direction: "asc" });
-    const [ratingRange, setRatingRange] = useState<number[]>([0, 5]);
+    const [ratingRange, setRatingRange] = useState<[number, number]>([0, 5]);
 
     const [products, setProducts] = useState<Product[]>([]);
 
-    const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
-    const getProduct = (page: number, sortCategory: SortProps) => {
-        setIsLoading(true);
-        const fetchData = async () => {
+    const [isLoading, handlers] = useDisclosure(false);
+
+    const getProduct = async (page: number, sortCategory: SortProps) => {
+        handlers.open();
+        try {
             let response;
 
             if (!props.category || (props.category === "all" && !props.searchString)) {
@@ -59,9 +60,11 @@ const ProductListPage = (props: ProductListPageProps) => {
                 setProducts([]);
                 setTotalPage(0);
             }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            handlers.close();
         }
-        fetchData().catch(console.error)
-        setIsLoading(false);
     }
 
     // On Props change
@@ -88,14 +91,14 @@ const ProductListPage = (props: ProductListPageProps) => {
         getProduct(1, sortCategory);
     }, [sortCategory])
 
-    const handlePageChange = (e: ChangeEvent<unknown>, value: number) => {
+    const handlePageChange = (value: number) => {
         setPage(value);
     }
 
-    const handleRatingChange = (event: Event, newValue: number | number[]) => {
-        setRatingRange(newValue as number[]);
-        console.log(ratingRange);
-    };
+    const handleRatingChange = (value: [number, number]) => {
+        setRatingRange(value);
+        console.log(value)
+    }
 
     const handleFilter = () => {
         // Api Call
@@ -103,6 +106,7 @@ const ProductListPage = (props: ProductListPageProps) => {
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)] p-10 bg-white">
+            <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <div className="flex flex-col w-[80vw] m-auto">
                 <div className="flex justify-end items-center mb-5">
                     {/* <Link href={""}>
@@ -138,14 +142,15 @@ const ProductListPage = (props: ProductListPageProps) => {
                             flex flex-col">
                                 <div className="">
                                     <span className="">Range of Ratings</span>
-                                    <Slider
-                                        getAriaLabel={() => 'Range of Ratings'}
-                                        value={ratingRange}
+                                    <RangeSlider
+                                        min={0}
                                         max={5}
-                                        onChange={handleRatingChange}
-                                        valueLabelDisplay="auto"
                                         step={0.01}
-                                    />
+                                        minRange={0.5}
+                                        precision={2}
+                                        value={ratingRange}
+                                        onChange={setRatingRange}
+                                    ></RangeSlider>
                                 </div>
                                 <div className="self-end">
                                     <button className="btn disabled:text-black disabled:opacity-70" onChange={handleFilter}>Submit</button>
@@ -156,7 +161,6 @@ const ProductListPage = (props: ProductListPageProps) => {
                 </div>
 
                 <div className="flex flex-wrap justify-around gap-5 min-h-[50vh]">
-                    {isLoading && <LinearProgress />}
                     {products.length <= 0 && <p className="self-center text-3xl">No products found</p>}
                     {products.map(product => {
                         return (
@@ -169,7 +173,11 @@ const ProductListPage = (props: ProductListPageProps) => {
                     }
                 </div>
                 <div className="self-center mt-10">
-                    <Pagination count={totalPage} color="primary" size="large" page={page} onChange={handlePageChange} />
+                    <Pagination value={page} onChange={handlePageChange} total={totalPage}
+                        radius={'xl'}
+                        boundaries={5}
+                        classNames={{ control: 'border-transparent' }}
+                    />
                 </div>
 
             </div>

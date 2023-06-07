@@ -2,7 +2,7 @@ import { HomeIcon, CubeIcon, ArrowTrendingUpIcon, BoltIcon, ChartBarSquareIcon, 
 import NavItem from "./NavItem"
 import WeViewLogo from '/public/favicon.ico';
 import NavItemCollapse from "./NavItemCollapse"
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import { useGlobalStore } from "@/states/globalStates";
 
 const SideNavItems = () => {
