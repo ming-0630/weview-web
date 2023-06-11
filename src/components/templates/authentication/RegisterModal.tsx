@@ -24,7 +24,7 @@ const RegisterModal = () => {
     const toggleModal = useGlobalStore((state) => state.toggleRegister)
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
 
-    const [isLoading, { toggle }] = useDisclosure(false);
+    const [isLoading, loadingHandler] = useDisclosure(false);
 
     const [registerValues, setRegisterValues] = useState<registerInput>({
         email: "",
@@ -70,7 +70,7 @@ const RegisterModal = () => {
     }
 
     const handleRegister = async () => {
-        toggle();
+        loadingHandler.open();
         if (isPopulated() && isEmailValid() && isPasswordValid()) {
             const newUser: RegisterDto = {
                 email: registerValues.email,
@@ -87,7 +87,7 @@ const RegisterModal = () => {
                 toggleModal();
             }
         }
-        toggle();
+        loadingHandler.close();
     }
 
     useEffect(() => {

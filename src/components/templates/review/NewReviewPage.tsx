@@ -2,31 +2,38 @@ import ProductDetailsBg from "@/components/ui/ProductDetailsBg";
 import Product from "@/interfaces/productInterface";
 import { getProductDetails } from "@/services/product/services";
 import { useEffect, useState } from "react";
-import { SortProps } from "./ProductListPage";
+import { SortProps } from "../product/ProductListPage";
 import { useAuthStore } from "@/states/authStates";
 import Carousel from "@/components/ui/Carousell";
 import Image from "next/image";
 import classNames from "classnames";
 import FileUpload from "@/components/ui/FileUpload";
-import ReviewBlock from "../review/ReviewBlock";
+import ReviewBlock from "./ReviewBlock";
 import Review from "@/interfaces/reviewInterface";
 import CustomToastError from "@/utils/CustomToastError";
-import { Rating, Stepper } from "@mantine/core";
+import { LoadingOverlay, Rating, Stepper } from "@mantine/core";
 import { CubeIcon, MagnifyingGlassCircleIcon, PencilSquareIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import { CheckIcon } from "@heroicons/react/24/solid";
+import { useDisclosure } from "@mantine/hooks";
+import { addReview } from "@/services/review/services";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 
 interface ProductPageProps {
     id: string | string[]
 }
 
-const NewProductReviewPage = (props: ProductPageProps) => {
+const NewReviewPage = (props: ProductPageProps) => {
     const [product, setProduct] = useState<Product>();
-    const [isLoading, setIsLoading] = useState(false);
+
     const [sortCategory, setSortCategory] = useState<SortProps>({ by: "name", direction: "asc" });
     const [step, setStep] = useState(0);
 
+    const [isLoading, loadingHandler] = useDisclosure(false);
+
     const [hoverRating, setHoverRating] = useState(-1);
+    const router = useRouter();
 
     const [review, setReview] = useState<Review>({
         title: "",
@@ -39,17 +46,16 @@ const NewProductReviewPage = (props: ProductPageProps) => {
     const user = useAuthStore((state) => state.loggedInUser);
 
     const getProduct = () => {
-        setIsLoading(true);
+        loadingHandler.open();
         const fetchData = async () => {
             let response = await getProductDetails(props.id.toString());
 
             if (response && response.data) {
                 setProduct(response.data);
-                console.log(response.data)
             }
         }
         fetchData().catch(console.error)
-        setIsLoading(false);
+        loadingHandler.close();
     }
 
     // On Props change
@@ -61,41 +67,56 @@ const NewProductReviewPage = (props: ProductPageProps) => {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
+        try {
+            loadingHandler.open();
 
-        if (!product || !product.productId) {
-            CustomToastError("Product not found!")
-            return;
+            if (!product || !product.productId) {
+                CustomToastError("Product not found!")
+                return;
+            }
+
+            if (!review.rating) {
+                CustomToastError("No Rating!")
+                return;
+            }
+
+            if (!review.price) {
+                CustomToastError("No Price Entered!")
+                return;
+            }
+
+            if (!review.description || !review.title) {
+                CustomToastError("Missing fields!")
+                return;
+            }
+
+            const data = new FormData();
+            if (review.images) {
+                review.images.forEach(img => {
+                    data.append('uploadedImages', img)
+                });
+            }
+
+            data.append("title", review.title ?? "");
+            data.append("description", review.description ?? "");
+            data.append("rating", review.rating.toString());
+            data.append("price", review.price.toString());
+            data.append("productId", product.productId);
+            data.append('userId', user!.id);
+
+            const response = await addReview(data);
+
+            if (response && response.status == 200) {
+                toast.success("Review created successfully!");
+                router.push({
+                    pathname: '/products/details/' + product.productId,
+                })
+            }
+        } catch (e) {
+            console.log(e)
+        } finally {
+            loadingHandler.close();
         }
-
-        if (!review.rating) {
-            CustomToastError("No Rating!")
-            return;
-        }
-
-        if (!review.price) {
-            CustomToastError("No Price Entered!")
-            return;
-        }
-
-        if (!review.description || !review.title) {
-            CustomToastError("Missing fields!")
-            return;
-        }
-
-        const data = new FormData();
-        if (review.images) {
-            review.images.forEach(img => {
-                data.append('uploadedImages', img)
-            });
-        }
-
-        data.append("title", review.title ?? "");
-        data.append("description", review.description ?? "");
-        data.append("rating", review.rating.toString());
-        data.append("price", review.price.toString());
-        data.append("productId", product.productId);
-
-        // const response = await addProduct(data);
     }
 
     const ratingLabels: { [index: string]: string } = {
@@ -106,8 +127,8 @@ const NewProductReviewPage = (props: ProductPageProps) => {
         5: 'Excellent',
     };
 
-    const setImages = (images: string[]) => {
-        setReview({ ...review, images: images })
+    const setImages = (images: File[]) => {
+        setReview({ ...review, tempImages: images })
     }
 
     const handleStep = (step: number) => {
@@ -129,6 +150,7 @@ const NewProductReviewPage = (props: ProductPageProps) => {
 
     return (
         <div className="h-[calc(100vh_-_5rem)] w-full overflow-hidden relative">
+            <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <ProductDetailsBg className="w-full h-full absolute" viewBox="0 0 1920 1080"
                 preserveAspectRatio="xMaxYMax slice"></ProductDetailsBg>
             <div className="relative flex text-white h-full">
@@ -229,7 +251,8 @@ const NewProductReviewPage = (props: ProductPageProps) => {
                                             <span className="label-text">Price </span>
                                         </label>
                                         <input className="input input-bordered input-sm border-main focus:outline-main bg-transparent rounded-lg w-[20%]"
-                                            value={review.price}
+                                            value={review.price === 0 ? '' : review.price}
+                                            placeholder="RM"
                                             type="number"
                                             min="1" max="10000.00"
                                             step="0.01"
@@ -272,7 +295,7 @@ const NewProductReviewPage = (props: ProductPageProps) => {
                         <div className="rounded-2xl text-main p-10 w-[50vw]">
                             <div className="flex flex-col items-end">
                                 <FileUpload
-                                    files={review.images ?? []}
+                                    files={review.tempImages ?? []}
                                     setFiles={setImages}
                                 ></FileUpload>
                                 <div className="flex w-full justify-between mt-5">
@@ -286,11 +309,11 @@ const NewProductReviewPage = (props: ProductPageProps) => {
                     <div className={classNames("opacity-100 transition duration-300 ease-in-out absolute", step !== 3 && "!opacity-0 invisible")}>
                         <div className="text-3xl mb-3 text-main">Preview</div>
                         <div className="text-main w-[50vw] overflow-y-auto max-h-[60vh] border border-main rounded-lg p-10 pb-3">
-                            <ReviewBlock disabled review={review} user={user}></ReviewBlock>
+                            <ReviewBlock isPreview review={review} user={user}></ReviewBlock>
                         </div>
                         <div className="flex w-full justify-between mt-5">
                             <div className="btn btn-primary text-white" onClick={() => { handleStep(2) }}>Prev</div>
-                            <div className="btn btn-primary text-white" onClick={() => { handleSubmit }}>Submit</div>
+                            <div className="btn btn-primary text-white" onClick={handleSubmit}>Submit</div>
                         </div>
                     </div>
                 </div>
@@ -299,4 +322,4 @@ const NewProductReviewPage = (props: ProductPageProps) => {
     );
 }
 
-export default NewProductReviewPage;
+export default NewReviewPage;

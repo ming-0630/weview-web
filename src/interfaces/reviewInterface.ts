@@ -10,6 +10,7 @@ export interface Review {
     date_updated?: any
     user?: User
     images?: string[]
+    tempImages?: File[]
 }
 
 export default Review

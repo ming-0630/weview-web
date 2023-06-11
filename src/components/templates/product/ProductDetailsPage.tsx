@@ -3,8 +3,7 @@ import ProductDetailsBg from "@/components/ui/ProductDetailsBg";
 import Product from "@/interfaces/productInterface";
 import { getProductDetails } from "@/services/product/services";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
-import { StarIcon } from "@heroicons/react/24/solid";
-import { BarElement, CategoryScale, Chart, Legend, LineElement, LinearScale, PointElement, Title, Tooltip } from "chart.js";
+import { BarElement, CategoryScale, Chart, Legend, LineElement, LinearScale, PointElement, TimeScale, Title, Tooltip, scales } from "chart.js";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
@@ -13,7 +12,16 @@ import { useAuthStore } from "@/states/authStates";
 import ReviewBlock from "../review/ReviewBlock";
 import Carousel from "@/components/ui/Carousell";
 import Image from "next/image";
-import { Rating } from "@mantine/core";
+import { LoadingOverlay, Rating } from "@mantine/core";
+import Review from "@/interfaces/reviewInterface";
+import { useRouter } from "next/router";
+import { checkEligibility, fetchReviewData } from "@/services/review/services";
+import { useDisclosure } from "@mantine/hooks";
+import CustomToastError from "@/utils/CustomToastError";
+import { useGlobalStore } from "@/states/globalStates";
+import dayjs from "dayjs";
+import TimeChart from "../charts/TimeChart";
+import RatingBreakdown from "@/components/ui/RatingBreakdown";
 
 interface ProductDetailsPageProps {
     id: string | string[]
@@ -21,19 +29,26 @@ interface ProductDetailsPageProps {
 
 const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     const [product, setProduct] = useState<Product>();
-    const [isLoading, setIsLoading] = useState(false);
     const [sortCategory, setSortCategory] = useState<SortProps>({ by: "name", direction: "asc" });
+    const [reviewGraphData, setReviewGraphData] = useState<{ x: any, y: any }[]>([]);
+    const [activeReviewDataTab, setActiveReviewDataTab] = useState<string | null>('1M');
 
-    const user = useAuthStore((state) => state.loggedInUser);
+    const user = useAuthStore((state) => state.loggedInUser)
+    const toggleLogin = useGlobalStore((state) => state.toggleLogin)
+
+    const [isLoading, handlers] = useDisclosure(false);
+    const router = useRouter();
 
     Chart.register(CategoryScale,
         LinearScale,
         BarElement,
         LineElement,
         PointElement,
+        TimeScale,
         Title,
         Tooltip,
         Legend);
+
     const data = [
         { year: 2010, count: 10 },
         { year: 2011, count: 20 },
@@ -45,17 +60,61 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     ];
 
     const getProduct = () => {
-        setIsLoading(true);
+        handlers.open();
         const fetchData = async () => {
             let response = await getProductDetails(props.id.toString());
 
             if (response && response.data) {
                 setProduct(response.data);
-                console.log(response.data)
+                // console.log(response.data);
+                // console.log(response.data.reviews)
             }
         }
         fetchData().catch(console.error)
-        setIsLoading(false);
+        handlers.close();
+    }
+
+    const getReviewData = (activeTab: string) => {
+        handlers.open();
+        const fetchData = async () => {
+            if (product) {
+                if (activeReviewDataTab !== '1M' && activeReviewDataTab !== '1Y' && activeReviewDataTab !== 'MAX') {
+                    CustomToastError("Invalid tab!");
+                    setActiveReviewDataTab('1M');
+                    return;
+                }
+                const response = await fetchReviewData(product.productId!, activeReviewDataTab);
+
+                if (response && response.data && response.status == 200) {
+                    setReviewGraphData(response.data.ratingData.map((row: { date: string, rating: number }) => {
+                        return {
+                            x: row.date,
+                            y: row.rating
+                        }
+                    }))
+                }
+            }
+        }
+        fetchData().catch(console.error)
+        handlers.close();
+    }
+
+    const handleAddReview = async () => {
+        handlers.open();
+        if (!user) {
+            CustomToastError("Please login to write a review");
+            toggleLogin();
+            handlers.close();
+            return;
+        }
+
+        if (product) {
+            if (await checkEligibility(product.productId!, user.id)) {
+                router.push('/products/reviews/add/' + product?.productId);
+            }
+        }
+
+        handlers.close()
     }
 
     // On Props change
@@ -63,11 +122,18 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
         if (props.id) {
             getProduct();
         }
-
     }, [props])
+
+    useEffect(() => {
+        if (activeReviewDataTab) {
+            getReviewData(activeReviewDataTab);
+        }
+
+    }, [product, activeReviewDataTab])
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)]">
+            <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <div className="h-[calc(100vh_-_5rem)] w-full overflow-hidden relative">
                 <ProductDetailsBg className="w-full absolute" viewBox="0 0 1920 1080"></ProductDetailsBg>
                 <div className="relative flex h-full items-center px-32 gap-20">
@@ -91,16 +157,16 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                         </Link>
                         <hr className="border-none h-1 bg-white/50 rounded my-2"></hr>
                         <div className="flex justify-between">
-                            <div className="flex flex-col gap-1 items-center">
-                                <div className="flex gap-2">
-                                    <StarIcon className='w-7 h-7'></StarIcon>
-                                    <StarIcon className='w-7 h-7'></StarIcon>
-                                    <StarIcon className='w-7 h-7'></StarIcon>
-                                    <StarIcon className='w-7 h-7'></StarIcon>
-                                    <StarIcon className='w-7 h-7'></StarIcon>
-                                </div>
-                                <div className="text-xl">{"( 6.9k Ratings )"}</div>
-                            </div>
+                            {
+                                product && product.rating ?
+                                    <div className="flex flex-col gap-1 items-center">
+                                        <Rating defaultValue={product.rating}
+                                            size="lg" readOnly fractions={4} color="#143b31"
+                                        ></Rating>
+                                        <div className="text-xl"> {'(' + product.reviews?.length + ' ratings)'} </div>
+                                    </div> :
+                                    "No Reviews yet!"
+                            }
                             <Link href="#review-section">
                                 <button className="flex text-main bg-white p-5 rounded-2xl items-center text-xl font-semibold">
                                     <ArrowDownIcon className="w-7 mr-2"></ArrowDownIcon>
@@ -141,117 +207,65 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
             <div className="w-full relative" id="review-section">
                 <div className="h-[20vh] relative flex w-full">
                     <ProductDetailsBg className="w-full absolute object-contain" viewBox="0 0 1920 1080"></ProductDetailsBg>
-                    <span className="text-white text-7xl font-semibold absolute bottom-0 right-[5vw]">Reviews</span>
+                    <span className="text-white text-7xl font-semibold absolute bottom-0 right-[20vw]">Reviews</span>
                 </div>
                 <div className="bg-white min-h-screen rounded-3xl relative py-16">
                     <div className="m-auto w-[60vw] flex flex-col gap-12">
                         <div className="flex justify-between items-center">
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-5">
-                                    <div className="text-main font-bold text-6xl">5.00</div>
-                                    <Rating defaultValue={5}></Rating>
+                                    <div className="text-main font-bold text-6xl">{product && product.rating ?
+                                        (Math.round(product.rating * 100) / 100).toFixed(2) : "No reviews yet!"}</div>
+                                    {
+                                        product && product.rating && <Rating defaultValue={product.rating}
+                                            size="lg" readOnly fractions={4}></Rating>
+                                    }
                                 </div>
-                                <div className="text-main">Based on 6969 Reviews</div>
+                                <div className="text-main">Based on {product?.reviews?.length} Reviews</div>
                             </div>
-                            <Link href={'/products/reviews/add/' + product?.productId}>
-                                <button className="btn btn-primary text-white">Write a Review</button>
-                            </Link>
+                            <button className="btn btn-primary text-white" onClick={handleAddReview}>Write a Review</button>
                         </div>
 
                         <FadedLine className="w-full"></FadedLine>
 
                         <div className="flex flex-col">
-                            <div className="text-main font-semibold text-3xl">Ratings Breakdown</div>
-                            <div className="flex mt-5 items-center">
-                                <div className="flex flex-col gap-2 basis-1/3">
-                                    <div>
-                                        <div className="text-main">5 Stars</div>
-                                        <div className="flex items-center gap-3">
-                                            <progress className="progress progress-warning w-56" value={0} max="100"></progress>
-                                            <div className="text-main text-sm">0%</div>
+                            <div className="text-main font-semibold text-3xl">Review Analytics</div>
+                            <div className="flex mt-5 items-center gap-5">
+                                <RatingBreakdown product={product}></RatingBreakdown>
+                                <div className="flex flex-col gap-2 grow bg-white" data-theme="corporate">
+                                    <div className="stats stats-vertical bg-white text-main border border-main rounded-lg">                                        <div className="stat">
+                                        <div className='font-semibold text-gray-600 text-lg'>Price Breakdown</div>
+                                    </div>
+                                        <div className="stat">
+                                            <div className="stat-title text-main">Average Price (RM)</div>
+                                            <div className="stat-value">{product?.averagePrice}</div>
+                                            <div className="stat-desc">{
+                                                product?.reviews &&
+                                                dayjs(product?.reviews[product.reviews.length - 1].date_created).format("MMM YYYY")
+                                                + " - "
+                                                + dayjs(product?.reviews[0].date_created).format("MMM YYYY")
+                                            }</div>
+                                        </div>
+
+                                        <div className="stat">
+                                            <div className="stat-title text-main">Range of Prices (RM)</div>
+                                            <div className="stat-value">{product?.minPrice + ' - ' + product?.maxPrice}</div>
+                                            <div className="stat-desc">{"Based on " + product?.reviews?.length + " reviews"}</div>
                                         </div>
                                     </div>
-                                    <div>
-                                        <div className="text-main">4 Stars</div>
-                                        <div className="flex items-center gap-3">
-                                            <progress className="progress progress-warning w-56" value="10" max="100"></progress>
-                                            <div className="text-main text-sm">10%</div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="text-main">3 Stars</div>
-                                        <div className="flex items-center gap-3">
-                                            <progress className="progress progress-warning w-56" value="40" max="100"></progress>
-                                            <div className="text-main text-sm">40%</div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="text-main">2 Stars</div>
-                                        <div className="flex items-center gap-3">
-                                            <progress className="progress progress-warning w-56" value="70" max="100"></progress>
-                                            <div className="text-main text-sm">70%</div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="text-main">1 Stars</div>
-                                        <div className="flex items-center gap-3">
-                                            <progress className="progress progress-warning w-56" value="100" max="100"></progress>
-                                            <div className="text-main text-sm">50%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="grow">
-                                    <Line
-                                        datasetIdKey='id-00'
-                                        data={{
-                                            labels: data.map(row => row.year),
-                                            datasets: [{
-                                                label: 'Acquisitions by year',
-                                                data: data.map(row => row.count),
-                                                fill: false,
-                                                borderColor: '#F88379',
-                                                tension: 0.1
-                                            }]
-                                        }}
-                                    ></Line>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-col">
-                            <div className="text-main font-semibold text-3xl self-end">Price Breakdown</div>
-                            <div className="flex mt-5 items-center gap-5">
-                                <div className="grow">
-                                    <Line
-                                        datasetIdKey='id-00'
-                                        data={{
-                                            labels: data.map(row => row.year),
-                                            datasets: [{
-                                                label: 'Acquisitions by year',
-                                                data: data.map(row => row.count),
-                                                fill: false,
-                                                borderColor: '#F88379',
-                                                tension: 0.1
-                                            }]
-                                        }}
-                                    ></Line>
-                                </div>
-                                <div className="flex flex-col gap-2 basis-1/3" data-theme="corporate">
-                                    <div className="stats stats-vertical bg-white text-main border border-main rounded-lg">
-                                        <div className="stat">
-                                            <div className="stat-title text-main">Average Price</div>
-                                            <div className="stat-value">31K</div>
-                                            <div className="stat-desc">Jan 1st - Feb 1st</div>
-                                        </div>
-
-                                        <div className="stat">
-                                            <div className="stat-title text-main">Range of Prices</div>
-                                            <div className="stat-value">4,200</div>
-                                            <div className="stat-desc">↗︎ 400 (22%)</div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div className="w-full -mt-5">
+                            <div className="border border-main rounded-lg p-5">
+                                <TimeChart data={reviewGraphData}
+                                    activeTab={activeReviewDataTab}
+                                    setActiveTab={setActiveReviewDataTab}
+                                ></TimeChart>
                             </div>
+
+
                         </div>
 
                         <FadedLine className="w-full"></FadedLine>
@@ -273,7 +287,14 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                                 </select>
                             </div>
                         </div>
-                        <ReviewBlock user={user!}></ReviewBlock>
+                        {
+                            product?.reviews?.map((review: Review, i: number) => {
+                                return (
+                                    <ReviewBlock user={review.user} review={review} key={i}></ReviewBlock>
+                                )
+                            })
+                        }
+
 
                     </div>
                 </div>

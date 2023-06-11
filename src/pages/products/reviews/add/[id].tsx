@@ -1,13 +1,12 @@
 import DefaultPageLayout from "@/components/layout/DefaultPagesLayout";
-import NewProductReviewPage from "@/components/templates/product/NewProductReviewPage";
-import ProductDetailsPage from "@/components/templates/product/ProductDetailsPage";
+import NewReviewPage from "@/components/templates/review/NewReviewPage";
 import { useRouter } from "next/router";
 
 export default function CreateReview() {
     const router = useRouter();
     return (
         <DefaultPageLayout>
-            <NewProductReviewPage id={router.query.id ? router.query.id : ""} />
+            <NewReviewPage id={router.query.id ? router.query.id : ""} />
         </DefaultPageLayout>
     )
 

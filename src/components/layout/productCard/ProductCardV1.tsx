@@ -32,9 +32,16 @@ const ProductCardV1 = (props: ProductCardProps) => {
                         </div>
                         <div className='flex items-center justify-between w-full'>
                             <div className='flex items-center text-yellow-500'>
-                                <StarIcon className='w-5 h-5 mr-1 '></StarIcon>
+                                <StarIcon className='w-5 h-5 mr-2'></StarIcon>
                                 {/* <span className='text-lg'>{props.product.reviews ? (Math.round(props.product.rating * 100) / 100).toFixed(2) : "0.00"}</span> */}
-                                <span>0.00</span>
+                                {props.product.rating ?
+                                    <div>
+                                        <span>
+                                            {props.product.rating?.toFixed(2)}
+                                        </span>
+                                        <span className='text-gray-400'>{" (" + props.product.ratingCount + ")"}</span>
+                                    </div>
+                                    : "-"}
                             </div>
                         </div>
                     </div>

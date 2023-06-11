@@ -18,7 +18,7 @@ const LoginModal = () => {
     const toggleModal = useGlobalStore((state) => state.toggleLogin)
     const toggleRegister = useGlobalStore((state) => state.toggleRegister)
 
-    const [isLoading, handlers] = useDisclosure(false);
+    const [isLoading, loadingHandler] = useDisclosure(false);
 
     const register = (e: any) => {
         if (!isLoading) {
@@ -34,7 +34,7 @@ const LoginModal = () => {
     const clientLogin = useAuthStore((state) => state.login)
 
     const handleLogin = async () => {
-        handlers.open();
+        loadingHandler.open();
         if (isPopulated()) {
             const response = await login(loginValues!);
             if (response &&
@@ -59,7 +59,7 @@ const LoginModal = () => {
                 toggleModal();
             }
         }
-        handlers.close();
+        loadingHandler.close();
     }
 
     const isPopulated = () => {

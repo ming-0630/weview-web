@@ -1,4 +1,3 @@
-import Stars from "@/components/ui/Stars";
 import { ArrowDownCircleIcon, ArrowUpCircleIcon, FlagIcon } from "@heroicons/react/24/outline";
 import Image from 'next/image';
 import blankUserImage from '../../../assets/blank_user.png'
@@ -14,7 +13,7 @@ export interface ReviewBlockProps {
     className?: string;
     user?: User;
     review?: Review;
-    disabled?: boolean
+    isPreview?: boolean;
 }
 
 const ReviewBlock = (props: ReviewBlockProps) => {
@@ -42,7 +41,11 @@ const ReviewBlock = (props: ReviewBlockProps) => {
                         <div className="text-main text-lg">{props.user && props.user.username}</div>
                     </div>
 
-                    <div className="text-gray-500 text-sm">{props.review?.date_created ?? dayjs(Date.now()).format('D MMMM YYYY')}</div>
+                    <div className="text-gray-500 text-sm">{
+                        props.review?.date_created ?
+                            dayjs(props.review?.date_created).format('D MMMM YYYY') : dayjs(Date.now()).format('D MMMM YYYY')
+                    }
+                    </div>
                 </div>
 
                 <pre style={{ whiteSpace: 'pre-wrap' }} className="text-justify font-sans text-sm">
@@ -54,14 +57,20 @@ const ReviewBlock = (props: ReviewBlockProps) => {
                     Vestibulum sed ullamcorper neque. Nullam posuere vitae felis nec hendrerit. Suspendisse eget accumsan mauris, ac malesuada purus. Aenean et imperdiet lectus, at vulputate sapien. Integer in dui iaculis, dictum elit et, ullamcorper mi. Nam varius nulla aliquam vulputate lacinia. Curabitur vulputate urna et commodo feugiat. Nunc vel nibh eget arcu malesuada sodales vehicula ut tellus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam erat volutpat.`}
                 </pre>
 
-                <div className="flex flex-wrap">
-                    {props.review?.images?.map((img) => {
-                        return <div className="relative w-[10vw] h-[20vh]">
-                            <Image src={img} alt={""} fill className="object-contain"></Image>
-                        </div>
-                    })}
+                <div className="flex flex-wrap gap-3">
+                    {props.isPreview ?
+                        props.review?.tempImages?.map((img) => {
+                            return <div className="relative w-[10vw] h-[20vh]">
+                                <Image src={URL.createObjectURL(img)} alt={""} fill className="object-cover"></Image>
+                            </div>
+                        }) :
+                        props.review?.images?.map((img) => {
+                            return <div className="relative w-[10vw] h-[20vh]">
+                                <Image src={img} alt={""} fill className="object-cover"></Image>
+                            </div>
+                        })}
                 </div>
-                <Accordion title="View more comments" disabled={props.disabled}>
+                <Accordion title="View more comments" disabled={props.isPreview}>
                     <CommentBlock user={props.user}></CommentBlock>
                     <FadedLine className="w-[80%] m-auto"></FadedLine>
                     <CommentBlock user={props.user}></CommentBlock>

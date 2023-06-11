@@ -1,10 +1,5 @@
 import Category from "@/enums/categoryEnum";
-
-// interface Product {
-//     name?: string,
-//     category?: Category,
-//     rating?: number,
-// }
+import Review from "./reviewInterface";
 
 export interface Product {
     productId?: string
@@ -15,8 +10,13 @@ export interface Product {
     date_created?: any
     date_updated?: any
     coverImage?: string
+    rating?: number
+    ratingCount?: number
+    averagePrice?: number,
+    minPrice?: number,
+    maxPrice?: number
     images?: string[]
-    reviews?: any
+    reviews?: Review[]
 }
 
 export default Product
