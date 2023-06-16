@@ -5,7 +5,7 @@ import blankUserImage from '../../../assets/blank_user.png'
 import OutsideAlerter from '@/utils/OutsideAlerter';
 import LoggedInSideNav from './LoggedInSideNav';
 import SideNavItems from './SideNavItems';
-import { getUserImage } from '@/services/user/services';
+import User from '@/interfaces/userInterface';
 
 
 export interface SideNavBarProps {
@@ -17,29 +17,9 @@ const SideNavBar = (props: SideNavBarProps) => {
     const navIsOpen = useGlobalStore((state) => state.navIsOpen)
     const toggleNav = useGlobalStore((state) => state.toggleNav)
 
+    const [loggedInUser, setLoggedInUser] = useState<User>();
+
     const user = useAuthStore((state) => state.loggedInUser)
-
-    const [img, setImg] = useState("");
-
-    useEffect(() => {
-        getImage();
-    }, [user])
-
-    const getImage = () => {
-        if (user) {
-            const fetchData = async () => {
-                const response = await getUserImage(user.id);
-
-                if (response) {
-                    console.log(response.data);
-                    const img = URL.createObjectURL(response.data);
-                    setImg(img);
-                }
-
-            }
-            fetchData().catch(console.error)
-        }
-    }
 
     const wrapperRef = useRef<HTMLDivElement>(null);
     OutsideAlerter({
@@ -47,6 +27,10 @@ const SideNavBar = (props: SideNavBarProps) => {
         isOpen: navIsOpen,
         setFunction: toggleNav
     });
+
+    useEffect(() => {
+        setLoggedInUser(user)
+    }, [user])
 
     return (
         <div className="drawer drawer-end absolute overflow-y-auto">
@@ -58,7 +42,8 @@ const SideNavBar = (props: SideNavBarProps) => {
                 <label htmlFor="side-nav-drawer" className="drawer-overlay"></label>
                 <div className="menu p-4 w-72 lg:w-[21rem] bg-white text-base-content text-gray-dark" ref={wrapperRef}>
                     {/* <!-- Sidebar content here --> */}
-                    {user ? <LoggedInSideNav username={user.username} image={user && img ? img : blankUserImage}></LoggedInSideNav>
+                    {loggedInUser ? <LoggedInSideNav username={loggedInUser.username}
+                        image={loggedInUser && loggedInUser.userImage ? loggedInUser.userImage : blankUserImage}></LoggedInSideNav>
                         : <SideNavItems></SideNavItems>
                     }
                 </div>

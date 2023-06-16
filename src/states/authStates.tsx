@@ -1,6 +1,7 @@
 import User from '@/interfaces/userInterface';
 import { toast } from 'react-toastify';
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware';
 
 export interface AuthTokens {
     accessToken: string,
@@ -26,29 +27,35 @@ export interface AuthState {
     loggedInUser?: User,
 }
 
-export const useAuthStore = create<AuthState>()((set, get) => ({
-    accessToken: typeof window !== "undefined" ? localStorage.getItem("accessToken") : null,
-    refreshToken: typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null,
-    isLoggedIn: () => !!get().accessToken,
-    login: (tokens: AuthTokens, user: User) => {
-        setTokensToLocalStorage(tokens);
-        set((state) => ({
-            ...state,
-            accessToken: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
-            loggedInUser: user
-        }));
-    },
-    logout: () => {
-        removeTokensFromLocalStorage();
-        set((state) => ({
-            ...state,
-            accessToken: null,
-            refreshToken: null,
+export const useAuthStore = create<AuthState>()(
+    persist(
+        (set, get) => ({
+            accessToken: typeof window !== "undefined" ? localStorage.getItem("accessToken") : null,
+            refreshToken: typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null,
+            isLoggedIn: () => !!get().accessToken,
+            login: (tokens: AuthTokens, user: User) => {
+                setTokensToLocalStorage(tokens);
+                set((state) => ({
+                    ...state,
+                    accessToken: tokens.accessToken,
+                    refreshToken: tokens.refreshToken,
+                    loggedInUser: user
+                }));
+            },
+            logout: () => {
+                removeTokensFromLocalStorage();
+                set((state) => ({
+                    ...state,
+                    accessToken: null,
+                    refreshToken: null,
+                    loggedInUser: undefined
+                }));
+                toast.success("Logout successful!")
+            },
             loggedInUser: undefined
-        }));
-        toast.success("Logout successful!")
-    },
-    loggedInUser: undefined
-}))
+        }), {
+        name: 'user-storage', // unique name
+    }
+    )
+)
 

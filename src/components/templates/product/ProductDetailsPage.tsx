@@ -6,7 +6,6 @@ import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import { BarElement, CategoryScale, Chart, Legend, LineElement, LinearScale, PointElement, TimeScale, Title, Tooltip, scales } from "chart.js";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
 import { SortProps } from "./ProductListPage";
 import { useAuthStore } from "@/states/authStates";
 import ReviewBlock from "../review/ReviewBlock";
@@ -22,6 +21,7 @@ import { useGlobalStore } from "@/states/globalStates";
 import dayjs from "dayjs";
 import TimeChart from "../charts/TimeChart";
 import RatingBreakdown from "@/components/ui/RatingBreakdown";
+import User from "@/interfaces/userInterface";
 
 interface ProductDetailsPageProps {
     id: string | string[]
@@ -29,6 +29,7 @@ interface ProductDetailsPageProps {
 
 const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     const [product, setProduct] = useState<Product>();
+    const [currentUser, setCurrentUser] = useState<User>();
     const [sortCategory, setSortCategory] = useState<SortProps>({ by: "name", direction: "asc" });
     const [reviewGraphData, setReviewGraphData] = useState<{ x: any, y: any }[]>([]);
     const [activeReviewDataTab, setActiveReviewDataTab] = useState<string | null>('1M');
@@ -60,21 +61,19 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     ];
 
     const getProduct = () => {
-        handlers.open();
         const fetchData = async () => {
             let response = await getProductDetails(props.id.toString());
 
             if (response && response.data) {
                 setProduct(response.data);
-                // console.log(response.data);
-                // console.log(response.data.reviews)
             }
         }
+        handlers.open();
         fetchData().catch(console.error)
         handlers.close();
     }
 
-    const getReviewData = (activeTab: string) => {
+    const getReviewData = () => {
         handlers.open();
         const fetchData = async () => {
             if (product) {
@@ -101,7 +100,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
 
     const handleAddReview = async () => {
         handlers.open();
-        if (!user) {
+        if (!currentUser) {
             CustomToastError("Please login to write a review");
             toggleLogin();
             handlers.close();
@@ -109,7 +108,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
         }
 
         if (product) {
-            if (await checkEligibility(product.productId!, user.id)) {
+            if (await checkEligibility(product.productId!, currentUser.id)) {
                 router.push('/products/reviews/add/' + product?.productId);
             }
         }
@@ -125,11 +124,15 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     }, [props])
 
     useEffect(() => {
-        if (activeReviewDataTab) {
-            getReviewData(activeReviewDataTab);
-        }
-
+        getReviewData();
     }, [product, activeReviewDataTab])
+
+    useEffect(() => {
+        setCurrentUser(user);
+        if (props.id) {
+            getProduct();
+        }
+    }, [user])
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)]">

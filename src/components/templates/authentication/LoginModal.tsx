@@ -42,16 +42,13 @@ const LoginModal = () => {
                 response.data) {
 
                 const data = response.data;
-
                 const tokens: AuthTokens = {
                     accessToken: data.accessToken,
                     refreshToken: data.refreshToken
                 }
                 const user: User = {
-                    id: data.user.id,
-                    email: data.user.email,
+                    id: data.user.user_id,
                     username: data.user.username,
-                    roles: data.user.roles,
                     userImage: data.userImage
                 }
                 clientLogin(tokens, user);

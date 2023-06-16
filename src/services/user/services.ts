@@ -32,8 +32,8 @@ export function login(creds: LoginDto) {
         data,
         { authorization: false }
     ).then((res) => {
-        if (res.data && res.data.user && res.data.userImage) {
-            const blob = base64StringToBlob(res.data.userImage);
+        if (res.data && res.data.user && res.data.user.userImage) {
+            const blob = base64StringToBlob(res.data.user.userImage);
             const img = URL.createObjectURL(blob);
             res.data.userImage = img;
         }
@@ -47,36 +47,5 @@ export function login(creds: LoginDto) {
         }
 
     });
-
-    // .catch((err) => {
-    //     if (err.response && err.response.data) {
-    //         console.log(err.response.data.message);
-    //         CustomToastError(err.response.data.message);
-    //     } else if (err && err.response) {
-    //         CustomToastError(err.response)
-    //     } else {
-    //         CustomToastError(err)
-    //     }
-    // })
     return response;
 }
-
-export function getUserImage(id: string) {
-    const response = client.get(
-        "/getProfilePic", {
-        params: {
-            id: id
-        }, responseType: "blob",
-    }).catch(async (err) => {
-        console.log(err.response.data);
-        const error = await err.response.data.text();
-        const msg = JSON.parse(error).message;
-        CustomToastError(msg);
-    });
-
-    return response
-}
-
-export function getProfile() {
-    return client.get("/users/profile");
-} 
