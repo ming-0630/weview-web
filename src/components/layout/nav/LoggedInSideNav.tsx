@@ -17,7 +17,7 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
     const logout = useAuthStore((state) => state.logout)
 
     return (
-        <div className="h-full flex flex-col">
+        <div className="min-h-screen p-5 flex flex-col">
             <div className="flex justify-center items-center mb-1">
                 <Image src={WeViewLogo} alt="WeView logo" width={50}></Image>
             </div>
@@ -46,7 +46,7 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
             <hr className="border-none h-0.5 text-black/10 bg-black/10 rounded my-3"></hr>
             <NavItem
                 title='My Watchlist'
-                href={'/'}
+                href={'/user/watchlist'}
                 icon={<HeartIcon className='w-6 m-3'></HeartIcon>}
             ></NavItem>
             <NavItem
@@ -61,7 +61,7 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
             ></NavItem>
             <NavItem
                 title='All Products'
-                href={'/product-list-page'}
+                href={'/products/all'}
                 icon={<CubeIcon className='w-6 m-3'></CubeIcon>}
             ></NavItem>
             <NavItemCollapse
@@ -69,25 +69,25 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
                 icon={<Squares2X2Icon className='w-6 m-3'></Squares2X2Icon>}>
                 <NavItem
                     title='Smartphones'
-                    href={'/product-list-page'}
+                    href={'/products/smartphones'}
                     icon={<DevicePhoneMobileIcon className='w-6 m-3'></DevicePhoneMobileIcon>}
                     isNavItem
                 ></NavItem>
                 <NavItem
                     title='Music'
-                    href={'/product-list-page'}
+                    href={'/products/music'}
                     icon={<MusicalNoteIcon className='w-6 m-3'></MusicalNoteIcon>}
                     isNavItem
                 ></NavItem>
                 <NavItem
                     title='Computers'
-                    href={'/product-list-page'}
+                    href={'/products/computers'}
                     icon={<ComputerDesktopIcon className='w-6 m-3'></ComputerDesktopIcon>}
                     isNavItem
                 ></NavItem>
                 <NavItem
                     title='Home Appliances'
-                    href={'/product-list-page'}
+                    href={'/products/homeappliances'}
                     icon={<BoltIcon className='w-6 m-3'></BoltIcon>}
                     isNavItem
                 ></NavItem>

@@ -2,7 +2,7 @@ import FadedLine from "@/components/ui/FadedLine";
 import ProductDetailsBg from "@/components/ui/ProductDetailsBg";
 import Product from "@/interfaces/productInterface";
 import { getProductDetails } from "@/services/product/services";
-import { ArrowDownIcon } from "@heroicons/react/24/outline";
+import { ArrowDownIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { BarElement, CategoryScale, Chart, Legend, LineElement, LinearScale, PointElement, TimeScale, Title, Tooltip, scales } from "chart.js";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -22,6 +22,9 @@ import dayjs from "dayjs";
 import TimeChart from "../charts/TimeChart";
 import RatingBreakdown from "@/components/ui/RatingBreakdown";
 import User from "@/interfaces/userInterface";
+import { CheckIcon } from "@heroicons/react/24/solid";
+import { addToWatchlist } from "@/services/user/services";
+import { toast } from "react-toastify";
 
 interface ProductDetailsPageProps {
     id: string | string[]
@@ -134,6 +137,19 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
         }
     }, [user])
 
+    const handleAddToWatchlist = async () => {
+        handlers.open()
+        if (user) {
+            const response = await addToWatchlist(product?.productId!, user?.id)
+
+            if (response && response.status == 200) {
+                toast.success("Added to watchlist")
+                getProduct()
+            }
+        }
+        handlers.close()
+    }
+
     return (
         <div className="min-h-[calc(100vh_-_5rem)]">
             <LoadingOverlay visible={isLoading} overlayBlur={2} />
@@ -153,11 +169,13 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                     </div>
                     <div className="flex flex-col grow gap-2 text-white">
                         <span className="text-7xl font-semibold">{product?.name}</span>
-                        <Link href={'/products/' + product?.category?.toString().toLowerCase()} className="mt-2">
-                            <span className='font-medium text-3xl hover:underline uppercase opacity-70'>
+
+                        <span className='font-medium text-3xl uppercase opacity-70 inline-block mt-2'>
+                            <Link href={'/products/' + product?.category?.toString().toLowerCase()} className="hover:underline ">
                                 {product?.category && product.category}
-                            </span>
-                        </Link>
+                            </Link>
+                        </span>
+
                         <hr className="border-none h-1 bg-white/50 rounded my-2"></hr>
                         <div className="flex justify-between">
                             {
@@ -170,13 +188,33 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                                     </div> :
                                     "No Reviews yet!"
                             }
-                            <Link href="#review-section">
-                                <button className="flex text-main bg-white p-5 rounded-2xl items-center text-xl font-semibold">
-                                    <ArrowDownIcon className="w-7 mr-2"></ArrowDownIcon>
-                                    Show Reviews
-                                </button>
-                            </Link>
+                            <div className="flex gap-5">
 
+                                {
+                                    product?.watchlisted ?
+                                        <div className="flex text-white bg-transparent
+                                                        p-5 rounded-2xl items-center text-xl font-semibold
+                                                        ">
+                                            <CheckIcon className="w-7 mr-2"></CheckIcon>
+                                            Added to Watchlist
+                                        </div>
+                                        : <button className="flex text-white bg-transparent border-white border-2
+                                                        p-5 rounded-2xl items-center text-xl font-semibold
+                                                        transition
+                                                        hover:bg-white hover:text-main"
+                                            onClick={handleAddToWatchlist}>
+                                            <HeartIcon className="w-7 mr-2"></HeartIcon>
+                                            Add to Watchlist
+                                        </button>
+                                }
+
+                                <Link href="#review-section">
+                                    <button className="flex text-main bg-white p-5 rounded-2xl items-center text-xl font-semibold hover:brightness-95">
+                                        <ArrowDownIcon className="w-7 mr-2"></ArrowDownIcon>
+                                        Show Reviews
+                                    </button>
+                                </Link>
+                            </div>
                         </div>
                     </div>
 

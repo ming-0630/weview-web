@@ -4,6 +4,11 @@ import Image, { StaticImageData } from 'next/image';
 import { useState } from 'react';
 import Product from '@/interfaces/productInterface';
 import classNames from 'classnames';
+import { addToWatchlist } from '@/services/user/services';
+import useStore from '@/utils/useStore';
+import { useAuthStore } from '@/states/authStates';
+import CustomToastError from '@/utils/CustomToastError';
+import { useGlobalStore } from '@/states/globalStates';
 
 export interface ProductCardProps {
     product: Product
@@ -14,12 +19,24 @@ export interface ProductCardProps {
 const ProductCardOri = (props: ProductCardProps) => {
     const outlinePlus = <PlusCircleIcon className='w-9'></PlusCircleIcon>
     const filledPlus = <PlusCircleIconFilled className='w-9'></PlusCircleIconFilled>
-
     const [icon, setIcon] = useState(outlinePlus)
+
+    const user = useStore(useAuthStore, (state) => state.loggedInUser)
+    const toggleLogin = useGlobalStore((state) => state.toggleLogin)
+
+    const handleOnWatchlistClick = async () => {
+        if (user) {
+            const response = await addToWatchlist(props.product.productId!, user?.id)
+        } else {
+            CustomToastError("Please login to add to watchlist");
+            toggleLogin();
+            return;
+        }
+    }
 
 
     return (
-        <div className={classNames('text-white-plain w-full rounded-xl flex flex-col hover:scale-105 transition cursor-pointer rounded-2xl overflow-hidden',
+        <div className={classNames('text-white-plain w-full flex flex-col hover:scale-105 transition cursor-pointer rounded-2xl overflow-hidden',
             'bg-main from-main to-white-plain to-40% drop-shadow-xl',
             props.hasBorder && 'border-0 border-main'
         )}>
@@ -39,6 +56,7 @@ const ProductCardOri = (props: ProductCardProps) => {
                             <span className='text-lg'>{"0.00"}</span>
                         </div>
                         <div className='rounded-full inline-block cursor-pointer mt-3'
+                            onClick={handleOnWatchlistClick}
                             onMouseEnter={() => { setIcon(filledPlus) }}
                             onMouseLeave={() => { setIcon(outlinePlus) }}>
                             {icon}

@@ -14,9 +14,10 @@ export interface Product {
     ratingCount?: number
     averagePrice?: number,
     minPrice?: number,
-    maxPrice?: number
-    images?: string[]
-    reviews?: Review[]
+    maxPrice?: number,
+    images?: string[],
+    reviews?: Review[],
+    watchlisted?: boolean
 }
 
 export default Product

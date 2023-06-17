@@ -20,7 +20,7 @@ const SideNavItems = () => {
         toggleRegister();
     }
     return (
-        <div className="h-full flex flex-col">
+        <div className="flex flex-col p-5">
             <div className="flex justify-center items-center">
                 <Image src={WeViewLogo} alt="WeView logo" width={50}></Image>
             </div>

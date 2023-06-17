@@ -55,13 +55,14 @@ const NavBar = (props: NavBarProps) => {
     )
 
     return (
-        <SideNavBar>
+        <>
             <Head>
                 <title>{props.title ?? "WeView"}</title>
             </Head>
             {nav}
+            <SideNavBar></SideNavBar>
             {props.children}
-        </SideNavBar>
+        </>
     );
 }
 

@@ -5,6 +5,12 @@ import { getAllProductPreview, getCategoryPreview, getSearchProduct } from "@/se
 import Product from "@/interfaces/productInterface";
 import { LoadingOverlay, Pagination, RangeSlider, Slider } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import useStore from "@/utils/useStore";
+import { useAuthStore } from "@/states/authStates";
+import { useGlobalStore } from "@/states/globalStates";
+import { addToWatchlist } from "@/services/user/services";
+import { toast } from "react-toastify";
+import CustomToastError from "@/utils/CustomToastError";
 
 interface ProductListPageProps {
     category?: string | string[];
@@ -26,6 +32,10 @@ const ProductListPage = (props: ProductListPageProps) => {
     const [totalPage, setTotalPage] = useState(1);
 
     const [isLoading, handlers] = useDisclosure(false);
+
+    const user = useStore(useAuthStore, (state) => state.loggedInUser)
+    const toggleLogin = useGlobalStore((state) => state.toggleLogin)
+
 
     const getProduct = async (page: number, sortCategory: SortProps) => {
         handlers.open();
@@ -67,6 +77,23 @@ const ProductListPage = (props: ProductListPageProps) => {
         }
     }
 
+    const handleOnWatchlistClick = async (productId: string) => {
+        handlers.open();
+        if (user) {
+            const response = await addToWatchlist(productId, user?.id)
+            if (response && response.status == 200 && response.data) {
+                toast.success(response.data);
+                getProduct(page, sortCategory);
+            }
+        } else {
+            CustomToastError("Please login to add to watchlist");
+            handlers.close();
+            toggleLogin();
+            return;
+        }
+        handlers.close();
+    }
+
     // On Props change
     useEffect(() => {
         if (page != 1) {
@@ -83,7 +110,7 @@ const ProductListPage = (props: ProductListPageProps) => {
     // On page change
     useEffect(() => {
         getProduct(page, sortCategory);
-    }, [page])
+    }, [page, user])
 
     // On Sort Change
     useEffect(() => {
@@ -131,9 +158,6 @@ const ProductListPage = (props: ProductListPageProps) => {
                                 <option value={JSON.stringify({ by: "name", direction: "desc" })}>Z to A</option>
                                 <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Highest Rating</option>
                                 <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Lowest Rating</option>
-
-                                {/* <option>Highest Average Price</option>
-                                <option>Lowest Average Price</option> */}
                             </select>
                         </div>
                         <div className="dropdown dropdown-end">
@@ -165,7 +189,9 @@ const ProductListPage = (props: ProductListPageProps) => {
                     {products.map(product => {
                         return (
                             <div className="my-5 w-[15rem] xl:w-[19rem] 3xl:basis-1/5 h-[20rem] xl:h-[23rem]" key={product.productId}>
-                                <ProductCard product={product} hasBorder></ProductCard>
+                                <ProductCard product={product}
+                                    onWatchlistClick={() => { handleOnWatchlistClick(product.productId!) }}
+                                ></ProductCard>
                             </div>
                         )
                     })
@@ -179,7 +205,6 @@ const ProductListPage = (props: ProductListPageProps) => {
                         classNames={{ control: 'border-transparent' }}
                     />
                 </div>
-
             </div>
         </div>
     );

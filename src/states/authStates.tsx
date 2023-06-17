@@ -1,4 +1,5 @@
 import User from '@/interfaces/userInterface';
+import { base64StringToBlob } from 'blob-util';
 import { toast } from 'react-toastify';
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware';
@@ -55,6 +56,15 @@ export const useAuthStore = create<AuthState>()(
             loggedInUser: undefined
         }), {
         name: 'user-storage', // unique name
+        onRehydrateStorage: (state) => {
+            return (state) => {
+                if (state && state.loggedInUser && state.loggedInUser.userImageBase64) {
+                    const blob = base64StringToBlob(state.loggedInUser?.userImageBase64);
+                    const img = URL.createObjectURL(blob);
+                    state.loggedInUser.userImage = img;
+                }
+            }
+        }
     }
     )
 )

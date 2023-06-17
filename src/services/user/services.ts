@@ -1,7 +1,6 @@
-import { toast } from "react-toastify";
+import { base64StringToBlob } from "blob-util";
 import { client } from "../axiosClient";
 import CustomToastError from "@/utils/CustomToastError";
-import { base64StringToBlob } from "blob-util";
 
 export interface RegisterDto {
     email: string,
@@ -31,11 +30,58 @@ export function login(creds: LoginDto) {
         "auth/login",
         data,
         { authorization: false }
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response;
+}
+
+export function addToWatchlist(productId: string, userId: string) {
+    const response = client.post(
+        "user/addToWatchlist",
+        null, {
+        params: {
+            productId: productId,
+            userId: userId
+        }
+    }
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response;
+}
+
+
+export function fetchWatchlist(userId: string, pageNum: number, sortBy?: string, direction?: string) {
+    const response = client.get(
+        "user/watchlist",
+        {
+            params: {
+                userId: userId,
+                pageNum: pageNum,
+                sortBy: sortBy,
+                direction: direction
+            }
+        }
     ).then((res) => {
-        if (res.data && res.data.user && res.data.user.userImage) {
-            const blob = base64StringToBlob(res.data.user.userImage);
-            const img = URL.createObjectURL(blob);
-            res.data.userImage = img;
+        if (res.data && res.data.productDTOs) {
+            res.data.productDTOs.forEach((product: any) => {
+                const blob = base64StringToBlob(product.coverImage);
+                const img = URL.createObjectURL(blob);
+                product.coverImage = img;
+            });
         }
         return res;
     }).catch((err) => {

@@ -12,6 +12,7 @@ import CustomToastError from "@/utils/CustomToastError";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlay } from "@mantine/core";
 import { Button } from "@/components/ui/Button";
+import { base64StringToBlob } from "blob-util";
 
 const LoginModal = () => {
     const isShow = useGlobalStore((state) => state.loginIsOpen)
@@ -46,10 +47,15 @@ const LoginModal = () => {
                     accessToken: data.accessToken,
                     refreshToken: data.refreshToken
                 }
+
+                const blob = base64StringToBlob(data.user.userImage);
+                const img = URL.createObjectURL(blob);
+
                 const user: User = {
                     id: data.user.user_id,
                     username: data.user.username,
-                    userImage: data.userImage
+                    userImageBase64: data.user.userImage,
+                    userImage: img
                 }
                 clientLogin(tokens, user);
                 toast.success("Login Successful!");
