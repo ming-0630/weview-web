@@ -1,18 +1,18 @@
-import Modal from "@/components/ui/Modal";
-import Image from 'next/image';
-import WeViewLogo from '/public/favicon.ico';
-import { useEffect, useState } from "react";
-import { useGlobalStore } from "@/states/globalStates";
-import PasswordInput from "@/components/ui/PasswordInput";
-import { LoginDto, login } from "@/services/user/services";
-import { toast } from "react-toastify";
-import { AuthTokens, useAuthStore } from "@/states/authStates";
-import User from "@/interfaces/userInterface";
-import CustomToastError from "@/utils/CustomToastError";
-import { useDisclosure } from "@mantine/hooks";
-import { LoadingOverlay } from "@mantine/core";
 import { Button } from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import PasswordInput from "@/components/ui/PasswordInput";
+import User from "@/interfaces/userInterface";
+import { LoginDto, login } from "@/services/user/services";
+import { AuthTokens, useAuthStore } from "@/states/authStates";
+import { useGlobalStore } from "@/states/globalStates";
+import CustomToastError from "@/utils/CustomToastError";
+import { LoadingOverlay } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { base64StringToBlob } from "blob-util";
+import Image from 'next/image';
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import WeViewLogo from '/public/favicon.ico';
 
 const LoginModal = () => {
     const isShow = useGlobalStore((state) => state.loginIsOpen)
@@ -52,6 +52,7 @@ const LoginModal = () => {
                     id: data.user.id,
                     username: data.user.username,
                     userImageBase64: data.user.userImage,
+                    isVerified: data.user.isVerified
                 }
 
                 if (data.user && data.user.userImage) {

@@ -95,3 +95,25 @@ export function fetchWatchlist(userId: string, pageNum: number, sortBy?: string,
     });
     return response;
 }
+
+export function updateProfilePicture(props: FormData) {
+    const response = client.post(
+        "/user/updateProfilePicture",
+        props,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        },
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+
+    return response
+}

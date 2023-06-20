@@ -6,6 +6,7 @@ import { ScriptProps } from "next/script";
 import ConfirmModal from "../templates/authentication/ConfirmModal";
 import { LoadingOverlay } from "@mantine/core";
 import { useGlobalStore } from "@/states/globalStates";
+import UploadProfilePicModal from "../templates/user/UploadProfilePicModal";
 
 // declare module '@mui/material/styles' {
 //     interface Theme {
@@ -56,6 +57,7 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
             <ConfirmModal></ConfirmModal>
             <LoginModal></LoginModal>
             <RegisterModal></RegisterModal>
+            <UploadProfilePicModal></UploadProfilePicModal>
             <NavBar>
                 <div className='w-full bg-white !scroll-smooth'>
                     {children}

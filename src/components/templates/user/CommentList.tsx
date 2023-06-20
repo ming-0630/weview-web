@@ -1,14 +1,14 @@
 import Comment from "@/interfaces/commentInterface";
-import { fetchReviews, fetchUserComments } from "@/services/review/services";
+import { fetchUserComments } from "@/services/review/services";
 import { useAuthStore } from "@/states/authStates";
 import { useGlobalStore } from "@/states/globalStates";
 import useStore from "@/utils/useStore";
-import { ChatBubbleLeftRightIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { Pagination } from "@mantine/core";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SortProps } from "../product/ProductListPage";
 import CommentBlock from "../review/CommentBlock";
-import Link from "next/link";
 
 const CommentList = () => {
     const [comments, setComments] = useState<Comment[]>([]);

@@ -1,40 +1,79 @@
-import { UserCircleIcon, PencilSquareIcon, ChatBubbleLeftRightIcon, HomeIcon, CubeIcon, HeartIcon, ArrowTrendingUpIcon, Squares2X2Icon, DevicePhoneMobileIcon, ComputerDesktopIcon, BoltIcon, MusicalNoteIcon, ChartBarSquareIcon, ChevronLeftIcon } from "@heroicons/react/24/outline"
-import NavItem from "./NavItem"
-import NavItemCollapse from "./NavItemCollapse"
-import Image, { StaticImageData } from 'next/image';
-import { useGlobalStore } from "@/states/globalStates";
-import WeViewLogo from '/public/favicon.ico';
 import { useAuthStore } from "@/states/authStates";
+import { useGlobalStore } from "@/states/globalStates";
+import useStore from "@/utils/useStore";
+import { ArrowTrendingUpIcon, BoltIcon, ChartBarSquareIcon, ChatBubbleLeftRightIcon, ComputerDesktopIcon, CubeIcon, DevicePhoneMobileIcon, FireIcon, HeartIcon, HomeIcon, MusicalNoteIcon, PencilSquareIcon, QuestionMarkCircleIcon, Squares2X2Icon, UserCircleIcon } from "@heroicons/react/24/outline";
+import Image from 'next/image';
 import { useRouter } from "next/router";
+import blankUserImage from '../../../assets/blank_user.png';
+import NavItem from "./NavItem";
+import NavItemCollapse from "./NavItemCollapse";
+import WeViewLogo from '/public/favicon.ico';
+import { Tooltip } from "@mantine/core";
+import Link from "next/link";
+import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 
-export interface LoggedInSideNavProps {
-    username: string;
-    image: string | StaticImageData | any
-}
-
-const LoggedInSideNav = (props: LoggedInSideNavProps) => {
+const LoggedInSideNav = () => {
     const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
     const toggleNav = useGlobalStore((state) => state.toggleNav)
+    const toggleUpload = useGlobalStore((state) => state.toggleUpload)
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
     const logout = useAuthStore((state) => state.logout)
+    const user = useStore(useAuthStore, ((state) => state.loggedInUser))
 
     const router = useRouter();
 
     return (
         <div className="min-h-screen p-5 flex flex-col">
-            <div className="flex justify-center items-center mb-1">
+            <div className="flex justify-center items-center mb-3">
                 <Image src={WeViewLogo} alt="WeView logo" width={50}></Image>
             </div>
-            <NavItemCollapse title={props.username}
-                icon={<div className="rounded-full border-main border-2 ml-4 mr-6 w-12 h-12 relative">
-                    <Image src={props.image} alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
-                </div>}
-                className='text-xl !p-3'
+            <div className="flex mb-3">
+                <div className="rounded-full border-main border-2 ml-4 mr-6 w-12 h-12 relative cursor-pointer"
+                    onClick={toggleUpload}
+                >
+                    <Image src={user && user.userImage ? user.userImage : blankUserImage} alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
+                </div>
+                <div className="flex flex-col" >
+                    <div className="flex items-center">
+                        <div className="text-main font-bold text-2xl mb-1 mr-5">{user?.username}</div>
+                        {user && user.isVerified ?
+                            <Tooltip label="Verified!" withArrow>
+                                <CheckCircleIcon className="w-5"></CheckCircleIcon>
+                            </Tooltip>
+                            : <Tooltip label="Verify your account to unlock full access!" withArrow>
+                                <Link href={""}>
+                                    <ExclamationTriangleIcon className="w-5 text-red-400"></ExclamationTriangleIcon>
+                                </Link>
+                            </Tooltip>
+
+                        }
+                    </div>
+
+                    <div className="flex items-center">
+                        <FireIcon className="w-5 mr-2 text-orange-400"></FireIcon>
+                        <div className="text-sm text-orange-400 mr-2">{"555 points"}</div>
+                        <Tooltip label="Click here to know more about points!" withArrow>
+                            <Link href={""}>
+                                <QuestionMarkCircleIcon className="w-5 stroke-2 text-gray-500"></QuestionMarkCircleIcon>
+                            </Link>
+                        </Tooltip>
+                    </div>
+                </div>
+            </div>
+
+            <hr className="border-none h-0.5 text-black/10 bg-black/10 rounded my-3"></hr>
+            <NavItem
+                title='Home'
+                href={'/'}
+                icon={<HomeIcon className='w-6 m-3'></HomeIcon>}
+            ></NavItem>
+            <NavItemCollapse title={'My Profile'}
+                icon={<UserCircleIcon className='w-6 m-3'></UserCircleIcon>}
             >
                 <NavItem
-                    title='My Profile'
-                    href={'/'}
-                    icon={<UserCircleIcon className='w-6 m-3'></UserCircleIcon>}
+                    title='My Watchlist'
+                    href={'/user/watchlist'}
+                    icon={<HeartIcon className='w-6 m-3'></HeartIcon>}
                 ></NavItem>
                 <NavItem
                     title='My Reviews'
@@ -47,17 +86,6 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
                     icon={<ChatBubbleLeftRightIcon className='w-6 m-3'></ChatBubbleLeftRightIcon>}
                 ></NavItem>
             </NavItemCollapse>
-            <hr className="border-none h-0.5 text-black/10 bg-black/10 rounded my-3"></hr>
-            <NavItem
-                title='My Watchlist'
-                href={'/user/watchlist'}
-                icon={<HeartIcon className='w-6 m-3'></HeartIcon>}
-            ></NavItem>
-            <NavItem
-                title='Home'
-                href={'/'}
-                icon={<HomeIcon className='w-6 m-3'></HomeIcon>}
-            ></NavItem>
             <NavItem
                 title='Trending'
                 href={'/product-list-page'}

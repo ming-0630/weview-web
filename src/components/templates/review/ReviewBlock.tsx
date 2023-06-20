@@ -1,25 +1,23 @@
-import { FlagIcon } from "@heroicons/react/24/outline";
-import Image from 'next/image';
-import blankUserImage from '../../../assets/blank_user.png'
-import User from "@/interfaces/userInterface";
 import Accordion from "@/components/ui/Accordion";
-import CommentBlock from "./CommentBlock";
-import Review from "@/interfaces/reviewInterface";
-import dayjs from "dayjs";
-import { Rating } from "@mantine/core";
-import UpvoteDownvote from "@/components/ui/UpvoteDownvote";
-import { InputTextarea } from 'primereact/inputtextarea'
 import { Button } from "@/components/ui/Button";
-import { useEffect, useState } from "react";
-import { useAuthStore } from "@/states/authStates";
-import { useDisclosure } from "@mantine/hooks";
-import CustomToastError from "@/utils/CustomToastError";
-import { useGlobalStore } from "@/states/globalStates";
-import { addComment, deleteReviewAPI, getComments } from "@/services/review/services";
+import UpvoteDownvote from "@/components/ui/UpvoteDownvote";
 import Comment from "@/interfaces/commentInterface";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import Review from "@/interfaces/reviewInterface";
+import User from "@/interfaces/userInterface";
+import { addComment, deleteReviewAPI, getComments } from "@/services/review/services";
+import { useAuthStore } from "@/states/authStates";
+import { useGlobalStore } from "@/states/globalStates";
+import CustomToastError from "@/utils/CustomToastError";
 import useStore from "@/utils/useStore";
+import { FlagIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Rating } from "@mantine/core";
+import dayjs from "dayjs";
+import Image from 'next/image';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import blankUserImage from '../../../assets/blank_user.png';
+import CommentBlock from "./CommentBlock";
 
 export interface ReviewBlockProps {
     className?: string;

@@ -5,6 +5,7 @@ interface User {
     username: string;
     userImage?: string;
     userImageBase64?: string;
+    isVerified: boolean
 }
 
 export default User

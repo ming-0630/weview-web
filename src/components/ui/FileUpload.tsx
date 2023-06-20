@@ -11,6 +11,7 @@ import classNames from 'classnames';
 export interface FileUploadProps {
     files: File[];
     setFiles: (...args: any[]) => void;
+    containerClassName?: string;
 }
 
 const CustomFileUpload = (props: FileUploadProps) => {
@@ -126,17 +127,18 @@ const CustomFileUpload = (props: FileUploadProps) => {
     const cancelOptions = { icon: <TrashIcon className='w-7'></TrashIcon>, iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' };
 
     return (
-        <div className='w-full overflow-y-auto max-h-[65vh]'>
+        <div className={classNames('w-full overflow-y-auto max-h-[65vh]', props.containerClassName)}>
             <Toast ref={toast}></Toast>
 
             <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
             <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
 
-            <FileUpload ref={fileUploadRef} name="demo[]" url="/api/upload" multiple accept="image/*" maxFileSize={10000000}
+            <FileUpload ref={fileUploadRef} name="demo[]" url="/api/upload" accept="image/*" maxFileSize={10000000}
                 onSelect={onSelect} onError={onClear} onClear={onClear}
                 headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                 chooseOptions={chooseOptions} customUpload cancelOptions={cancelOptions}
-                contentClassName="min-h-[40vh] flex justify-center w-full [&>*:nth-child(3)]:w-full" />
+                multiple
+                contentClassName="min-h-[30vh] flex justify-center w-full [&>*:nth-child(3)]:w-full" />
         </div>
     )
 }

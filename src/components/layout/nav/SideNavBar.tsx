@@ -1,11 +1,10 @@
-import { ReactNode } from 'react';
-import { useGlobalStore } from '@/states/globalStates';
 import { useAuthStore } from '@/states/authStates';
-import blankUserImage from '../../../assets/blank_user.png'
-import LoggedInSideNav from './LoggedInSideNav';
-import SideNavItems from './SideNavItems';
+import { useGlobalStore } from '@/states/globalStates';
 import useStore from '@/utils/useStore';
 import { Drawer, ScrollArea } from '@mantine/core';
+import { ReactNode } from 'react';
+import LoggedInSideNav from './LoggedInSideNav';
+import SideNavItems from './SideNavItems';
 
 export interface SideNavBarProps {
     children?: ReactNode,
@@ -24,8 +23,7 @@ const SideNavBar = (props: SideNavBarProps) => {
                 classNames={{
                     body: "min-h-screen p-0"
                 }}>
-                {user ? <LoggedInSideNav username={user.username}
-                    image={user && user.userImage ? user.userImage : blankUserImage}></LoggedInSideNav>
+                {user ? <LoggedInSideNav></LoggedInSideNav>
                     : <SideNavItems></SideNavItems>
                 }
 
