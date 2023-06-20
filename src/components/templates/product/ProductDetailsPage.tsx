@@ -5,13 +5,12 @@ import { getProductDetails } from "@/services/product/services";
 import { ArrowDownIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { BarElement, CategoryScale, Chart, Legend, LineElement, LinearScale, PointElement, TimeScale, Title, Tooltip, scales } from "chart.js";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SortProps } from "./ProductListPage";
 import { useAuthStore } from "@/states/authStates";
 import ReviewBlock from "../review/ReviewBlock";
 import Carousel from "@/components/ui/Carousell";
 import Image from "next/image";
-import { LoadingOverlay, Rating } from "@mantine/core";
 import Review from "@/interfaces/reviewInterface";
 import { useRouter } from "next/router";
 import { checkEligibility, fetchReviewData } from "@/services/review/services";
@@ -25,6 +24,7 @@ import User from "@/interfaces/userInterface";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { addToWatchlist } from "@/services/user/services";
 import { toast } from "react-toastify";
+import { Rating } from "@mantine/core";
 
 interface ProductDetailsPageProps {
     id: string | string[]
@@ -39,9 +39,14 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
 
     const user = useAuthStore((state) => state.loggedInUser)
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
+    const loadingHandler = useGlobalStore((state) => state.loadingHandler)
 
-    const [isLoading, handlers] = useDisclosure(false);
     const router = useRouter();
+    const getHashValue = () => {
+        const hash = router.asPath.split('#')[1];
+        return hash;
+    };
+    const reviewRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
     Chart.register(CategoryScale,
         LinearScale,
@@ -71,13 +76,13 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                 setProduct(response.data);
             }
         }
-        handlers.open();
+        loadingHandler.open();
         fetchData().catch(console.error)
-        handlers.close();
+        loadingHandler.close();
     }
 
     const getReviewData = () => {
-        handlers.open();
+        loadingHandler.open();
         const fetchData = async () => {
             if (product) {
                 if (activeReviewDataTab !== '1M' && activeReviewDataTab !== '1Y' && activeReviewDataTab !== 'MAX') {
@@ -98,15 +103,15 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
             }
         }
         fetchData().catch(console.error)
-        handlers.close();
+        loadingHandler.close();
     }
 
     const handleAddReview = async () => {
-        handlers.open();
+        loadingHandler.open();
         if (!currentUser) {
             CustomToastError("Please login to write a review");
             toggleLogin();
-            handlers.close();
+            loadingHandler.close();
             return;
         }
 
@@ -116,7 +121,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
             }
         }
 
-        handlers.close()
+        loadingHandler.close()
     }
 
     // On Props change
@@ -137,8 +142,18 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
         }
     }, [user])
 
+    useEffect(() => {
+        const id = getHashValue();
+        if (id) {
+            const reviewDiv = reviewRefs.current[id.toString()];
+            if (reviewDiv) {
+                reviewDiv.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }
+        }
+    }, [product])
+
     const handleAddToWatchlist = async () => {
-        handlers.open()
+        loadingHandler.open()
         if (user) {
             const response = await addToWatchlist(product?.productId!, user?.id)
 
@@ -147,12 +162,11 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                 getProduct()
             }
         }
-        handlers.close()
+        loadingHandler.close()
     }
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)]">
-            <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <div className="h-[calc(100vh_-_5rem)] w-full overflow-hidden relative">
                 <ProductDetailsBg className="w-full absolute" viewBox="0 0 1920 1080"></ProductDetailsBg>
                 <div className="relative flex h-full items-center px-32 gap-20">
@@ -331,7 +345,13 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                         {
                             product?.reviews?.map((review: Review, i: number) => {
                                 return (
-                                    <ReviewBlock user={review.user} review={review} key={i}></ReviewBlock>
+                                    <div id={review.reviewId} ref={(ref) => (reviewRefs.current[review.reviewId!] = ref)}>
+                                        <ReviewBlock user={review.user} review={review} key={i}
+                                            refreshFunction={() => {
+                                                getProduct()
+                                            }}
+                                        ></ReviewBlock>
+                                    </div>
                                 )
                             })
                         }

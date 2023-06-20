@@ -5,6 +5,7 @@ import Image, { StaticImageData } from 'next/image';
 import { useGlobalStore } from "@/states/globalStates";
 import WeViewLogo from '/public/favicon.ico';
 import { useAuthStore } from "@/states/authStates";
+import { useRouter } from "next/router";
 
 export interface LoggedInSideNavProps {
     username: string;
@@ -14,7 +15,10 @@ export interface LoggedInSideNavProps {
 const LoggedInSideNav = (props: LoggedInSideNavProps) => {
     const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
     const toggleNav = useGlobalStore((state) => state.toggleNav)
+    const loadingHandler = useGlobalStore((state) => state.loadingHandler)
     const logout = useAuthStore((state) => state.logout)
+
+    const router = useRouter();
 
     return (
         <div className="min-h-screen p-5 flex flex-col">
@@ -34,12 +38,12 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
                 ></NavItem>
                 <NavItem
                     title='My Reviews'
-                    href={'/'}
+                    href={'/user/reviews'}
                     icon={<PencilSquareIcon className='w-6 m-3'></PencilSquareIcon>}
                 ></NavItem>
                 <NavItem
                     title='My Comments'
-                    href={'/'}
+                    href={'/user/comments'}
                     icon={<ChatBubbleLeftRightIcon className='w-6 m-3'></ChatBubbleLeftRightIcon>}
                 ></NavItem>
             </NavItemCollapse>
@@ -102,7 +106,13 @@ const LoggedInSideNav = (props: LoggedInSideNavProps) => {
                 toggleConfirm({
                     title: "Confirm Logout?",
                     description: "Are you sure you want to logout?",
-                    onClickYes: () => { toggleConfirm(); logout(); }
+                    onClickYes: () => {
+                        loadingHandler.open();
+                        router.push("/");
+                        toggleConfirm();
+                        logout();
+                        loadingHandler.close();
+                    }
                 });
                 toggleNav();
             }}>Logout</div>

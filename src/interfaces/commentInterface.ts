@@ -8,6 +8,8 @@ export interface Comment {
     dateCreated: Date,
     votes: number,
     currentUserVote: VoteType | null,
+    productId?: string,
+    reviewId?: string
 }
 
 export default Comment

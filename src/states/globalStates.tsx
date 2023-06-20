@@ -7,12 +7,16 @@ export interface GlobalState {
     registerIsOpen: boolean,
     confirmIsOpen: boolean,
     confirmDetails: ConfirmModalProps,
+    loading: boolean,
     toggleNav: () => void,
     toggleLogin: () => void,
     toggleRegister: () => void,
-    // toggleConfirm: (onClickYes?: (...args: any[]) => void) => void,
     toggleConfirm: (props?: ConfirmModalProps) => void,
-    // modalIsOpen: () => boolean
+    loadingHandler: {
+        open: () => void;
+        close: () => void
+    }
+
 }
 
 export const useGlobalStore = create<GlobalState>()((set) => (
@@ -22,7 +26,7 @@ export const useGlobalStore = create<GlobalState>()((set) => (
         registerIsOpen: false,
         confirmIsOpen: false,
         confirmDetails: {},
-        nav2isOpen: false,
+        loading: false,
         toggleNav: () => set((state) => ({ navIsOpen: !state.navIsOpen })),
         toggleLogin: () => set((state) => ({ loginIsOpen: !state.loginIsOpen })),
         toggleRegister: () => set((state) => ({ registerIsOpen: !state.registerIsOpen })),
@@ -33,9 +37,9 @@ export const useGlobalStore = create<GlobalState>()((set) => (
                 confirmDetails: !state.confirmIsOpen ? confirmDetails : state.confirmDetails
             }))
         },
-        // modalIsOpen: () => {
-
-        //     return false;
-        // }
+        loadingHandler: {
+            open: () => set({ loading: true }),
+            close: () => set({ loading: false })
+        }
     }))
 

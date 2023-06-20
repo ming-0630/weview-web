@@ -4,6 +4,8 @@ import RegisterModal from "../templates/authentication/RegisterModal";
 import NavBar from "./nav/NavBar";
 import { ScriptProps } from "next/script";
 import ConfirmModal from "../templates/authentication/ConfirmModal";
+import { LoadingOverlay } from "@mantine/core";
+import { useGlobalStore } from "@/states/globalStates";
 
 // declare module '@mui/material/styles' {
 //     interface Theme {
@@ -34,9 +36,10 @@ import ConfirmModal from "../templates/authentication/ConfirmModal";
 // });
 
 const DefaultPageLayout = ({ children }: ScriptProps) => {
+    const isLoading = useGlobalStore((state) => state.loading)
     return (
         <main
-            className='flex min-h-screen flex-col items-center justify-between font-sans text-black'>
+            className='flex flex-col items-center justify-between font-sans text-black relative'>
             <ToastContainer
                 position="bottom-right"
                 autoClose={1500}
@@ -49,6 +52,7 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
                 pauseOnHover
                 theme="light"
             />
+            <LoadingOverlay visible={isLoading} overlayBlur={2} className="h-screen fixed w-full" />
             <ConfirmModal></ConfirmModal>
             <LoginModal></LoginModal>
             <RegisterModal></RegisterModal>

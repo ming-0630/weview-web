@@ -9,9 +9,9 @@ export interface Review {
     description?: string
     date_created?: any
     date_updated?: any
-    votes: number,
-    currentUserVote: VoteType | null,
-    commentCount: number,
+    votes?: number,
+    currentUserVote?: VoteType | null,
+    commentCount?: number,
     user?: User
     images?: string[]
     tempImages?: File[]

@@ -4,44 +4,42 @@ import blankUserImage from '../../../assets/blank_user.png'
 import User from "@/interfaces/userInterface";
 import Accordion from "@/components/ui/Accordion";
 import CommentBlock from "./CommentBlock";
-import FadedLine from "@/components/ui/FadedLine";
 import Review from "@/interfaces/reviewInterface";
 import dayjs from "dayjs";
 import { Rating } from "@mantine/core";
 import UpvoteDownvote from "@/components/ui/UpvoteDownvote";
 import { InputTextarea } from 'primereact/inputtextarea'
 import { Button } from "@/components/ui/Button";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/states/authStates";
 import { useDisclosure } from "@mantine/hooks";
 import CustomToastError from "@/utils/CustomToastError";
 import { useGlobalStore } from "@/states/globalStates";
-import { addComment, getComments } from "@/services/review/services";
+import { addComment, deleteReviewAPI, getComments } from "@/services/review/services";
 import Comment from "@/interfaces/commentInterface";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import useStore from "@/utils/useStore";
+import { toast } from "react-toastify";
 
 export interface ReviewBlockProps {
     className?: string;
     user?: User;
     review?: Review;
     isPreview?: boolean;
+    refreshFunction?: (...args: any[]) => void
 }
 
 const ReviewBlock = (props: ReviewBlockProps) => {
-    const [loggedInUser, setLoggedInUser] = useState<User>();
     const [commentsPage, setCommentsPage] = useState(0);
     const [commentsHasNext, setCommentsHasNext] = useState(false);
     const [comments, setComments] = useState<Comment[]>([]);
 
     const [newComment, setNewComment] = useState("");
 
-    const user = useAuthStore((state) => state.loggedInUser)
+    const user = useStore(useAuthStore, ((state) => state.loggedInUser))
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
-
-    const [isLoading, handlers] = useDisclosure(false);
-
-    useEffect(() => {
-        setLoggedInUser(user)
-    }, [user])
+    const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
+    const loadingHandler = useGlobalStore((state) => state.loadingHandler)
 
     useEffect(() => {
         setComments([]);
@@ -63,23 +61,23 @@ const ReviewBlock = (props: ReviewBlockProps) => {
     }
 
     const submitComment = async () => {
-        handlers.open();
-        if (!loggedInUser) {
-            CustomToastError("Please login to write a review");
+        loadingHandler.open();
+        if (!user) {
+            CustomToastError("Please login to write a comment");
             toggleLogin();
-            handlers.close();
+            loadingHandler.close();
             return;
         }
 
         if (!newComment) {
             CustomToastError("Cannot submit empty comment");
-            handlers.close();
+            loadingHandler.close();
             return;
         }
 
         if (props.review && props.review.reviewId) {
 
-            const response = await addComment(newComment, props.review.reviewId, loggedInUser.id)
+            const response = await addComment(newComment, props.review.reviewId, user.id)
 
             if (response && response.status == 200) {
                 setCommentsPage(1);
@@ -89,7 +87,39 @@ const ReviewBlock = (props: ReviewBlockProps) => {
             }
         }
 
-        handlers.close()
+        loadingHandler.close()
+    }
+
+    const handleDeleteReview = () => {
+        toggleConfirm({
+            title: "Confirm Delete?",
+            description: "Are you sure you want to delete this review?",
+            onClickYes: () => { deleteReview(); toggleConfirm(); }
+        });
+    }
+
+    const deleteReview = async () => {
+        try {
+            loadingHandler.open();
+            if (props.review) {
+                const response = await deleteReviewAPI(props.review.reviewId!)
+
+                if (response && response.status == 200) {
+                    toast.success("Deleted successfully");
+                    // window.location.reload();
+                    if (props.refreshFunction) {
+                        props.refreshFunction();
+                    }
+                }
+            }
+        } finally {
+            loadingHandler.close()
+        }
+    }
+
+    const handleReport = () => {
+        console.log(props.review)
+        console.log(user)
     }
 
     return (
@@ -98,8 +128,12 @@ const ReviewBlock = (props: ReviewBlockProps) => {
                 <UpvoteDownvote reviewId={props.review?.reviewId} intialVotes={props.review?.votes}
                     currentUserVote={props.review?.currentUserVote}
                 ></UpvoteDownvote>
+                {
+                    props.review?.user?.id == user?.id ?
+                        <TrashIcon className="w-5 text-red-500 cursor-pointer" onClick={handleDeleteReview}></TrashIcon>
+                        : <FlagIcon className="w-5 text-red-500 cursor-pointer" onClick={handleReport}></FlagIcon>
+                }
 
-                <FlagIcon className="w-5 text-red-500"></FlagIcon>
             </div>
             <div className="grow flex flex-col gap-3">
                 <div className="flex gap-4 items-center">
@@ -149,13 +183,12 @@ const ReviewBlock = (props: ReviewBlockProps) => {
                 <Accordion title={"View comments " + "(" + props.review?.commentCount + ")"}
                     disabled={props.isPreview}
                     onClick={() => { comments.length > 0 ? setComments([]) : handleGetComments(1) }}
-                    isLoading={isLoading}
                 >
                     <div className="p-10 flex flex-col gap-5">
                         <div className="flex flex-col">
                             <div className="flex gap-5">
                                 <div className="relative w-10 h-10 border border-main rounded-full">
-                                    <Image src={loggedInUser && loggedInUser.userImage ? loggedInUser.userImage : blankUserImage} alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
+                                    <Image src={user && user.userImage ? user.userImage : blankUserImage} alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
                                 </div>
                                 <InputTextarea
                                     placeholder="Add a comment"

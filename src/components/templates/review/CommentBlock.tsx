@@ -1,25 +1,64 @@
-import { ArrowDownCircleIcon, ArrowUpCircleIcon, FlagIcon } from "@heroicons/react/24/outline";
-import Image from 'next/image';
-import blankUserImage from '../../../assets/blank_user.png'
-import User from "@/interfaces/userInterface";
-import Accordion from "@/components/ui/Accordion";
-import FadedLine from "@/components/ui/FadedLine";
-import { useEffect, useState } from "react";
-import Comment from "@/interfaces/commentInterface";
-import dayjs from "dayjs";
 import UpvoteDownvote from "@/components/ui/UpvoteDownvote";
+import Comment from "@/interfaces/commentInterface";
+import { useAuthStore } from "@/states/authStates";
+import useStore from "@/utils/useStore";
+import { FlagIcon, TrashIcon } from "@heroicons/react/24/outline";
+import dayjs from "dayjs";
+import Image from 'next/image';
+import { useEffect, useState } from "react";
+import blankUserImage from '../../../assets/blank_user.png';
+import { useGlobalStore } from "@/states/globalStates";
+import { toast } from "react-toastify";
+import { deleteCommentAPI } from "@/services/review/services";
 
 export interface CommentBlockProps {
     className?: string;
     comment?: Comment;
+    refreshFunction?: (...args: any[]) => void
 }
 
 const CommentBlock = (props: CommentBlockProps) => {
     const [comment, setComment] = useState<Comment>();
 
+    const user = useStore(useAuthStore, ((state) => state.loggedInUser))
+    const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
+    const loadingHandler = useGlobalStore((state) => state.loadingHandler)
+
     useEffect(() => {
         setComment(props.comment)
     }, [props.comment])
+
+    const handleDeleteComment = () => {
+        toggleConfirm({
+            title: "Confirm Delete?",
+            description: "Are you sure you want to delete this review?",
+            onClickYes: () => { deleteCommment(); toggleConfirm(); }
+        });
+    }
+
+    const deleteCommment = async () => {
+        try {
+            loadingHandler.open();
+            if (props.comment) {
+                const response = await deleteCommentAPI(props.comment.commentId!)
+
+                if (response && response.status == 200) {
+                    toast.success("Deleted successfully");
+                    // window.location.reload();
+                    if (props.refreshFunction) {
+                        props.refreshFunction();
+                    }
+                }
+            }
+        } finally {
+            loadingHandler.close()
+        }
+    }
+
+    const handleReport = () => {
+        console.log(props.comment)
+        console.log(user)
+    }
 
     return (
         <div className="flex flex-col p-8">
@@ -36,7 +75,11 @@ const CommentBlock = (props: CommentBlockProps) => {
                     <UpvoteDownvote commentId={props.comment?.commentId} intialVotes={props.comment?.votes}
                         currentUserVote={props.comment?.currentUserVote} isHorizontal
                     ></UpvoteDownvote>
-                    <FlagIcon className="w-5 text-red-500"></FlagIcon>
+                    {
+                        props.comment?.user?.id == user?.id ?
+                            <TrashIcon className="w-5 text-red-500 cursor-pointer" onClick={handleDeleteComment}></TrashIcon>
+                            : <FlagIcon className="w-5 text-red-500 cursor-pointer" onClick={handleReport}></FlagIcon>
+                    }
                 </div>
             </div>
             <pre style={{ whiteSpace: 'pre-wrap' }} className="text-justify font-sans text-sm p-3">

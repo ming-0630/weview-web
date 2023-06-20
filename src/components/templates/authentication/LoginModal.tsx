@@ -48,15 +48,18 @@ const LoginModal = () => {
                     refreshToken: data.refreshToken
                 }
 
-                const blob = base64StringToBlob(data.user.userImage);
-                const img = URL.createObjectURL(blob);
-
                 const user: User = {
-                    id: data.user.user_id,
+                    id: data.user.id,
                     username: data.user.username,
                     userImageBase64: data.user.userImage,
-                    userImage: img
                 }
+
+                if (data.user && data.user.userImage) {
+                    const blob = base64StringToBlob(data.user.userImage);
+                    const img = URL.createObjectURL(blob);
+                    user.userImage = img
+                }
+
                 clientLogin(tokens, user);
                 toast.success("Login Successful!");
                 toggleModal();

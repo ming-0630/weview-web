@@ -1,42 +1,42 @@
-import WatchlistCard from "@/components/layout/productCard/WatchlistCard"
-import Product from "@/interfaces/productInterface";
-import { HeartIcon } from "@heroicons/react/24/outline"
-import { useDisclosure } from "@mantine/hooks";
+
+import { PencilSquareIcon } from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react";
 import { SortProps } from "../product/ProductListPage";
 import { Pagination } from "@mantine/core";
-import { addToWatchlist, fetchWatchlist } from "@/services/user/services";
 import useStore from "@/utils/useStore";
 import { useAuthStore } from "@/states/authStates";
-import { toast } from "react-toastify";
+import Review from "@/interfaces/reviewInterface";
+import ReviewBlock from "../review/ReviewBlock";
+import { fetchReviews } from "@/services/review/services";
 import { useGlobalStore } from "@/states/globalStates";
 
-const Watchlist = () => {
-    const [products, setProducts] = useState<Product[]>([]);
+const ReviewList = () => {
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [totalReviews, setTotalReviews] = useState(0);
     const [sortCategory, setSortCategory] = useState<SortProps>({ by: "dateCreated", direction: "desc" });
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
     const user = useStore(useAuthStore, (state) => state.loggedInUser)
-
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
 
-    const getWatchlist = async (page: number, sortCategory: SortProps) => {
+    const getReviews = async (page: number, sortCategory: SortProps) => {
         if (user) {
             loadingHandler.open();
             try {
-                const response = await fetchWatchlist(
+                const response = await fetchReviews(
                     user?.id,
                     page,
                     sortCategory.by,
                     sortCategory.direction
                 );
 
-                if (response && response.data && response.data.productDTOs) {
-                    setProducts(response.data.productDTOs);
+                if (response && response.data && response.data.reviewList) {
+                    setReviews(response.data.reviewList);
+                    setTotalReviews(response.data.totalReviews);
                     setTotalPage(response.data.totalPages);
                 } else {
-                    setProducts([]);
+                    setReviews([]);
                     setTotalPage(0);
                 }
             } catch (e) {
@@ -47,29 +47,18 @@ const Watchlist = () => {
         }
     }
 
-    const handleOnWatchlistDelete = async (productId: string) => {
-        if (user) {
-            const response = await addToWatchlist(productId, user?.id)
-
-            if (response && response.status == 200) {
-                toast.success("Deleted from watchlist!")
-                getWatchlist(page, sortCategory);
-            }
-        }
-    }
-
     const handlePageChange = (value: number) => {
         setPage(value);
     }
 
     useEffect(() => {
         setPage(1);
-        getWatchlist(1, sortCategory);
+        getReviews(1, sortCategory);
     }, [sortCategory, user])
 
     // On page change
     useEffect(() => {
-        getWatchlist(page, sortCategory);
+        getReviews(page, sortCategory);
         window.scrollTo({
             top: 0,
             behavior: "smooth"
@@ -80,9 +69,12 @@ const Watchlist = () => {
         <div className="min-h-[calc(100vh_-_5rem)]">
             <div className="md:w-2/3 m-auto px-16 pt-12 flex flex-col gap-5">
                 <div className="flex justify-between">
-                    <div className="text-main font-bold text-5xl flex">
-                        <HeartIcon className="w-12 mr-3"></HeartIcon>
-                        My Watchlist
+                    <div className="text-main font-bold text-5xl flex items-center justify-center">
+                        <PencilSquareIcon className='w-12 mr-3'></PencilSquareIcon>
+                        <div>
+                            My Reviews
+                        </div>
+                        <div className="text-4xl ml-3 self-center">{"(" + totalReviews + ")"}</div>
                     </div>
                     <div>
                         <div className="flex">
@@ -95,27 +87,29 @@ const Watchlist = () => {
                                 >
                                     <option value={JSON.stringify({ by: "dateCreated", direction: "desc" })}>Newest</option>
                                     <option value={JSON.stringify({ by: "dateCreated", direction: "asc" })}>Oldest</option>
-                                    <option value={JSON.stringify({ by: "product_name", direction: "asc" })}>A - Z</option>
-                                    <option value={JSON.stringify({ by: "product_name", direction: "desc" })}>Z - A</option>
+                                    <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Highest Rating</option>
+                                    <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Lowest Rating</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="mt-5">
+                <div className="flex flex-col gap-10 mt-8">
                     {
-                        products.length > 0 ?
-                            products.map((product, key) => {
-                                return <WatchlistCard
-                                    product={product}
-                                    key={key}
-                                    onDeleteClick={() => handleOnWatchlistDelete(product.productId!)}></WatchlistCard>
+                        reviews.length > 0 ?
+                            reviews.map((review, key) => {
+                                return <div className="border-b-2 border-main/40 pb-5">
+                                    <ReviewBlock review={review} key={key} user={review.user}
+                                        refreshFunction={() => {
+                                            getReviews(page, sortCategory)
+                                        }}></ReviewBlock>
+                                </div>
                             }) :
-                            <div>Nothing in watchlist!</div>
+                            <div>No reviews yet!</div>
                     }
                 </div>
 
-                <div className="mt-10 mx-auto">
+                <div className="my-10 mx-auto">
                     <Pagination value={page} onChange={handlePageChange} total={totalPage}
                         radius={'xl'}
                         boundaries={5}
@@ -127,4 +121,4 @@ const Watchlist = () => {
     )
 }
 
-export default Watchlist
+export default ReviewList

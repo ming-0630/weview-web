@@ -141,18 +141,20 @@ export function getProductDetails(id: string) {
             })
 
             if (res.data.reviews) {
-                res.data.reviews.forEach((review: any, i: number) => {
+                res.data.reviews.forEach((review: any) => {
                     if (review.user.userImage) {
                         const blob = base64StringToBlob(review.user.userImage);
                         const obj = URL.createObjectURL(blob);
                         review.user.userImage = obj
                     }
 
-                    review.images.forEach((img: any, j: number) => {
-                        const blob = base64StringToBlob(img);
-                        const obj = URL.createObjectURL(blob);
-                        res.data.reviews[i].images[j] = obj;
-                    })
+                    if (review.images) {
+                        review.images.forEach((img: any, j: number) => {
+                            const blob = base64StringToBlob(img);
+                            const obj = URL.createObjectURL(blob);
+                            review.images[j] = obj;
+                        })
+                    }
                 })
             }
         }

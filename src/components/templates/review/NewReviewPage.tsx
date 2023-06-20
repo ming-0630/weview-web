@@ -11,13 +11,14 @@ import FileUpload from "@/components/ui/FileUpload";
 import ReviewBlock from "./ReviewBlock";
 import Review from "@/interfaces/reviewInterface";
 import CustomToastError from "@/utils/CustomToastError";
-import { LoadingOverlay, Rating, Stepper } from "@mantine/core";
+import { Rating, Stepper } from "@mantine/core";
 import { CubeIcon, MagnifyingGlassCircleIcon, PencilSquareIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import { CheckIcon } from "@heroicons/react/24/solid";
-import { useDisclosure } from "@mantine/hooks";
 import { addReview } from "@/services/review/services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { useGlobalStore } from "@/states/globalStates";
+import useStore from "@/utils/useStore";
 
 
 interface ProductPageProps {
@@ -26,11 +27,9 @@ interface ProductPageProps {
 
 const NewReviewPage = (props: ProductPageProps) => {
     const [product, setProduct] = useState<Product>();
-
-    const [sortCategory, setSortCategory] = useState<SortProps>({ by: "name", direction: "asc" });
     const [step, setStep] = useState(0);
 
-    const [isLoading, loadingHandler] = useDisclosure(false);
+    const loadingHandler = useGlobalStore((state) => state.loadingHandler)
 
     const [hoverRating, setHoverRating] = useState(-1);
     const router = useRouter();
@@ -43,7 +42,7 @@ const NewReviewPage = (props: ProductPageProps) => {
         images: []
     })
 
-    const user = useAuthStore((state) => state.loggedInUser);
+    const user = useStore(useAuthStore, ((state) => state.loggedInUser));
 
     const getProduct = () => {
         loadingHandler.open();
@@ -91,8 +90,8 @@ const NewReviewPage = (props: ProductPageProps) => {
             }
 
             const data = new FormData();
-            if (review.images) {
-                review.images.forEach(img => {
+            if (review.tempImages) {
+                review.tempImages.forEach(img => {
                     data.append('uploadedImages', img)
                 });
             }
@@ -103,6 +102,10 @@ const NewReviewPage = (props: ProductPageProps) => {
             data.append("price", review.price.toString());
             data.append("productId", product.productId);
             data.append('userId', user!.id);
+
+            // for (var pair of data.entries()) {
+            //     console.log(pair[0] + ', ' + pair[1]);
+            // }
 
             const response = await addReview(data);
 
@@ -128,6 +131,7 @@ const NewReviewPage = (props: ProductPageProps) => {
     };
 
     const setImages = (images: File[]) => {
+        console.log(images)
         setReview({ ...review, tempImages: images })
     }
 
@@ -150,7 +154,6 @@ const NewReviewPage = (props: ProductPageProps) => {
 
     return (
         <div className="h-[calc(100vh_-_5rem)] w-full overflow-hidden relative">
-            <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <ProductDetailsBg className="w-full h-full absolute" viewBox="0 0 1920 1080"
                 preserveAspectRatio="xMaxYMax slice"></ProductDetailsBg>
             <div className="relative flex text-white h-full">

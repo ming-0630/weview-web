@@ -3,8 +3,7 @@ import Category from "@/enums/categoryEnum";
 import { useEffect, useState } from "react";
 import { getAllProductPreview, getCategoryPreview, getSearchProduct } from "@/services/product/services";
 import Product from "@/interfaces/productInterface";
-import { LoadingOverlay, Pagination, RangeSlider, Slider } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { Pagination, RangeSlider, } from "@mantine/core";
 import useStore from "@/utils/useStore";
 import { useAuthStore } from "@/states/authStates";
 import { useGlobalStore } from "@/states/globalStates";
@@ -31,15 +30,16 @@ const ProductListPage = (props: ProductListPageProps) => {
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
-    const [isLoading, handlers] = useDisclosure(false);
+    const loadingHandler = useGlobalStore((state) => state.loadingHandler)
 
     const user = useStore(useAuthStore, (state) => state.loggedInUser)
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
 
 
     const getProduct = async (page: number, sortCategory: SortProps) => {
-        handlers.open();
+
         try {
+            loadingHandler.open();
             let response;
 
             if (!props.category || (props.category === "all" && !props.searchString)) {
@@ -73,12 +73,12 @@ const ProductListPage = (props: ProductListPageProps) => {
         } catch (e) {
             console.error(e);
         } finally {
-            handlers.close();
+            loadingHandler.close();
         }
     }
 
     const handleOnWatchlistClick = async (productId: string) => {
-        handlers.open();
+        loadingHandler.open();
         if (user) {
             const response = await addToWatchlist(productId, user?.id)
             if (response && response.status == 200 && response.data) {
@@ -87,11 +87,11 @@ const ProductListPage = (props: ProductListPageProps) => {
             }
         } else {
             CustomToastError("Please login to add to watchlist");
-            handlers.close();
+            loadingHandler.close();
             toggleLogin();
             return;
         }
-        handlers.close();
+        loadingHandler.close();
     }
 
     // On Props change
@@ -110,12 +110,20 @@ const ProductListPage = (props: ProductListPageProps) => {
     // On page change
     useEffect(() => {
         getProduct(page, sortCategory);
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        })
     }, [page, user])
 
     // On Sort Change
     useEffect(() => {
         setPage(1);
         getProduct(1, sortCategory);
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        })
     }, [sortCategory])
 
     const handlePageChange = (value: number) => {
@@ -133,7 +141,6 @@ const ProductListPage = (props: ProductListPageProps) => {
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)] p-10 bg-white">
-            <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <div className="flex flex-col w-[80vw] m-auto">
                 <div className="flex justify-end items-center mb-5">
                     {/* <Link href={""}>

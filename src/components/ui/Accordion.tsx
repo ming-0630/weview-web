@@ -8,7 +8,6 @@ export interface AccordionProps {
     children: ReactNode;
     className?: string;
     disabled?: boolean;
-    isLoading?: boolean;
     onClick?: (...args: any[]) => any;
 }
 
@@ -27,7 +26,6 @@ const Accordion = (props: AccordionProps) => {
 
     return (
         <div>
-            <LoadingOverlay visible={props.isLoading ?? false} overlayBlur={2} />
             <div className={classNames("flex gap-3 p-3 text-main text-sm", !props.disabled && "cursor-pointer")} onClick={toggleIsShow}>
                 {props.title}
                 {
