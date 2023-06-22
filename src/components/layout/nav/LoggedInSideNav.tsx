@@ -1,21 +1,22 @@
 import { useAuthStore } from "@/states/authStates";
 import { useGlobalStore } from "@/states/globalStates";
 import useStore from "@/utils/useStore";
-import { ArrowTrendingUpIcon, BoltIcon, ChartBarSquareIcon, ChatBubbleLeftRightIcon, ComputerDesktopIcon, CubeIcon, DevicePhoneMobileIcon, FireIcon, HeartIcon, HomeIcon, MusicalNoteIcon, PencilSquareIcon, QuestionMarkCircleIcon, Squares2X2Icon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowTrendingUpIcon, BoltIcon, ChartBarSquareIcon, ChatBubbleLeftRightIcon, ComputerDesktopIcon, CubeIcon, DevicePhoneMobileIcon, FireIcon, HeartIcon, HomeIcon, MusicalNoteIcon, PencilSquareIcon, Squares2X2Icon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import { Tooltip } from "@mantine/core";
 import Image from 'next/image';
+import Link from "next/link";
 import { useRouter } from "next/router";
 import blankUserImage from '../../../assets/blank_user.png';
 import NavItem from "./NavItem";
 import NavItemCollapse from "./NavItemCollapse";
 import WeViewLogo from '/public/favicon.ico';
-import { Tooltip } from "@mantine/core";
-import Link from "next/link";
-import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 
 const LoggedInSideNav = () => {
     const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
     const toggleNav = useGlobalStore((state) => state.toggleNav)
     const toggleUpload = useGlobalStore((state) => state.toggleUpload)
+    const togglePoints = useGlobalStore((state) => state.togglePoints)
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
     const logout = useAuthStore((state) => state.logout)
     const user = useStore(useAuthStore, ((state) => state.loggedInUser))
@@ -28,14 +29,14 @@ const LoggedInSideNav = () => {
                 <Image src={WeViewLogo} alt="WeView logo" width={50}></Image>
             </div>
             <div className="flex mb-3">
-                <div className="rounded-full border-main border-2 ml-4 mr-6 w-12 h-12 relative cursor-pointer"
+                <div className="rounded-full border-gray-300 border-4 ml-4 mr-6 w-14 h-14 relative cursor-pointer hover:brightness-90"
                     onClick={toggleUpload}
                 >
                     <Image src={user && user.userImage ? user.userImage : blankUserImage} alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
                 </div>
                 <div className="flex flex-col" >
-                    <div className="flex items-center">
-                        <div className="text-main font-bold text-2xl mb-1 mr-5">{user?.username}</div>
+                    <div className="flex items-center mb-1">
+                        <div className="text-main font-bold text-2xl mr-5">{user?.username}</div>
                         {user && user.isVerified ?
                             <Tooltip label="Verified!" withArrow>
                                 <CheckCircleIcon className="w-5"></CheckCircleIcon>
@@ -50,13 +51,14 @@ const LoggedInSideNav = () => {
                     </div>
 
                     <div className="flex items-center">
-                        <FireIcon className="w-5 mr-2 text-orange-400"></FireIcon>
-                        <div className="text-sm text-orange-400 mr-2">{"555 points"}</div>
-                        <Tooltip label="Click here to know more about points!" withArrow>
-                            <Link href={""}>
-                                <QuestionMarkCircleIcon className="w-5 stroke-2 text-gray-500"></QuestionMarkCircleIcon>
-                            </Link>
+                        <Tooltip label="Click here to know more about points!" withArrow onClick={() => { toggleNav(); togglePoints() }}>
+                            <div className="flex items-center cursor-pointer">
+                                <FireIcon className="w-5 mr-2 text-orange-400"></FireIcon>
+                                <div className="text-sm text-orange-400 mr-2">{user?.points ?? 0}</div>
+                            </div>
                         </Tooltip>
+
+
                     </div>
                 </div>
             </div>

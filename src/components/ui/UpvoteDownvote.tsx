@@ -3,7 +3,7 @@ import { getVotes, voteReview } from "@/services/vote/services";
 import { useAuthStore } from "@/states/authStates";
 import { ArrowDownCircleIcon, ArrowUpCircleIcon } from "@heroicons/react/24/solid";
 import { ArrowDownCircleIcon as ArrowDownCircleIconOutlined, ArrowUpCircleIcon as ArrowUpCircleIconOutlined } from "@heroicons/react/24/outline";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import classNames from "classnames";
 import CustomToastError from "@/utils/CustomToastError";
 import { debounce } from "lodash";
@@ -14,10 +14,11 @@ export interface UpvoteDownvoteProps {
     intialVotes?: number,
     currentUserVote?: VoteType | null,
     isHorizontal?: boolean
+    disabled?: boolean
 }
 
 const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
-    const user = useAuthStore((state) => state.loggedInUser)
+    const { loggedInUser } = useAuthStore();
     const [voteCount, setVoteCount] = useState(0)
     const [currentVote, setCurrentVote] = useState<VoteType | null>(null)
 
@@ -31,10 +32,10 @@ const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
         } else {
             setCurrentVote(props.currentUserVote)
         }
-    }, [props])
+    }, [props.intialVotes, props.currentUserVote])
 
     const handleVote = (vote: VoteType) => {
-        if (!user) {
+        if (!loggedInUser) {
             CustomToastError("Please login to continue");
             return;
         }
@@ -87,9 +88,9 @@ const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
     const sendVote = useCallback(
         debounce(
             async (vote: VoteType) => {
-                if (user) {
+                if (loggedInUser) {
                     if (props.reviewId) {
-                        const res = await voteReview(user.id, vote, props.reviewId, "");
+                        const res = await voteReview(loggedInUser.id, vote, props.reviewId, "");
 
                         if (res && res.status == 200) {
                             const votesResponse = await getVotes(props.reviewId, "")
@@ -101,7 +102,7 @@ const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
                     }
 
                     if (props.commentId) {
-                        const res = await voteReview(user.id, vote, "", props.commentId);
+                        const res = await voteReview(loggedInUser.id, vote, "", props.commentId);
 
                         if (res && res.status == 200) {
                             const votesResponse = await getVotes("", props.commentId)
@@ -114,18 +115,20 @@ const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
                 }
             }
             , 1500)
-        , [props.reviewId, user])
+        , [props.reviewId, loggedInUser])
 
     const iconClass = classNames(
-        'w-7 cursor-pointer'
+        'w-7',
+        props.disabled ? 'opacity-50' :
+            'cursor-pointer'
     )
 
     if (!currentVote) {
         return (
             <div className={classNames("flex items-center", props.isHorizontal ? "flex-row gap-2" : "flex-col")}>
-                <ArrowUpCircleIconOutlined className={iconClass} onClick={() => handleVote(VoteType.UPVOTE)}></ArrowUpCircleIconOutlined>
+                <ArrowUpCircleIconOutlined className={iconClass} onClick={() => !props.disabled && handleVote(VoteType.UPVOTE)}></ArrowUpCircleIconOutlined>
                 <div className="font-semibold text-main text-xl">{voteCount}</div>
-                <ArrowDownCircleIconOutlined className={iconClass} onClick={() => handleVote(VoteType.DOWNVOTE)}></ArrowDownCircleIconOutlined>
+                <ArrowDownCircleIconOutlined className={iconClass} onClick={() => !props.disabled && handleVote(VoteType.DOWNVOTE)}></ArrowDownCircleIconOutlined>
             </div>
         )
     } else {
@@ -133,16 +136,16 @@ const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
             <div className={classNames("flex items-center", props.isHorizontal ? "flex-row gap-2" : "flex-col")}>
                 {
                     VoteType[currentVote.toString() as keyof typeof VoteType] == VoteType.UPVOTE as VoteType ?
-                        <ArrowUpCircleIcon className={iconClass} onClick={() => handleVote(VoteType.UPVOTE)}></ArrowUpCircleIcon> :
-                        <ArrowUpCircleIconOutlined className={iconClass} onClick={() => handleVote(VoteType.UPVOTE)}></ArrowUpCircleIconOutlined>
+                        <ArrowUpCircleIcon className={iconClass} onClick={() => !props.disabled && handleVote(VoteType.UPVOTE)}></ArrowUpCircleIcon> :
+                        <ArrowUpCircleIconOutlined className={iconClass} onClick={() => !props.disabled && handleVote(VoteType.UPVOTE)}></ArrowUpCircleIconOutlined>
                 }
 
                 <div className="font-semibold text-main text-xl">{voteCount}</div>
 
                 {
                     VoteType[currentVote.toString() as keyof typeof VoteType] == VoteType.DOWNVOTE as VoteType ?
-                        <ArrowDownCircleIcon className={iconClass} onClick={() => handleVote(VoteType.DOWNVOTE)}></ArrowDownCircleIcon> :
-                        <ArrowDownCircleIconOutlined className={iconClass} onClick={() => handleVote(VoteType.DOWNVOTE)}></ArrowDownCircleIconOutlined>
+                        <ArrowDownCircleIcon className={iconClass} onClick={() => !props.disabled && handleVote(VoteType.DOWNVOTE)}></ArrowDownCircleIcon> :
+                        <ArrowDownCircleIconOutlined className={iconClass} onClick={() => !props.disabled && handleVote(VoteType.DOWNVOTE)}></ArrowDownCircleIconOutlined>
                 }
 
             </div>

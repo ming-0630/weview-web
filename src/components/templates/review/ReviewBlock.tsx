@@ -34,7 +34,7 @@ const ReviewBlock = (props: ReviewBlockProps) => {
 
     const [newComment, setNewComment] = useState("");
 
-    const user = useStore(useAuthStore, ((state) => state.loggedInUser))
+    const { loggedInUser } = useAuthStore();
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
     const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
@@ -49,9 +49,9 @@ const ReviewBlock = (props: ReviewBlockProps) => {
     const handleGetComments = async (page: number) => {
         if (props.review) {
             const response = await getComments(props.review.reviewId!, page)
-
-            if (response && response.data) {
-                setComments((prevComments) => [...prevComments, ...response.data.commentList]);
+            if (response && response.data && response.data.commentList.length > 0) {
+                // setComments((prevComments) => [...prevComments, response.data.commentList]);
+                setComments(response.data.commentList);
                 setCommentsPage(response.data.currentPage);
                 setCommentsHasNext(response.data.hasNext);
             }
@@ -60,7 +60,7 @@ const ReviewBlock = (props: ReviewBlockProps) => {
 
     const submitComment = async () => {
         loadingHandler.open();
-        if (!user) {
+        if (!loggedInUser) {
             CustomToastError("Please login to write a comment");
             toggleLogin();
             loadingHandler.close();
@@ -75,7 +75,7 @@ const ReviewBlock = (props: ReviewBlockProps) => {
 
         if (props.review && props.review.reviewId) {
 
-            const response = await addComment(newComment, props.review.reviewId, user.id)
+            const response = await addComment(newComment, props.review.reviewId, loggedInUser.id)
 
             if (response && response.status == 200) {
                 setCommentsPage(1);
@@ -117,7 +117,7 @@ const ReviewBlock = (props: ReviewBlockProps) => {
 
     const handleReport = () => {
         console.log(props.review)
-        console.log(user)
+        console.log(loggedInUser)
     }
 
     return (
@@ -125,9 +125,10 @@ const ReviewBlock = (props: ReviewBlockProps) => {
             <div className="flex flex-col items-center gap-2">
                 <UpvoteDownvote reviewId={props.review?.reviewId} intialVotes={props.review?.votes}
                     currentUserVote={props.review?.currentUserVote}
+                    disabled={props.user?.id == loggedInUser?.id}
                 ></UpvoteDownvote>
                 {
-                    props.review?.user?.id == user?.id ?
+                    props.review?.user?.id == loggedInUser?.id ?
                         <TrashIcon className="w-5 text-red-500 cursor-pointer" onClick={handleDeleteReview}></TrashIcon>
                         : <FlagIcon className="w-5 text-red-500 cursor-pointer" onClick={handleReport}></FlagIcon>
                 }
@@ -180,13 +181,13 @@ const ReviewBlock = (props: ReviewBlockProps) => {
                 </div>
                 <Accordion title={"View comments " + "(" + props.review?.commentCount + ")"}
                     disabled={props.isPreview}
-                    onClick={() => { comments.length > 0 ? setComments([]) : handleGetComments(1) }}
+                    onClick={() => { comments && handleGetComments(1) }}
                 >
                     <div className="p-10 flex flex-col gap-5">
                         <div className="flex flex-col">
                             <div className="flex gap-5">
                                 <div className="relative w-10 h-10 border border-main rounded-full">
-                                    <Image src={user && user.userImage ? user.userImage : blankUserImage} alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
+                                    <Image src={loggedInUser && loggedInUser.userImage ? loggedInUser.userImage : blankUserImage} alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
                                 </div>
                                 <InputTextarea
                                     placeholder="Add a comment"
@@ -199,8 +200,9 @@ const ReviewBlock = (props: ReviewBlockProps) => {
                             <Button className="w-[8vw] mt-3 self-end" onClick={submitComment}>Comment</Button>
                         </div>
                         {
-                            comments.length > 0 ?
+                            comments ?
                                 comments.map((comment: Comment) => {
+                                    console.log(comment)
                                     return (
                                         <CommentBlock comment={comment} key={comment.commentId}></CommentBlock>)
                                 }) :

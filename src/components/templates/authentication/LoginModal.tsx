@@ -32,7 +32,8 @@ const LoginModal = () => {
 
     const [loginValues, setLoginValues] = useState<LoginDto>({ email: "", password: "" })
 
-    const clientLogin = useAuthStore((state) => state.login)
+    const { setTokens } = useAuthStore()
+    const { setCurrentUser } = useAuthStore()
 
     const handleLogin = async () => {
         loadingHandler.open();
@@ -52,7 +53,8 @@ const LoginModal = () => {
                     id: data.user.id,
                     username: data.user.username,
                     userImageBase64: data.user.userImage,
-                    isVerified: data.user.isVerified
+                    isVerified: data.user.isVerified,
+                    points: data.user.points
                 }
 
                 if (data.user && data.user.userImage) {
@@ -61,7 +63,8 @@ const LoginModal = () => {
                     user.userImage = img
                 }
 
-                clientLogin(tokens, user);
+                setTokens(tokens);
+                setCurrentUser(user);
                 toast.success("Login Successful!");
                 toggleModal();
             }

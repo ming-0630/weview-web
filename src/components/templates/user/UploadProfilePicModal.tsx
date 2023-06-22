@@ -23,7 +23,7 @@ const UploadProfilePicModal = () => {
     const user = useStore(useAuthStore, ((state) => state.loggedInUser));
     const accessToken = useStore(useAuthStore, ((state) => state.accessToken));
     const refreshToken = useStore(useAuthStore, ((state) => state.refreshToken));
-    const clientLogin = useAuthStore((state) => state.login)
+    const setUser = useAuthStore((state) => state.setCurrentUser)
 
     const [images, setImages] = useState<File[]>([])
     const [isLoading, loadingHandler] = useDisclosure(false);
@@ -49,23 +49,20 @@ const UploadProfilePicModal = () => {
             if (response && response.status == 200 && response.data) {
                 toast.success("Uploaded image successfully!");
                 const data = response.data;
-                const tokens: AuthTokens = {
-                    accessToken: accessToken!,
-                    refreshToken: refreshToken!
-                }
 
                 const updatedUser: User = {
                     id: data.user.id,
                     username: data.user.username,
                     userImageBase64: data.user.userImage,
-                    isVerified: data.user.isVerified
+                    isVerified: data.user.isVerified,
+                    points: data.user.points
                 }
                 if (data.user && data.user.userImage) {
                     const blob = base64StringToBlob(data.user.userImage);
                     const img = URL.createObjectURL(blob);
                     updatedUser.userImage = img
                 }
-                clientLogin(tokens, updatedUser)
+                setUser(updatedUser)
                 toggleUpload();
             }
         } catch (e) {

@@ -37,7 +37,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     const [reviewGraphData, setReviewGraphData] = useState<{ x: any, y: any }[]>([]);
     const [activeReviewDataTab, setActiveReviewDataTab] = useState<string | null>('1M');
 
-    const user = useAuthStore((state) => state.loggedInUser)
+    const { loggedInUser } = useAuthStore()
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
 
@@ -136,11 +136,13 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     }, [product, activeReviewDataTab])
 
     useEffect(() => {
-        setCurrentUser(user);
-        if (props.id) {
-            getProduct();
+        if (currentUser?.id != loggedInUser?.id) {
+            setCurrentUser(loggedInUser);
+            if (props.id) {
+                getProduct();
+            }
         }
-    }, [user])
+    }, [loggedInUser])
 
     useEffect(() => {
         const id = getHashValue();
@@ -154,8 +156,8 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
 
     const handleAddToWatchlist = async () => {
         loadingHandler.open()
-        if (user) {
-            const response = await addToWatchlist(product?.productId!, user?.id)
+        if (currentUser) {
+            const response = await addToWatchlist(product?.productId!, currentUser?.id)
 
             if (response && response.status == 200) {
                 toast.success("Added to watchlist")
@@ -355,8 +357,6 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                                 )
                             })
                         }
-
-
                     </div>
                 </div>
             </div>

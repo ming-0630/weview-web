@@ -5,8 +5,31 @@ import "../styles/prime-theme.css";
 import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';
 import type { AppProps } from 'next/app'
 import { MantineProvider } from '@mantine/core';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { getUser } from '@/services/user/services';
+import { useAuthStore } from '@/states/authStates';
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+  const { setCurrentUser, isLoggedIn } = useAuthStore()
+
+  // Fetch the initial auth state on each page transition
+  useEffect(() => {
+    if (isLoggedIn()) {
+      const fetchInitialAuthState = async () => {
+        // Call your getInitialAuthState function here
+        const response = await getUser();
+
+        if (response && response.data) {
+          setCurrentUser(response.data);
+        }
+      };
+
+      fetchInitialAuthState();
+    }
+  }, [router.asPath]);
+
   return (
     <MantineProvider
       withGlobalStyles

@@ -16,9 +16,11 @@ function getCurrentRefreshToken() {
 
 function setRefreshedTokens(tokens: AuthTokens) {
     console.log('set tokens...')
-    const login = useAuthStore.getState().login
+    const login = useAuthStore.getState().setTokens
+    const setUser = useAuthStore.getState().setCurrentUser
     const user = useAuthStore.getState().loggedInUser
-    login(tokens, user!)
+    login(tokens)
+    setUser(user!)
 }
 
 async function logout() {

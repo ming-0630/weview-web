@@ -7,6 +7,7 @@ import ConfirmModal from "../templates/authentication/ConfirmModal";
 import { LoadingOverlay } from "@mantine/core";
 import { useGlobalStore } from "@/states/globalStates";
 import UploadProfilePicModal from "../templates/user/UploadProfilePicModal";
+import PointsSystemModal from "../templates/user/PointsSystemModal";
 
 // declare module '@mui/material/styles' {
 //     interface Theme {
@@ -58,6 +59,7 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
             <LoginModal></LoginModal>
             <RegisterModal></RegisterModal>
             <UploadProfilePicModal></UploadProfilePicModal>
+            <PointsSystemModal></PointsSystemModal>
             <NavBar>
                 <div className='w-full bg-white !scroll-smooth'>
                     {children}

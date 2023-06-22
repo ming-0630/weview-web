@@ -117,3 +117,25 @@ export function updateProfilePicture(props: FormData) {
 
     return response
 }
+
+export function getUser() {
+    const response = client.get(
+        "user/getUser"
+    ).then((res) => {
+        if (res.data) {
+            const blob = base64StringToBlob(res.data.userImage);
+            const img = URL.createObjectURL(blob);
+            res.data.userImage = img;
+        }
+        return res;
+    }).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response;
+}
