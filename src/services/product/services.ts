@@ -124,12 +124,16 @@ export function getSearchProduct(keyword: string, category: Category, pageNum: n
     return response
 }
 
-export function getProductDetails(id: string) {
+export function getProductDetails(id: string, pageNum: number,
+    sortBy?: string, direction?: string) {
     const response = client.get(
         "/product/details",
         {
             params: {
-                id: id
+                id: id,
+                reviewPageNum: pageNum,
+                reviewSortBy: sortBy,
+                reviewDirection: direction
             }
         },
     ).then((res) => {

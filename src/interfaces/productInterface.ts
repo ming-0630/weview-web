@@ -17,6 +17,7 @@ export interface Product {
     maxPrice?: number,
     images?: string[],
     reviews?: Review[],
+    totalReviewPage: number,
     watchlisted?: boolean
 }
 

@@ -1,5 +1,5 @@
 import Accordion from "@/components/ui/Accordion";
-import { Button } from "@/components/ui/Button";
+// import { Button } from "@/components/ui/Button";
 import UpvoteDownvote from "@/components/ui/UpvoteDownvote";
 import Comment from "@/interfaces/commentInterface";
 import Review from "@/interfaces/reviewInterface";
@@ -10,7 +10,7 @@ import { useGlobalStore } from "@/states/globalStates";
 import CustomToastError from "@/utils/CustomToastError";
 import useStore from "@/utils/useStore";
 import { FlagIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Rating } from "@mantine/core";
+import { Button, Rating, Tooltip } from "@mantine/core";
 import dayjs from "dayjs";
 import Image from 'next/image';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -18,6 +18,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import blankUserImage from '../../../assets/blank_user.png';
 import CommentBlock from "./CommentBlock";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import Unverified from "@/components/ui/Unverified";
 
 export interface ReviewBlockProps {
     className?: string;
@@ -44,6 +46,7 @@ const ReviewBlock = (props: ReviewBlockProps) => {
         if (commentsPage > 0) {
             handleGetComments(1);
         }
+        console.log(props.user)
     }, [props.review])
 
     const handleGetComments = async (page: number) => {
@@ -148,6 +151,17 @@ const ReviewBlock = (props: ReviewBlockProps) => {
                             <Image src={props.user && props.user.userImage ? props.user.userImage : blankUserImage} alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
                         </div>
                         <div className="text-main text-lg">{props.user && props.user.username}</div>
+                        {props.user && props.user.isVerified ?
+                            <Tooltip label="Verified User!" withArrow>
+                                <CheckBadgeIcon className="w-5 text-main"></CheckBadgeIcon>
+                            </Tooltip>
+                            : <Tooltip label="Unverified User!" withArrow>
+                                <div className="cursor-pointer mb-0.5">
+                                    <Unverified></Unverified>
+                                </div>
+
+                            </Tooltip>
+                        }
                     </div>
 
                     <div className="text-gray-500 text-sm">{
@@ -197,7 +211,9 @@ const ReviewBlock = (props: ReviewBlockProps) => {
                                     value={newComment}
                                     onChange={(e) => { setNewComment(e.target.value) }} />
                             </div>
-                            <Button className="w-[8vw] mt-3 self-end" onClick={submitComment}>Comment</Button>
+                            <Button className="mt-3 w-[8vw] self-end bg-main" variant='filled'
+                                onClick={submitComment}
+                            >Comment</Button>
                         </div>
                         {
                             comments ?

@@ -5,12 +5,6 @@ import { useGlobalStore } from "@/states/globalStates";
 import { Table, Tabs } from "@mantine/core";
 import { ChatBubbleLeftRightIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
-export interface ConfirmModalProps {
-    title?: string,
-    description?: string,
-    onClickYes?: (...args: any[]) => void
-}
-
 const PointsSystemModal = () => {
     const isShow = useGlobalStore((state) => state.pointsIsOpen)
     const toggleModal = useGlobalStore((state) => state.togglePoints)

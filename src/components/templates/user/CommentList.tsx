@@ -98,9 +98,9 @@ const CommentList = () => {
                 <div className="flex flex-col gap-10 mt-5">
                     {
                         comments.length > 0 ?
-                            comments.map((comment, key) => {
-                                return <div className="border-b-2 border-main/40 pb-5 flex flex-col">
-                                    <CommentBlock comment={comment} key={key}
+                            comments.map((comment) => {
+                                return <div className="border-b-2 border-main/40 pb-5 flex flex-col" key={comment.commentId}>
+                                    <CommentBlock comment={comment}
                                         refreshFunction={() => {
                                             getComments(page, sortCategory);
                                         }}

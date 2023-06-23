@@ -2,7 +2,7 @@ import { useAuthStore } from "@/states/authStates";
 import { useGlobalStore } from "@/states/globalStates";
 import useStore from "@/utils/useStore";
 import { ArrowTrendingUpIcon, BoltIcon, ChartBarSquareIcon, ChatBubbleLeftRightIcon, ComputerDesktopIcon, CubeIcon, DevicePhoneMobileIcon, FireIcon, HeartIcon, HomeIcon, MusicalNoteIcon, PencilSquareIcon, Squares2X2Icon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import { CheckBadgeIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import { Tooltip } from "@mantine/core";
 import Image from 'next/image';
 import Link from "next/link";
@@ -11,12 +11,14 @@ import blankUserImage from '../../../assets/blank_user.png';
 import NavItem from "./NavItem";
 import NavItemCollapse from "./NavItemCollapse";
 import WeViewLogo from '/public/favicon.ico';
+import Unverified from "@/components/ui/Unverified";
 
 const LoggedInSideNav = () => {
     const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
     const toggleNav = useGlobalStore((state) => state.toggleNav)
     const toggleUpload = useGlobalStore((state) => state.toggleUpload)
     const togglePoints = useGlobalStore((state) => state.togglePoints)
+    const toggleVerify = useGlobalStore((state) => state.toggleVerify)
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
     const logout = useAuthStore((state) => state.logout)
     const user = useStore(useAuthStore, ((state) => state.loggedInUser))
@@ -36,17 +38,19 @@ const LoggedInSideNav = () => {
                 </div>
                 <div className="flex flex-col" >
                     <div className="flex items-center mb-1">
-                        <div className="text-main font-bold text-2xl mr-5">{user?.username}</div>
+                        <div className="text-main font-bold text-2xl mr-3">{user?.username}</div>
                         {user && user.isVerified ?
                             <Tooltip label="Verified!" withArrow>
-                                <CheckCircleIcon className="w-5"></CheckCircleIcon>
+                                <CheckBadgeIcon className="w-5 text-main -mb-0.5"></CheckBadgeIcon>
                             </Tooltip>
-                            : <Tooltip label="Verify your account to unlock full access!" withArrow>
-                                <Link href={""}>
-                                    <ExclamationTriangleIcon className="w-5 text-red-400"></ExclamationTriangleIcon>
-                                </Link>
-                            </Tooltip>
+                            : <Tooltip label="Click here to verify your account!" withArrow
+                                onClick={toggleVerify}
+                            >
+                                <div className="cursor-pointer group">
+                                    <Unverified></Unverified>
+                                </div>
 
+                            </Tooltip>
                         }
                     </div>
 
@@ -64,6 +68,7 @@ const LoggedInSideNav = () => {
             </div>
 
             <hr className="border-none h-0.5 text-black/10 bg-black/10 rounded my-3"></hr>
+            <input type="text" autoFocus className="hidden" />
             <NavItem
                 title='Home'
                 href={'/'}

@@ -1,5 +1,6 @@
 import '@/styles/globals.css'
 import 'react-toastify/dist/ReactToastify.min.css'
+import 'react-phone-number-input/style.css'
 import "primereact/resources/primereact.min.css";
 import "../styles/prime-theme.css";
 import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';

@@ -139,3 +139,44 @@ export function getUser() {
     });
     return response;
 }
+
+export function getVerificationCode(phone: string) {
+    const response = client.get(
+        "user/generateOTP",
+        {
+            params: {
+                phoneNumber: phone
+            }
+        }
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response;
+}
+
+export function verifyCode(phone: string, code: string) {
+    const response = client.get(
+        "user/verifyOTP",
+        {
+            params: {
+                phoneNumber: phone,
+                code: code
+            }
+        }
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response;
+}

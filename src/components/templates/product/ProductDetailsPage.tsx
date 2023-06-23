@@ -1,30 +1,29 @@
+import Carousel from "@/components/ui/Carousell";
 import FadedLine from "@/components/ui/FadedLine";
 import ProductDetailsBg from "@/components/ui/ProductDetailsBg";
-import Product from "@/interfaces/productInterface";
-import { getProductDetails } from "@/services/product/services";
-import { ArrowDownIcon, HeartIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { BarElement, CategoryScale, Chart, Legend, LineElement, LinearScale, PointElement, TimeScale, Title, Tooltip, scales } from "chart.js";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { SortProps } from "./ProductListPage";
-import { useAuthStore } from "@/states/authStates";
-import ReviewBlock from "../review/ReviewBlock";
-import Carousel from "@/components/ui/Carousell";
-import Image from "next/image";
-import Review from "@/interfaces/reviewInterface";
-import { useRouter } from "next/router";
-import { checkEligibility, fetchReviewData } from "@/services/review/services";
-import { useDisclosure } from "@mantine/hooks";
-import CustomToastError from "@/utils/CustomToastError";
-import { useGlobalStore } from "@/states/globalStates";
-import dayjs from "dayjs";
-import TimeChart from "../charts/TimeChart";
 import RatingBreakdown from "@/components/ui/RatingBreakdown";
+import Product from "@/interfaces/productInterface";
+import Review from "@/interfaces/reviewInterface";
 import User from "@/interfaces/userInterface";
-import { CheckIcon } from "@heroicons/react/24/solid";
+import { getProductDetails } from "@/services/product/services";
+import { checkEligibility, fetchReviewData } from "@/services/review/services";
 import { addToWatchlist } from "@/services/user/services";
+import { useAuthStore } from "@/states/authStates";
+import { useGlobalStore } from "@/states/globalStates";
+import CustomToastError from "@/utils/CustomToastError";
+import { ArrowDownIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { CheckIcon } from "@heroicons/react/24/solid";
+import { Pagination, Rating } from "@mantine/core";
+import { BarElement, CategoryScale, Chart, Legend, LineElement, LinearScale, PointElement, TimeScale, Title, Tooltip } from "chart.js";
+import dayjs from "dayjs";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { Rating } from "@mantine/core";
+import TimeChart from "../charts/TimeChart";
+import ReviewBlock from "../review/ReviewBlock";
+import { SortProps } from "./ProductListPage";
 
 interface ProductDetailsPageProps {
     id: string | string[]
@@ -33,9 +32,11 @@ interface ProductDetailsPageProps {
 const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     const [product, setProduct] = useState<Product>();
     const [currentUser, setCurrentUser] = useState<User>();
-    const [sortCategory, setSortCategory] = useState<SortProps>({ by: "name", direction: "asc" });
     const [reviewGraphData, setReviewGraphData] = useState<{ x: any, y: any }[]>([]);
     const [activeReviewDataTab, setActiveReviewDataTab] = useState<string | null>('1M');
+
+    const [page, setPage] = useState(1);
+    const [sortCategory, setSortCategory] = useState<SortProps>({ by: "dateCreated", direction: "desc" });
 
     const { loggedInUser } = useAuthStore()
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
@@ -58,19 +59,12 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
         Tooltip,
         Legend);
 
-    const data = [
-        { year: 2010, count: 10 },
-        { year: 2011, count: 20 },
-        { year: 2012, count: 15 },
-        { year: 2013, count: 25 },
-        { year: 2014, count: 22 },
-        { year: 2015, count: 30 },
-        { year: 2016, count: 28 },
-    ];
-
     const getProduct = () => {
         const fetchData = async () => {
-            let response = await getProductDetails(props.id.toString());
+            let response = await getProductDetails(props.id.toString(),
+                page,
+                sortCategory.by,
+                sortCategory.direction);
 
             if (response && response.data) {
                 setProduct(response.data);
@@ -124,12 +118,20 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
         loadingHandler.close()
     }
 
+    const handlePageChange = (value: number) => {
+        setPage(value);
+        const element = document.getElementById("review-list");
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
     // On Props change
     useEffect(() => {
         if (props.id) {
             getProduct();
         }
-    }, [props])
+    }, [props, page, sortCategory])
 
     useEffect(() => {
         getReviewData();
@@ -263,10 +265,10 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
             </div>
             <div className="w-full relative" id="review-section">
                 <div className="h-[20vh] relative flex w-full">
-                    <ProductDetailsBg className="w-full absolute object-contain" viewBox="0 0 1920 1080"></ProductDetailsBg>
+                    <ProductDetailsBg className="w-full absolute object-contain" viewBox="0 0 1920 350"></ProductDetailsBg>
                     <span className="text-white text-7xl font-semibold absolute bottom-0 right-[20vw]">Reviews</span>
                 </div>
-                <div className="bg-white min-h-screen rounded-3xl relative py-16">
+                <div className="bg-white rounded-3xl relative py-16">
                     <div className="m-auto w-[60vw] flex flex-col gap-12">
                         <div className="flex justify-between items-center">
                             <div className="flex flex-col gap-1">
@@ -278,84 +280,102 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                                             size="lg" readOnly fractions={4}></Rating>
                                     }
                                 </div>
-                                <div className="text-main">Based on {product?.reviews?.length} Reviews</div>
+                                {
+                                    product?.reviews ?
+                                        <div className="text-main">Based on {product?.reviews?.length} Reviews</div> :
+                                        <div className="text-main">Add a review now!</div>
+                                }
+
                             </div>
                             <button className="btn btn-primary text-white" onClick={handleAddReview}>Write a Review</button>
                         </div>
+                        {
+                            product?.reviews &&
+                            <>
+                                <FadedLine className="w-full"></FadedLine>
 
-                        <FadedLine className="w-full"></FadedLine>
+                                <div className="flex flex-col">
+                                    <div className="text-main font-semibold text-3xl">Review Analytics</div>
+                                    <div className="flex mt-5 items-center gap-5">
+                                        <RatingBreakdown product={product}></RatingBreakdown>
+                                        <div className="flex flex-col gap-2 grow bg-white" data-theme="corporate">
+                                            <div className="stats stats-vertical bg-white text-main border border-main rounded-lg">                                        <div className="stat">
+                                                <div className='font-semibold text-gray-600 text-lg'>Price Breakdown</div>
+                                            </div>
+                                                <div className="stat">
+                                                    <div className="stat-title text-main">Average Price (RM)</div>
+                                                    <div className="stat-value">{product?.averagePrice}</div>
+                                                    <div className="stat-desc">{
+                                                        product?.reviews &&
+                                                        dayjs(product?.reviews[product.reviews.length - 1].date_created).format("MMM YYYY")
+                                                        + " - "
+                                                        + dayjs(product?.reviews[0].date_created).format("MMM YYYY")
+                                                    }</div>
+                                                </div>
 
-                        <div className="flex flex-col">
-                            <div className="text-main font-semibold text-3xl">Review Analytics</div>
-                            <div className="flex mt-5 items-center gap-5">
-                                <RatingBreakdown product={product}></RatingBreakdown>
-                                <div className="flex flex-col gap-2 grow bg-white" data-theme="corporate">
-                                    <div className="stats stats-vertical bg-white text-main border border-main rounded-lg">                                        <div className="stat">
-                                        <div className='font-semibold text-gray-600 text-lg'>Price Breakdown</div>
-                                    </div>
-                                        <div className="stat">
-                                            <div className="stat-title text-main">Average Price (RM)</div>
-                                            <div className="stat-value">{product?.averagePrice}</div>
-                                            <div className="stat-desc">{
-                                                product?.reviews &&
-                                                dayjs(product?.reviews[product.reviews.length - 1].date_created).format("MMM YYYY")
-                                                + " - "
-                                                + dayjs(product?.reviews[0].date_created).format("MMM YYYY")
-                                            }</div>
-                                        </div>
-
-                                        <div className="stat">
-                                            <div className="stat-title text-main">Range of Prices (RM)</div>
-                                            <div className="stat-value">{product?.minPrice + ' - ' + product?.maxPrice}</div>
-                                            <div className="stat-desc">{"Based on " + product?.reviews?.length + " reviews"}</div>
+                                                <div className="stat">
+                                                    <div className="stat-title text-main">Range of Prices (RM)</div>
+                                                    <div className="stat-value">{product?.minPrice + ' - ' + product?.maxPrice}</div>
+                                                    <div className="stat-desc">{"Based on " + product?.reviews?.length + " reviews"}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div className="w-full -mt-5">
-                            <div className="border border-main rounded-lg p-5">
-                                <TimeChart data={reviewGraphData}
-                                    activeTab={activeReviewDataTab}
-                                    setActiveTab={setActiveReviewDataTab}
-                                ></TimeChart>
-                            </div>
-
-
-                        </div>
-
-                        <FadedLine className="w-full"></FadedLine>
-
-                        <div className="flex flex-col">
-                            <div data-theme="cupcake" className="flex items-center mr-5 self-end">
-                                <label className="mr-3 text-md xl:text-lg">Sort By:</label>
-                                <select
-                                    title="Sort by: "
-                                    className="select select-sm xl:select-md border-2 border-main rounded-xl leading-none 
-                            focus:outline-0 text-gray-black focus:text-gray-black text-lg"
-                                    value={JSON.stringify(sortCategory)}
-                                    onChange={e => setSortCategory(JSON.parse(e.target.value))}
-                                >
-                                    <option value={JSON.stringify({ by: "name", direction: "asc" })}>A to Z</option>
-                                    <option value={JSON.stringify({ by: "name", direction: "desc" })}>Z to A</option>
-                                    <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Highest Rating</option>
-                                    <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Lowest Rating</option>
-                                </select>
-                            </div>
-                        </div>
-                        {
-                            product?.reviews?.map((review: Review, i: number) => {
-                                return (
-                                    <div id={review.reviewId} ref={(ref) => (reviewRefs.current[review.reviewId!] = ref)}>
-                                        <ReviewBlock user={review.user} review={review} key={i}
-                                            refreshFunction={() => {
-                                                getProduct()
-                                            }}
-                                        ></ReviewBlock>
+                                <div className="w-full -mt-5">
+                                    <div className="border border-main rounded-lg p-5">
+                                        <TimeChart data={reviewGraphData}
+                                            activeTab={activeReviewDataTab}
+                                            setActiveTab={setActiveReviewDataTab}
+                                        ></TimeChart>
                                     </div>
-                                )
-                            })
+
+
+                                </div>
+
+                                <FadedLine className="w-full"></FadedLine>
+
+                                <div className="flex flex-col" id="review-list">
+                                    <div data-theme="cupcake" className="flex items-center mr-5 self-end">
+                                        <label className="mr-3 text-md xl:text-lg">Sort By:</label>
+                                        <select
+                                            title="Sort by: "
+                                            className="select select-sm xl:select-md border-2 border-main rounded-xl leading-none 
+                            focus:outline-0 text-gray-black focus:text-gray-black text-lg"
+                                            value={JSON.stringify(sortCategory)}
+                                            onChange={e => setSortCategory(JSON.parse(e.target.value))}
+                                        >
+                                            <option value={JSON.stringify({ by: "dateCreated", direction: "desc" })}>Newest</option>
+                                            <option value={JSON.stringify({ by: "dateCreated", direction: "asc" })}>Oldest</option>
+                                            <option value={JSON.stringify({ by: "votes", direction: "asc" })}>Most Upvotes</option>
+                                            <option value={JSON.stringify({ by: "votes", direction: "desc" })}>Most Downvotes</option>
+                                            <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Highest Rating</option>
+                                            <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Lowest Rating</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                {
+                                    product?.reviews?.map((review: Review) => {
+                                        return (
+                                            <div id={review.reviewId} ref={(ref) => (reviewRefs.current[review.reviewId!] = ref)} key={review.reviewId}>
+                                                <ReviewBlock user={review.user} review={review}
+                                                    refreshFunction={() => {
+                                                        getProduct()
+                                                    }}
+                                                ></ReviewBlock>
+                                            </div>
+                                        )
+                                    })
+                                }
+                                <div className="self-center mt-10">
+                                    <Pagination value={page} onChange={handlePageChange} total={product.totalReviewPage}
+                                        radius={'xl'}
+                                        boundaries={5}
+                                        classNames={{ control: 'border-transparent' }}
+                                    />
+                                </div>
+                            </>
                         }
                     </div>
                 </div>

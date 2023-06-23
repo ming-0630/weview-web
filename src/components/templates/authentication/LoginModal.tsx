@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button";
+// import { Button } from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import PasswordInput from "@/components/ui/PasswordInput";
 import User from "@/interfaces/userInterface";
@@ -6,7 +6,7 @@ import { LoginDto, login } from "@/services/user/services";
 import { AuthTokens, useAuthStore } from "@/states/authStates";
 import { useGlobalStore } from "@/states/globalStates";
 import CustomToastError from "@/utils/CustomToastError";
-import { LoadingOverlay } from "@mantine/core";
+import { Button, LoadingOverlay } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { base64StringToBlob } from "blob-util";
 import Image from 'next/image';
@@ -119,9 +119,11 @@ const LoginModal = () => {
 
                     <div className="flex justify-between items-center mt-5">
                         <label className="cursor-pointer text-black/50 text-sm hover:text-main"
-                            onClick={register}>Don't have an account? Click here!</label>
+                            onClick={register}>{"Don't have an account? Click here!"}</label>
 
-                        <Button onClick={handleLogin}>Login</Button>
+                        <Button className="mt-3 bg-main" variant='filled'
+                            onClick={handleLogin}
+                        >Login</Button>
                     </div>
                 </div>
 

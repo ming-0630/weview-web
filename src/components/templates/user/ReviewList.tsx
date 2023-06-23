@@ -87,8 +87,11 @@ const ReviewList = () => {
                                 >
                                     <option value={JSON.stringify({ by: "dateCreated", direction: "desc" })}>Newest</option>
                                     <option value={JSON.stringify({ by: "dateCreated", direction: "asc" })}>Oldest</option>
+                                    <option value={JSON.stringify({ by: "votes", direction: "asc" })}>Most Upvotes</option>
+                                    <option value={JSON.stringify({ by: "votes", direction: "desc" })}>Most Downvotes</option>
                                     <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Highest Rating</option>
                                     <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Lowest Rating</option>
+
                                 </select>
                             </div>
                         </div>
@@ -97,9 +100,9 @@ const ReviewList = () => {
                 <div className="flex flex-col gap-10 mt-8">
                     {
                         reviews.length > 0 ?
-                            reviews.map((review, key) => {
-                                return <div className="border-b-2 border-main/40 pb-5">
-                                    <ReviewBlock review={review} key={key} user={review.user}
+                            reviews.map((review) => {
+                                return <div className="border-b-2 border-main/40 pb-5" key={review.reviewId}>
+                                    <ReviewBlock review={review} user={review.user}
                                         refreshFunction={() => {
                                             getReviews(page, sortCategory)
                                         }}></ReviewBlock>

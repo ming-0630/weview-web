@@ -1,7 +1,7 @@
 import FileUpload from "@/components/ui/FileUpload";
 import Modal from "@/components/ui/Modal";
 import { useGlobalStore } from "@/states/globalStates";
-import { LoadingOverlay } from "@mantine/core";
+import { Button, LoadingOverlay } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Image from 'next/image';
 import WeViewLogo from '/public/favicon.ico';
@@ -9,7 +9,6 @@ import { useState } from "react";
 import useStore from "@/utils/useStore";
 import { AuthTokens, useAuthStore } from "@/states/authStates";
 import blankUserImage from '../../../assets/blank_user.png';
-import { Button } from "@/components/ui/Button";
 import CustomToastError from "@/utils/CustomToastError";
 import { update } from "lodash";
 import { updateProfilePicture } from "@/services/user/services";
@@ -21,8 +20,6 @@ const UploadProfilePicModal = () => {
     const isShow = useGlobalStore((state) => state.uploadIsOpen)
     const toggleUpload = useGlobalStore((state) => state.toggleUpload)
     const user = useStore(useAuthStore, ((state) => state.loggedInUser));
-    const accessToken = useStore(useAuthStore, ((state) => state.accessToken));
-    const refreshToken = useStore(useAuthStore, ((state) => state.refreshToken));
     const setUser = useAuthStore((state) => state.setCurrentUser)
 
     const [images, setImages] = useState<File[]>([])
@@ -100,7 +97,9 @@ const UploadProfilePicModal = () => {
                     ></FileUpload>
                 </div>
                 <div className="self-end mt-5">
-                    <Button onClick={handleSubmit}>Save</Button>
+                    <Button className="mt-3 bg-main" variant='filled'
+                        onClick={handleSubmit}
+                    >Submit</Button>
                 </div>
             </div>
         </Modal>

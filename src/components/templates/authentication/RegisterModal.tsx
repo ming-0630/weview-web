@@ -8,9 +8,9 @@ import PasswordInput from "@/components/ui/PasswordInput";
 import { toast } from "react-toastify";
 import { RegisterDto, register } from "@/services/user/services";
 import CustomToastError from "@/utils/CustomToastError";
-import { Button } from "@/components/ui/Button";
+// import { Button } from "@/components/ui/Button";
 import { useDisclosure } from "@mantine/hooks";
-import { LoadingOverlay } from "@mantine/core";
+import { Button, LoadingOverlay } from "@mantine/core";
 
 interface registerInput {
     email: string,
@@ -144,7 +144,9 @@ const RegisterModal = () => {
 
                         <div className="flex justify-between items-center mb-3 ">
                             <label className="cursor-pointer text-black/50 mr-5 text-sm hover:text-main" onClick={login}>Already have an account? Click here!</label>
-                            <Button onClick={handleRegister}>Register</Button>
+                            <Button className="mt-3 bg-main" variant='filled'
+                                onClick={handleRegister}
+                            >Register</Button>
                         </div>
                     </div>
                 </div>

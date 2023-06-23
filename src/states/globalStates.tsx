@@ -8,6 +8,7 @@ export interface GlobalState {
     confirmIsOpen: boolean,
     uploadIsOpen: boolean,
     pointsIsOpen: boolean,
+    verifyIsOpen: boolean,
     confirmDetails: ConfirmModalProps,
     loading: boolean,
     toggleNav: () => void,
@@ -15,6 +16,7 @@ export interface GlobalState {
     toggleRegister: () => void,
     toggleUpload: () => void,
     togglePoints: () => void,
+    toggleVerify: () => void,
     toggleConfirm: (props?: ConfirmModalProps) => void,
     loadingHandler: {
         open: () => void;
@@ -31,6 +33,7 @@ export const useGlobalStore = create<GlobalState>()((set) => (
         confirmIsOpen: false,
         uploadIsOpen: false,
         pointsIsOpen: false,
+        verifyIsOpen: false,
         confirmDetails: {},
         loading: false,
         toggleNav: () => set((state) => ({ navIsOpen: !state.navIsOpen })),
@@ -45,6 +48,7 @@ export const useGlobalStore = create<GlobalState>()((set) => (
         },
         toggleUpload: () => set((state) => ({ uploadIsOpen: !state.uploadIsOpen })),
         togglePoints: () => set((state) => ({ pointsIsOpen: !state.pointsIsOpen })),
+        toggleVerify: () => set((state) => ({ verifyIsOpen: !state.verifyIsOpen })),
         loadingHandler: {
             open: () => set({ loading: true }),
             close: () => set({ loading: false })

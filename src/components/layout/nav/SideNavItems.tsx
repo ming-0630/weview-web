@@ -20,7 +20,7 @@ const SideNavItems = () => {
         toggleRegister();
     }
     return (
-        <div className="flex flex-col p-5">
+        <div className="flex flex-col p-5" tabIndex={-1}>
             <div className="flex justify-center items-center">
                 <Image src={WeViewLogo} alt="WeView logo" width={50}></Image>
             </div>
@@ -30,6 +30,7 @@ const SideNavItems = () => {
             </div>
 
             <hr className="border-none h-0.5 bg-black/10 rounded my-2"></hr>
+            <input type="text" autoFocus className="hidden" />
             <NavItem
                 title='Home'
                 href={'/'}
@@ -80,9 +81,6 @@ const SideNavItems = () => {
                 isNavItem
             ></NavItem>
         </div>
-
-
-
     )
 }
 

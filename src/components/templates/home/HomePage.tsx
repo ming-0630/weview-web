@@ -11,17 +11,17 @@ import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { ReactElement, useEffect, useState } from "react";
 import Carousel from "../../ui/Carousell";
-import CategoriesImage from "./categories/CategoriesImage";
 import Link from "next/link";
+import CategoriesImage from "./Categories/CategoriesImage";
 
 const page1 = (
     <div className='flex h-[calc(100vh_-_5rem)]'>
         <div className='flex flex-col justify-center w-1/2 pl-20 lg:pl-40 mb-16 flex justify-start'>
             <div className='text-4xl lg:text-6xl xl:text-7xl'>
-                <div>Welcome to &nbsp;</div><div className='text-main font-bold'>WeView</div>
+                <div>{"Welcome to "}&nbsp;</div><div className='text-main font-bold'>WeView</div>
             </div>
             <div className='font-light text-xl lg:text-2xl xl:text-3xl mt-3'>
-                <span>Your one-stop review platform for all tech products and electronics</span>
+                <span>{"Your one-stop review platform for all tech products and electronics"}</span>
             </div>
             <div className='mt-3 w-full lg:w-2/3 xl:w-1/2'>
                 <SearchInput></SearchInput>
@@ -58,7 +58,7 @@ for (let index = 0; index < 10; index++) {
 const page2 = (<div className='flex flex-col items-center m-auto py-32 w-11/12 xl:w-5/6'>
     <div className='flex flex-col w-full items-center'>
         <span className='text-5xl'>Trending</span>
-        <span className='text-xl mt-5 text-black/60'>Find out what's the recent buzz</span>
+        <span className='text-xl mt-5 text-black/60'>{"Find out what's the recent buzz"}</span>
     </div>
 
     <div className='flex flex-col justify-center w-full h-3/5 pt-16'>
