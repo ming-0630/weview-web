@@ -35,7 +35,6 @@ const ProductListPage = (props: ProductListPageProps) => {
     const user = useStore(useAuthStore, (state) => state.loggedInUser)
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
 
-
     const getProduct = async (page: number, sortCategory: SortProps) => {
 
         try {

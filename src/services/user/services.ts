@@ -122,7 +122,8 @@ export function getUser() {
     const response = client.get(
         "user/getUser"
     ).then((res) => {
-        if (res.data) {
+        console.log(res)
+        if (res.data && res.data.userImage) {
             const blob = base64StringToBlob(res.data.userImage);
             const img = URL.createObjectURL(blob);
             res.data.userImage = img;
@@ -167,6 +168,27 @@ export function verifyCode(phone: string, code: string) {
             params: {
                 phoneNumber: phone,
                 code: code
+            }
+        }
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response;
+}
+
+export function redeemReward(rewardId: string) {
+    const response = client.post(
+        "user/reward/redeem",
+        null,
+        {
+            params: {
+                rewardId: rewardId
             }
         }
     ).catch((err) => {

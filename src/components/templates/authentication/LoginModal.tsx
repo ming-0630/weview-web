@@ -54,7 +54,8 @@ const LoginModal = () => {
                     username: data.user.username,
                     userImageBase64: data.user.userImage,
                     isVerified: data.user.isVerified,
-                    points: data.user.points
+                    points: data.user.points,
+                    role: data.user.role
                 }
 
                 if (data.user && data.user.userImage) {

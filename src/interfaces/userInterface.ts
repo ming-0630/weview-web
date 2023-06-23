@@ -7,6 +7,7 @@ interface User {
     userImageBase64?: string;
     isVerified: boolean;
     points: number;
+    role: string[]
 }
 
 export default User

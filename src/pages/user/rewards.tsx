@@ -1,10 +1,10 @@
 import DefaultPageLayout from "@/components/layout/DefaultPagesLayout";
-import ReviewList from "@/components/templates/user/ReviewList";
+import Rewards from "@/components/templates/user/Rewards";
 
-export default function ReviewPage() {
+export default function RewardsPage() {
     return (
         <DefaultPageLayout>
-            <ReviewList></ReviewList>
+            <Rewards></Rewards>
         </DefaultPageLayout>
     )
 }

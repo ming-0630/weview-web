@@ -130,9 +130,6 @@ const CustomFileUpload = (props: FileUploadProps) => {
         <div className={classNames('w-full overflow-y-auto max-h-[65vh]', props.containerClassName)}>
             <Toast ref={toast}></Toast>
 
-            <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
-            <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
-
             <FileUpload ref={fileUploadRef} name="demo[]" url="/api/upload" accept="image/*" maxFileSize={10000000}
                 onSelect={onSelect} onError={onClear} onClear={onClear}
                 headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}

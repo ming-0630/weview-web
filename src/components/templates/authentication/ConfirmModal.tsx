@@ -2,18 +2,20 @@ import Modal from "@/components/ui/Modal";
 import Image from 'next/image';
 import WeViewLogo from '/public/favicon.ico';
 import { useGlobalStore } from "@/states/globalStates";
+import { Children, ReactNode } from "react";
 
 export interface ConfirmModalProps {
     title?: string,
     description?: string,
+    children?: ReactNode,
     onClickYes?: (...args: any[]) => void
+    isNotifying?: boolean
 }
 
 const ConfirmModal = () => {
     const isShow = useGlobalStore((state) => state.confirmIsOpen)
     const confirmDetails = useGlobalStore((state) => state.confirmDetails)
     const toggleModal = useGlobalStore((state) => state.toggleConfirm)
-    const toggleNav = useGlobalStore((state) => state.toggleNav)
 
     return (
         <Modal isShow={isShow}
@@ -26,10 +28,18 @@ const ConfirmModal = () => {
                     <div className="text-2xl text-main ml-4">{(confirmDetails && confirmDetails.title) ?? "Title"}</div>
                 </div>
                 <div className="p-3 flex flex-col">
-                    <div className="text-xl mb-3">{(confirmDetails && confirmDetails.description) ?? " Description"}</div>
+                    <div className="text-xl mb-3">{confirmDetails && confirmDetails.description}</div>
+                    {confirmDetails && confirmDetails.children}
                     <div className="self-end">
-                        <div className="btn btn-success mr-3" onClick={confirmDetails && confirmDetails.onClickYes}>yes</div>
-                        <div className="btn btn-error" onClick={() => { toggleModal() }}>No</div>
+                        {
+                            confirmDetails && confirmDetails.isNotifying ?
+                                <div className="btn btn-success mr-3 mt-3" onClick={() => { toggleModal() }}>Done</div>
+                                :
+                                <>
+                                    <div className="btn btn-success mr-3" onClick={confirmDetails && confirmDetails.onClickYes}>yes</div>
+                                    <div className="btn btn-error" onClick={() => { toggleModal() }}>No</div>
+                                </>
+                        }
                     </div>
                 </div>
 

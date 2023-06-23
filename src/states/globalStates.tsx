@@ -9,6 +9,7 @@ export interface GlobalState {
     uploadIsOpen: boolean,
     pointsIsOpen: boolean,
     verifyIsOpen: boolean,
+    newRewardIsOpen: boolean,
     confirmDetails: ConfirmModalProps,
     loading: boolean,
     toggleNav: () => void,
@@ -18,6 +19,7 @@ export interface GlobalState {
     togglePoints: () => void,
     toggleVerify: () => void,
     toggleConfirm: (props?: ConfirmModalProps) => void,
+    toggleNewRewardIsOpen: () => void,
     loadingHandler: {
         open: () => void;
         close: () => void
@@ -34,6 +36,7 @@ export const useGlobalStore = create<GlobalState>()((set) => (
         uploadIsOpen: false,
         pointsIsOpen: false,
         verifyIsOpen: false,
+        newRewardIsOpen: false,
         confirmDetails: {},
         loading: false,
         toggleNav: () => set((state) => ({ navIsOpen: !state.navIsOpen })),
@@ -49,6 +52,7 @@ export const useGlobalStore = create<GlobalState>()((set) => (
         toggleUpload: () => set((state) => ({ uploadIsOpen: !state.uploadIsOpen })),
         togglePoints: () => set((state) => ({ pointsIsOpen: !state.pointsIsOpen })),
         toggleVerify: () => set((state) => ({ verifyIsOpen: !state.verifyIsOpen })),
+        toggleNewRewardIsOpen: () => set((state) => ({ newRewardIsOpen: !state.newRewardIsOpen })),
         loadingHandler: {
             open: () => set({ loading: true }),
             close: () => set({ loading: false })

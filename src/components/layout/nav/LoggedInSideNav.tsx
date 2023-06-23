@@ -1,17 +1,16 @@
+import Unverified from "@/components/ui/Unverified";
 import { useAuthStore } from "@/states/authStates";
 import { useGlobalStore } from "@/states/globalStates";
 import useStore from "@/utils/useStore";
-import { ArrowTrendingUpIcon, BoltIcon, ChartBarSquareIcon, ChatBubbleLeftRightIcon, ComputerDesktopIcon, CubeIcon, DevicePhoneMobileIcon, FireIcon, HeartIcon, HomeIcon, MusicalNoteIcon, PencilSquareIcon, Squares2X2Icon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { CheckBadgeIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import { BoltIcon, ChartBarSquareIcon, ChatBubbleLeftRightIcon, ComputerDesktopIcon, CubeIcon, DevicePhoneMobileIcon, FireIcon, GiftIcon, HeartIcon, HomeIcon, MusicalNoteIcon, PencilSquareIcon, Squares2X2Icon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { Tooltip } from "@mantine/core";
 import Image from 'next/image';
-import Link from "next/link";
 import { useRouter } from "next/router";
 import blankUserImage from '../../../assets/blank_user.png';
 import NavItem from "./NavItem";
 import NavItemCollapse from "./NavItemCollapse";
 import WeViewLogo from '/public/favicon.ico';
-import Unverified from "@/components/ui/Unverified";
 
 const LoggedInSideNav = () => {
     const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
@@ -94,9 +93,9 @@ const LoggedInSideNav = () => {
                 ></NavItem>
             </NavItemCollapse>
             <NavItem
-                title='Trending'
-                href={'/product-list-page'}
-                icon={<ArrowTrendingUpIcon className='w-6 m-3'></ArrowTrendingUpIcon>}
+                title='Redeem rewards'
+                href={'/user/rewards'}
+                icon={<GiftIcon className='w-6 m-3'></GiftIcon>}
             ></NavItem>
             <NavItem
                 title='All Products'

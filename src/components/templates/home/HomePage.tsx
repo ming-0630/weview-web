@@ -1,17 +1,17 @@
 import ProductCard from "@/components/layout/productCard/ProductCardOri";
 import SearchInput from "@/components/ui/SearchInput";
-import smartphone from '../../../assets/smartphone 1.png';
-import smartphoneCategory from '../../../assets/smartphone.jpg';
-import musicCategory from '../../../assets/music.jpg';
-import allCategory from '../../../assets/all.jpg';
-import homeCategory from '../../../assets/home.jpg';
-import computerCategory from '../../../assets/computers.jpg';
 import Category from "@/enums/categoryEnum";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
-import { ReactElement, useEffect, useState } from "react";
-import Carousel from "../../ui/Carousell";
 import Link from "next/link";
+import { ReactElement } from "react";
+import allCategory from '../../../assets/all.jpg';
+import computerCategory from '../../../assets/computers.jpg';
+import homeCategory from '../../../assets/home.jpg';
+import musicCategory from '../../../assets/music.jpg';
+import smartphone from '../../../assets/smartphone 1.png';
+import smartphoneCategory from '../../../assets/smartphone.jpg';
+import Carousel from "../../ui/Carousell";
 import CategoriesImage from "./Categories/CategoriesImage";
 
 const page1 = (
