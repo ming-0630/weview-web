@@ -18,6 +18,7 @@ export interface CreateReward {
 const NewRewardModal = () => {
     const isShow = useGlobalStore((state) => state.newRewardIsOpen)
     const toggleModal = useGlobalStore((state) => state.toggleNewRewardIsOpen)
+    const { refreshFunction, loadingHandler } = useGlobalStore();
 
     const [images, setImages] = useState<File[]>([])
 
@@ -28,36 +29,46 @@ const NewRewardModal = () => {
     });
 
     const handleSubmit = async () => {
-        const data = new FormData();
-        if (images.length <= 0) {
-            CustomToastError("No images uploaded!")
-            return;
+        loadingHandler.open();
+        try {
+            const data = new FormData();
+            if (images.length <= 0) {
+                CustomToastError("No images uploaded!")
+                return;
+            }
+
+            if (!formData.name || !formData.codes || !formData.points) {
+                CustomToastError("Empty Fields!")
+                return;
+            }
+
+            const resultArray = convertStringToArray(formData.codes);
+            if (!resultArray) {
+                CustomToastError("Invalid String format!")
+                return;
+            }
+
+            data.append('uploadedImage', images[0])
+            data.append("name", formData.name);
+            data.append("points", formData.points);
+            resultArray.forEach((value) => {
+                data.append('codes', value);
+            });
+
+            const response = await addReward(data);
+
+            if (response && response.status == 200) {
+                toast.success("Added reward");
+                if (refreshFunction) {
+                    refreshFunction();
+                }
+                setImages([]);
+                toggleModal();
+            }
+        } finally {
+            loadingHandler.close();
         }
 
-        if (!formData.name || !formData.codes || !formData.points) {
-            CustomToastError("Empty Fields!")
-            return;
-        }
-
-        const resultArray = convertStringToArray(formData.codes);
-        if (!resultArray) {
-            CustomToastError("Invalid String format!")
-            return;
-        }
-
-        data.append('uploadedImage', images[0])
-        data.append("name", formData.name);
-        data.append("points", formData.points);
-        resultArray.forEach((value) => {
-            data.append('codes', value);
-        });
-
-        const response = await addReward(data);
-
-        if (response && response.status == 200) {
-            toast.success("Added reward");
-            toggleModal();
-        }
     }
 
     const convertStringToArray = (string: string) => {

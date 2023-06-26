@@ -4,6 +4,8 @@ import { ScriptProps } from "next/script";
 import { ToastContainer } from "react-toastify";
 import AdminNavBar from "./nav/AdminNavBar";
 import NewRewardModal from "../templates/NewRewardModal";
+import EditRewardModal from "../templates/EditRewardModal";
+import EditCodeModal from "../templates/EditCodeModal";
 
 const DefaultPageLayout = ({ children }: ScriptProps) => {
     const isLoading = useGlobalStore((state) => state.loading)
@@ -23,8 +25,10 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
                 pauseOnHover
                 theme="light"
             />
-            <NewRewardModal></NewRewardModal>
             <LoadingOverlay visible={isLoading} overlayBlur={2} className="h-screen fixed w-full" />
+            <NewRewardModal></NewRewardModal>
+            <EditRewardModal></EditRewardModal>
+            <EditCodeModal></EditCodeModal>
             <AdminNavBar>{children}</AdminNavBar>
         </main>
 

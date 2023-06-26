@@ -3,6 +3,9 @@ import Category from "@/enums/categoryEnum";
 import dayjs from "dayjs";
 import { addProduct } from "@/services/product/services";
 import { YearPicker } from "@mantine/dates";
+import { test } from "node:test";
+import { Button } from "@mantine/core";
+import { testApi } from "@/services/review/services";
 
 export interface CreateProduct {
     name: string,
@@ -19,6 +22,11 @@ const NewProductForm = () => {
         releaseYear: dayjs().year(),
         description: ""
     });
+
+    const test = async () => {
+        const response = await testApi();
+        console.log(response)
+    }
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -57,6 +65,7 @@ const NewProductForm = () => {
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)] p-10 bg-white">
+            <Button className="bg-main" onClick={test}>TEST</Button>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label className="mb-1">Name</label>

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import WeViewLogo from '/public/favicon.ico';
 import { useGlobalStore } from "@/states/globalStates";
 import { Children, ReactNode } from "react";
+import { LoadingOverlay } from "@mantine/core";
 
 export interface ConfirmModalProps {
     title?: string,
@@ -10,16 +11,18 @@ export interface ConfirmModalProps {
     children?: ReactNode,
     onClickYes?: (...args: any[]) => void
     isNotifying?: boolean
+    isLoading?: boolean
 }
 
 const ConfirmModal = () => {
     const isShow = useGlobalStore((state) => state.confirmIsOpen)
     const confirmDetails = useGlobalStore((state) => state.confirmDetails)
     const toggleModal = useGlobalStore((state) => state.toggleConfirm)
-
+    const { loading } = useGlobalStore();
     return (
         <Modal isShow={isShow}
             toggleModal={toggleModal}>
+            <LoadingOverlay visible={loading} overlayBlur={2} />
             <div className="p-5 w-[60vw] lg:w-[40vw]">
                 <div className="flex items-center ml-4">
                     <div className='w-10 h-10 relative'>

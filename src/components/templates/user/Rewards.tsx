@@ -14,6 +14,7 @@ import { fetchRewards } from "@/services/admin/services";
 import { Reward } from "@/interfaces/rewardInterface";
 import CustomToastError from "@/utils/CustomToastError";
 import { redeemReward } from "@/services/user/services";
+import { toInteger } from "lodash";
 
 const Rewards = () => {
 
@@ -31,12 +32,20 @@ const Rewards = () => {
         loadingHandler.open();
 
         if (reward.points && loggedInUser?.points && reward.id) {
-            if (loggedInUser?.points < reward.points) {
+            if (loggedInUser?.points < toInteger(reward.points)) {
                 CustomToastError("Insufficient points!")
                 toggleConfirm();
                 loadingHandler.close();
                 return;
             }
+
+            if (!reward.codeCount || reward.codeCount <= 0) {
+                CustomToastError("No codes left!")
+                toggleConfirm();
+                loadingHandler.close();
+                return;
+            }
+
 
             const response = await redeemReward(reward.id)
 
@@ -44,6 +53,7 @@ const Rewards = () => {
                 toggleConfirm();
                 loggedInUser.points = response.data.user.points
                 setCurrentUser(loggedInUser)
+                getRewards();
                 toggleConfirm({
                     title: "Thank you for your redemption!",
                     children: (
@@ -62,8 +72,6 @@ const Rewards = () => {
             }
 
         }
-
-
         loadingHandler.close();
     }
 
@@ -75,7 +83,6 @@ const Rewards = () => {
             if (response && response.data) {
                 console.log(response.data)
                 if (response.data) {
-                    setPage(response.data.pageNum)
                     setTotalPage(response.data.totalPage)
                     setRewards(response.data.rewards)
                 }
@@ -134,7 +141,6 @@ const Rewards = () => {
 
                     </div>
                 </div>
-
                 <div className="my-10 mx-auto">
                     <Pagination value={page} onChange={handlePageChange} total={totalPage}
                         radius={'xl'}

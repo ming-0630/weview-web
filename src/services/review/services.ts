@@ -294,3 +294,23 @@ export function deleteCommentAPI(commentId: string) {
 
     return response
 }
+
+export function testApi() {
+    const response = client.post(
+        "/principal/call-python-api",
+        {
+            test: "Testing",
+            test2: "Testing 2"
+        },
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+
+    return response
+}

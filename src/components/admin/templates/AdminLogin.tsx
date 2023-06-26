@@ -52,7 +52,6 @@ const AdminLoginPage = () => {
                 setTokens(tokens);
                 setCurrentUser(user);
 
-
                 if (!user.role.includes("ROLE_ADMIN")) {
                     toast.warning("This user is not an admin! Redirecting...")
                     router.push('/')

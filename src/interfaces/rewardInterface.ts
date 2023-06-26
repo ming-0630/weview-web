@@ -5,7 +5,7 @@ export interface Reward {
     id?: string,
     name?: string,
     codeCount?: number,
-    points?: number
+    points?: number | string,
     image?: string
 }
 

@@ -54,3 +54,60 @@ export function addReward(props: FormData) {
     });
     return response
 }
+
+export function editReward(props: FormData) {
+    const response = client.post(
+        "/user/reward/edit",
+        props,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        },
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response
+}
+
+export function getCodes(rewardId: string) {
+    const response = client.get(
+        "/user/reward/getCodes",
+        {
+            params: {
+                rewardId: rewardId
+            }
+        },
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response
+}
+
+export function addCodes(rewardId: string, codes: string[]) {
+    const response = client.post(
+        "/user/reward/addCodes",
+        { rewardId, codes }
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response
+}
