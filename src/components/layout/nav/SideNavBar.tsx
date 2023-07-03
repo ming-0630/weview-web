@@ -19,7 +19,7 @@ const SideNavBar = (props: SideNavBarProps) => {
 
     return (
         <>
-            <Drawer opened={navIsOpen} onClose={toggleNav} position='right' size="25%" withCloseButton={false}
+            <Drawer opened={navIsOpen} onClose={toggleNav} position='right' className='w-[25vw] xl:w-[20vw]' withCloseButton={false}
                 scrollAreaComponent={ScrollArea.Autosize}
                 classNames={{
                     body: "min-h-screen p-0"

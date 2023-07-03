@@ -1,24 +1,20 @@
 
-import { GiftIcon, PencilSquareIcon } from "@heroicons/react/24/outline"
+import RewardCard from "@/components/layout/rewardCard/RewardCard";
+import { Reward } from "@/interfaces/rewardInterface";
+import { fetchRewards } from "@/services/admin/services";
+import { redeemReward } from "@/services/user/services";
+import { useAuthStore } from "@/states/authStates";
+import { useGlobalStore } from "@/states/globalStates";
+import CustomToastError from "@/utils/CustomToastError";
+import { GiftIcon } from "@heroicons/react/24/outline";
+import { Pagination } from "@mantine/core";
+import { toInteger } from "lodash";
 import { useEffect, useState } from "react";
 import { SortProps } from "../product/ProductListPage";
-import { Pagination } from "@mantine/core";
-import useStore from "@/utils/useStore";
-import { useAuthStore } from "@/states/authStates";
-import Review from "@/interfaces/reviewInterface";
-import ReviewBlock from "../review/ReviewBlock";
-import { fetchReviews } from "@/services/review/services";
-import { useGlobalStore } from "@/states/globalStates";
-import RewardCard from "@/components/layout/rewardCard/RewardCard";
-import { fetchRewards } from "@/services/admin/services";
-import { Reward } from "@/interfaces/rewardInterface";
-import CustomToastError from "@/utils/CustomToastError";
-import { redeemReward } from "@/services/user/services";
-import { toInteger } from "lodash";
 
 const Rewards = () => {
 
-    const [sortCategory, setSortCategory] = useState<SortProps>({ by: "dateCreated", direction: "desc" });
+    const [sortCategory, setSortCategory] = useState<SortProps>({ by: "name", direction: "asc" });
     const [page, setPage] = useState(1);
     const [rewards, setRewards] = useState([]);
     const [totalPage, setTotalPage] = useState(1);
@@ -78,10 +74,13 @@ const Rewards = () => {
     const getRewards = async () => {
         try {
             loadingHandler.open();
-            const response = await fetchRewards(page);
+            const response = await fetchRewards(
+                page,
+                sortCategory.by,
+                sortCategory.direction
+            );
 
             if (response && response.data) {
-                console.log(response.data)
                 if (response.data) {
                     setTotalPage(response.data.totalPage)
                     setRewards(response.data.rewards)
@@ -100,7 +99,7 @@ const Rewards = () => {
     // On page change
     useEffect(() => {
         getRewards()
-    }, [page])
+    }, [page, sortCategory])
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)]">
@@ -121,25 +120,22 @@ const Rewards = () => {
                                     value={JSON.stringify(sortCategory)}
                                     onChange={e => setSortCategory(JSON.parse(e.target.value))}
                                 >
-                                    <option value={JSON.stringify({ by: "dateCreated", direction: "desc" })}>Newest</option>
-                                    <option value={JSON.stringify({ by: "dateCreated", direction: "asc" })}>Oldest</option>
-                                    <option value={JSON.stringify({ by: "votes", direction: "asc" })}>Most Upvotes</option>
-                                    <option value={JSON.stringify({ by: "votes", direction: "desc" })}>Most Downvotes</option>
-                                    <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Highest Rating</option>
-                                    <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Lowest Rating</option>
-
+                                    <option value={JSON.stringify({ by: "name", direction: "asc" })}>A - Z</option>
+                                    <option value={JSON.stringify({ by: "name", direction: "desc" })}>Z - A</option>
+                                    <option value={JSON.stringify({ by: "points", direction: "asc" })}>Lowest Points</option>
+                                    <option value={JSON.stringify({ by: "points", direction: "desc" })}>Highest Points</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col gap-10 mt-8">
-                    <div className="flex">
-                        {rewards.map((reward: Reward) => {
-                            return (<RewardCard reward={reward} key={reward.id} handleRedeem={() => handleRedeem(reward)}></RewardCard>)
-                        })}
+                <div className="flex flex-wrap grow gap-10 mt-8">
+                    {rewards.length > 0 ? rewards.map((reward: Reward) => {
+                        return (<RewardCard reward={reward} key={reward.id} handleRedeem={() => handleRedeem(reward)}></RewardCard>)
+                    }) :
+                        <div>No rewards found!</div>
+                    }
 
-                    </div>
                 </div>
                 <div className="my-10 mx-auto">
                     <Pagination value={page} onChange={handlePageChange} total={totalPage}

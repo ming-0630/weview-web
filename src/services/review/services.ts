@@ -2,6 +2,7 @@ import CustomToastError from "@/utils/CustomToastError";
 import { base64StringToBlob } from "blob-util";
 import { client } from "../axiosClient";
 import { Comment } from './../../interfaces/commentInterface';
+import Report from "@/interfaces/reportInterface";
 
 export function addReview(props: FormData) {
 
@@ -163,7 +164,11 @@ export function deleteReviewAPI(reviewId: string) {
     return response
 }
 
-export function fetchUserComments(userId: string, pageNum: number, sortBy?: string, direction?: string) {
+export function fetchUserComments(
+    userId: string,
+    pageNum: number,
+    sortBy?: string,
+    direction?: string) {
 
     const response = client.get(
         "/review/getUserComments",
@@ -295,13 +300,10 @@ export function deleteCommentAPI(commentId: string) {
     return response
 }
 
-export function testApi() {
+export function addReport(data: FormData) {
     const response = client.post(
-        "/principal/call-python-api",
-        {
-            test: "Testing",
-            test2: "Testing 2"
-        },
+        "review/report/add",
+        data
     ).catch((err) => {
         console.log(err)
         if (err.response && err.response.data) {
@@ -311,6 +313,5 @@ export function testApi() {
         }
 
     });
-
-    return response
+    return response;
 }

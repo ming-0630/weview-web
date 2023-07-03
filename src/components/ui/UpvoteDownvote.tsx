@@ -11,7 +11,7 @@ import { debounce } from "lodash";
 export interface UpvoteDownvoteProps {
     reviewId?: string,
     commentId?: string,
-    intialVotes?: number,
+    initialVotes?: number,
     currentUserVote?: VoteType | null,
     isHorizontal?: boolean
     disabled?: boolean
@@ -23,8 +23,8 @@ const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
     const [currentVote, setCurrentVote] = useState<VoteType | null>(null)
 
     useEffect(() => {
-        if (props.intialVotes) {
-            setVoteCount(props.intialVotes)
+        if (props.initialVotes || props.initialVotes == 0) {
+            setVoteCount(props.initialVotes)
         }
 
         if (props.currentUserVote == undefined) {
@@ -32,7 +32,7 @@ const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
         } else {
             setCurrentVote(props.currentUserVote)
         }
-    }, [props.intialVotes, props.currentUserVote])
+    }, [props.initialVotes, props.currentUserVote])
 
     const handleVote = (vote: VoteType) => {
         if (!loggedInUser) {

@@ -1,4 +1,5 @@
 enum Category {
+    NONE,
     ALL,
     SMARTPHONES,
     MUSIC,

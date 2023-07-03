@@ -66,7 +66,7 @@ const CommentBlock = (props: CommentBlockProps) => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <UpvoteDownvote commentId={props.comment?.commentId} intialVotes={props.comment?.votes}
+                    <UpvoteDownvote commentId={props.comment?.commentId} initialVotes={props.comment?.votes}
                         currentUserVote={props.comment?.currentUserVote} isHorizontal
                         disabled={props.comment?.user?.id == loggedInUser?.id}
                     ></UpvoteDownvote>

@@ -3,9 +3,13 @@ import { LoadingOverlay } from "@mantine/core";
 import { ScriptProps } from "next/script";
 import { ToastContainer } from "react-toastify";
 import AdminNavBar from "./nav/AdminNavBar";
-import NewRewardModal from "../templates/NewRewardModal";
-import EditRewardModal from "../templates/EditRewardModal";
-import EditCodeModal from "../templates/EditCodeModal";
+import InspectReportModal from "../templates/report/InspectReportModal";
+import InspectReviewModal from "../templates/report/InspectReviewModal";
+import EditCodeModal from "../templates/reward/EditCodeModal";
+import EditRewardModal from "../templates/reward/EditRewardModal";
+import NewRewardModal from "../templates/reward/NewRewardModal";
+import EditProductModal from "../templates/product/EditProductModal";
+import NewProductModal from "../templates/product/NewProductModal";
 
 const DefaultPageLayout = ({ children }: ScriptProps) => {
     const isLoading = useGlobalStore((state) => state.loading)
@@ -29,6 +33,10 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
             <NewRewardModal></NewRewardModal>
             <EditRewardModal></EditRewardModal>
             <EditCodeModal></EditCodeModal>
+            <NewProductModal></NewProductModal>
+            <EditProductModal></EditProductModal>
+            <InspectReviewModal></InspectReviewModal>
+            <InspectReportModal></InspectReportModal>
             <AdminNavBar>{children}</AdminNavBar>
         </main>
 

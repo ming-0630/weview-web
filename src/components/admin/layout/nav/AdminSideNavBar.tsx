@@ -1,7 +1,7 @@
 import NavItem from '@/components/layout/nav/NavItem';
 import { useAuthStore } from '@/states/authStates';
 import { useGlobalStore } from '@/states/globalStates';
-import { CubeIcon, GiftIcon } from '@heroicons/react/24/outline';
+import { CubeIcon, FlagIcon, GiftIcon } from '@heroicons/react/24/outline';
 import router from 'next/router';
 
 const AdminSideNavBar = () => {
@@ -16,9 +16,14 @@ const AdminSideNavBar = () => {
                 icon={<CubeIcon className='w-6 m-3'></CubeIcon>}
             ></NavItem>
             <NavItem
-                title='Reward'
+                title='Rewards'
                 href={'/admin/rewards'}
                 icon={<GiftIcon className='w-6 m-3'></GiftIcon>}
+            ></NavItem>
+            <NavItem
+                title='Reports'
+                href={'/admin/reports'}
+                icon={<FlagIcon className='w-6 m-3'></FlagIcon>}
             ></NavItem>
             <div className="btn btn-error text-white hover:brightness-95 justify-self-end mt-auto" onClick={() => {
                 toggleConfirm({

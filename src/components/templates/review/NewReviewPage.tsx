@@ -1,24 +1,23 @@
+import Carousel from "@/components/ui/Carousell";
+import FileUpload from "@/components/ui/FileUpload";
 import ProductDetailsBg from "@/components/ui/ProductDetailsBg";
 import Product from "@/interfaces/productInterface";
-import { getProductDetails } from "@/services/product/services";
-import { useEffect, useState } from "react";
-import { SortProps } from "../product/ProductListPage";
-import { useAuthStore } from "@/states/authStates";
-import Carousel from "@/components/ui/Carousell";
-import Image from "next/image";
-import classNames from "classnames";
-import FileUpload from "@/components/ui/FileUpload";
-import ReviewBlock from "./ReviewBlock";
 import Review from "@/interfaces/reviewInterface";
+import { getOneProduct } from "@/services/product/services";
+import { addReview } from "@/services/review/services";
+import { useAuthStore } from "@/states/authStates";
+import { useGlobalStore } from "@/states/globalStates";
 import CustomToastError from "@/utils/CustomToastError";
-import { Rating, Stepper } from "@mantine/core";
+import useStore from "@/utils/useStore";
 import { CubeIcon, MagnifyingGlassCircleIcon, PencilSquareIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import { CheckIcon } from "@heroicons/react/24/solid";
-import { addReview } from "@/services/review/services";
-import { toast } from "react-toastify";
+import { Rating, Stepper } from "@mantine/core";
+import classNames from "classnames";
+import Image from "next/image";
 import { useRouter } from "next/router";
-import { useGlobalStore } from "@/states/globalStates";
-import useStore from "@/utils/useStore";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import ReviewBlock from "./ReviewBlock";
 
 
 interface ProductPageProps {
@@ -39,7 +38,8 @@ const NewReviewPage = (props: ProductPageProps) => {
         description: "",
         price: 0,
         rating: 3,
-        images: []
+        images: [],
+        verified: true
     })
 
     const user = useStore(useAuthStore, ((state) => state.loggedInUser));
@@ -47,7 +47,7 @@ const NewReviewPage = (props: ProductPageProps) => {
     const getProduct = () => {
         loadingHandler.open();
         const fetchData = async () => {
-            let response = await getProductDetails(props.id.toString());
+            let response = await getOneProduct(props.id.toString());
 
             if (response && response.data) {
                 setProduct(response.data);

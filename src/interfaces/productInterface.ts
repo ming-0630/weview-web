@@ -18,7 +18,11 @@ export interface Product {
     images?: string[],
     reviews?: Review[],
     totalReviewPage?: number,
-    watchlisted?: boolean
+    watchlisted?: boolean,
+    unverifiedReview?: Review,
+    reviewStartDate?: Date,
+    reviewEndDate?: Date,
+    ratings?: number[]
 }
 
 export default Product

@@ -1,4 +1,4 @@
-import { StaticImageData } from "next/image";
+import Review from "./reviewInterface";
 
 interface User {
     id: string;
@@ -7,7 +7,10 @@ interface User {
     userImageBase64?: string;
     isVerified: boolean;
     points: number;
-    role: string[]
+    role: string[];
+    reviews?: Review[];
+    totalUpvotes?: number;
+    totalDownvotes?: number;
 }
 
 export default User

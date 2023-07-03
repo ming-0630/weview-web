@@ -200,9 +200,9 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                                 product && product.rating ?
                                     <div className="flex flex-col gap-1 items-center">
                                         <Rating defaultValue={product.rating}
-                                            size="lg" readOnly fractions={4} color="#143b31"
+                                            size="lg" readOnly={true} fractions={4} color="#143b31"
                                         ></Rating>
-                                        <div className="text-xl"> {'(' + product.reviews?.length + ' ratings)'} </div>
+                                        <div className="text-xl"> {'(' + product?.ratingCount + ' ratings)'} </div>
                                     </div> :
                                     "No Reviews yet!"
                             }
@@ -282,101 +282,117 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                                 </div>
                                 {
                                     product?.reviews ?
-                                        <div className="text-main">Based on {product?.reviews?.length} Reviews</div> :
+                                        <div className="text-main">Based on {product?.ratingCount} Reviews</div> :
                                         <div className="text-main">Add a review now!</div>
                                 }
 
                             </div>
                             <button className="btn btn-primary text-white" onClick={handleAddReview}>Write a Review</button>
                         </div>
-                        {
-                            product?.reviews &&
-                            <>
-                                <FadedLine className="w-full"></FadedLine>
+                        <>
+                            <FadedLine className="w-full"></FadedLine>
 
-                                <div className="flex flex-col">
-                                    <div className="text-main font-semibold text-3xl">Review Analytics</div>
-                                    <div className="flex mt-5 items-center gap-5">
-                                        <RatingBreakdown product={product}></RatingBreakdown>
-                                        <div className="flex flex-col gap-2 grow bg-white" data-theme="corporate">
-                                            <div className="stats stats-vertical bg-white text-main border border-main rounded-lg">                                        <div className="stat">
-                                                <div className='font-semibold text-gray-600 text-lg'>Price Breakdown</div>
+                            <div className="flex flex-col">
+                                <div className="text-main font-semibold text-3xl">Review Analytics</div>
+                                <div className="flex mt-5 items-center gap-5">
+                                    <RatingBreakdown ratingList={product?.ratings}></RatingBreakdown>
+                                    <div className="flex flex-col gap-2 grow bg-white" data-theme="corporate">
+                                        <div className="stats stats-vertical bg-white text-main border border-main rounded-lg">                                        <div className="stat">
+                                            <div className='font-semibold text-gray-600 text-lg'>Price Breakdown</div>
+                                        </div>
+                                            <div className="stat">
+                                                <div className="stat-title text-main">Average Price (RM)</div>
+                                                <div className="stat-value">{product?.averagePrice ?? "-"}</div>
+                                                <div className="stat-desc">{
+                                                    product?.reviews && product?.reviews.length > 0 ?
+                                                        (dayjs(product?.reviewStartDate).format("MMM YYYY")
+                                                            + " - "
+                                                            + dayjs(product?.reviewEndDate).format("MMM YYYY")) : "No reviews found"
+                                                }</div>
                                             </div>
-                                                <div className="stat">
-                                                    <div className="stat-title text-main">Average Price (RM)</div>
-                                                    <div className="stat-value">{product?.averagePrice}</div>
-                                                    <div className="stat-desc">{
-                                                        product?.reviews &&
-                                                        dayjs(product?.reviews[product.reviews.length - 1].date_created).format("MMM YYYY")
-                                                        + " - "
-                                                        + dayjs(product?.reviews[0].date_created).format("MMM YYYY")
-                                                    }</div>
-                                                </div>
 
-                                                <div className="stat">
-                                                    <div className="stat-title text-main">Range of Prices (RM)</div>
-                                                    <div className="stat-value">{product?.minPrice + ' - ' + product?.maxPrice}</div>
-                                                    <div className="stat-desc">{"Based on " + product?.reviews?.length + " reviews"}</div>
-                                                </div>
+                                            <div className="stat">
+                                                <div className="stat-title text-main">Range of Prices (RM)</div>
+                                                <div className="stat-value">{(product?.minPrice && product?.maxPrice) ?
+                                                    product?.minPrice + ' - ' + product?.maxPrice : "-"}</div>
+                                                <div className="stat-desc">{"Based on " + product?.ratingCount + " reviews"}</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div className="w-full -mt-5">
-                                    <div className="border border-main rounded-lg p-5">
-                                        <TimeChart data={reviewGraphData}
-                                            activeTab={activeReviewDataTab}
-                                            setActiveTab={setActiveReviewDataTab}
-                                        ></TimeChart>
+                            <div className="w-full -mt-5">
+                                <div className="border border-main rounded-lg p-5">
+                                    <TimeChart data={reviewGraphData}
+                                        activeTab={activeReviewDataTab}
+                                        setActiveTab={setActiveReviewDataTab}
+                                    ></TimeChart>
+                                </div>
+
+
+                            </div>
+                            {
+                                product?.reviews &&
+                                (<>
+                                    <FadedLine className="w-full"></FadedLine>
+
+                                    <div className="flex flex-col" id="review-list">
+                                        <div data-theme="cupcake" className="flex items-center mr-5 self-end">
+                                            <label className="mr-3 text-md xl:text-lg">Sort By:</label>
+                                            <select
+                                                title="Sort by: "
+                                                className="select select-sm xl:select-md border-2 border-main rounded-xl leading-none 
+                                                focus:outline-0 text-gray-black focus:text-gray-black text-lg"
+                                                value={JSON.stringify(sortCategory)}
+                                                onChange={e => setSortCategory(JSON.parse(e.target.value))}
+                                            >
+                                                <option value={JSON.stringify({ by: "dateCreated", direction: "desc" })}>Newest</option>
+                                                <option value={JSON.stringify({ by: "dateCreated", direction: "asc" })}>Oldest</option>
+                                                <option value={JSON.stringify({ by: "votes", direction: "asc" })}>Most Upvotes</option>
+                                                <option value={JSON.stringify({ by: "votes", direction: "desc" })}>Most Downvotes</option>
+                                                <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Highest Rating</option>
+                                                <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Lowest Rating</option>
+                                            </select>
+                                        </div>
                                     </div>
-
-
-                                </div>
-
-                                <FadedLine className="w-full"></FadedLine>
-
-                                <div className="flex flex-col" id="review-list">
-                                    <div data-theme="cupcake" className="flex items-center mr-5 self-end">
-                                        <label className="mr-3 text-md xl:text-lg">Sort By:</label>
-                                        <select
-                                            title="Sort by: "
-                                            className="select select-sm xl:select-md border-2 border-main rounded-xl leading-none 
-                            focus:outline-0 text-gray-black focus:text-gray-black text-lg"
-                                            value={JSON.stringify(sortCategory)}
-                                            onChange={e => setSortCategory(JSON.parse(e.target.value))}
-                                        >
-                                            <option value={JSON.stringify({ by: "dateCreated", direction: "desc" })}>Newest</option>
-                                            <option value={JSON.stringify({ by: "dateCreated", direction: "asc" })}>Oldest</option>
-                                            <option value={JSON.stringify({ by: "votes", direction: "asc" })}>Most Upvotes</option>
-                                            <option value={JSON.stringify({ by: "votes", direction: "desc" })}>Most Downvotes</option>
-                                            <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Highest Rating</option>
-                                            <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Lowest Rating</option>
-                                        </select>
+                                </>
+                                )
+                            }
+                            {
+                                product?.unverifiedReview &&
+                                (
+                                    <div id={product?.unverifiedReview.reviewId} ref={(ref) => (reviewRefs.current[product?.unverifiedReview!.reviewId!] = ref)}
+                                        key={product?.unverifiedReview.reviewId}>
+                                        <ReviewBlock user={product?.unverifiedReview.user} review={product?.unverifiedReview}
+                                            refreshFunction={() => {
+                                                getProduct()
+                                            }}
+                                        ></ReviewBlock>
                                     </div>
-                                </div>
-                                {
-                                    product?.reviews?.map((review: Review) => {
-                                        return (
-                                            <div id={review.reviewId} ref={(ref) => (reviewRefs.current[review.reviewId!] = ref)} key={review.reviewId}>
-                                                <ReviewBlock user={review.user} review={review}
-                                                    refreshFunction={() => {
-                                                        getProduct()
-                                                    }}
-                                                ></ReviewBlock>
-                                            </div>
-                                        )
-                                    })
-                                }
-                                <div className="self-center mt-10">
-                                    <Pagination value={page} onChange={handlePageChange} total={product.totalReviewPage}
-                                        radius={'xl'}
-                                        boundaries={5}
-                                        classNames={{ control: 'border-transparent' }}
-                                    />
-                                </div>
-                            </>
-                        }
+                                )
+                            }
+                            {
+                                product?.reviews?.map((review: Review) => {
+                                    return (
+                                        <div id={review.reviewId} ref={(ref) => (reviewRefs.current[review.reviewId!] = ref)} key={review.reviewId}>
+                                            <ReviewBlock user={review.user} review={review}
+                                                refreshFunction={() => {
+                                                    getProduct()
+                                                }}
+                                            ></ReviewBlock>
+                                        </div>
+                                    )
+                                })
+                            }
+                            <div className="self-center mt-10">
+                                <Pagination value={page} onChange={handlePageChange} total={product && product.totalReviewPage ? product.totalReviewPage : 0}
+                                    radius={'xl'}
+                                    boundaries={5}
+                                    classNames={{ control: 'border-transparent' }}
+                                />
+                            </div>
+                        </>
                     </div>
                 </div>
             </div>

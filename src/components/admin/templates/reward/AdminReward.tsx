@@ -23,7 +23,6 @@ const AdminReward = () => {
             const response = await fetchRewards(page);
 
             if (response && response.data) {
-                console.log(response.data)
                 if (response.data) {
                     setTotalPage(response.data.totalPage)
                     setRewards(response.data.rewards)

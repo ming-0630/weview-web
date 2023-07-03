@@ -14,7 +14,9 @@ export interface Review {
     commentCount?: number,
     user?: User
     images?: string[]
-    tempImages?: File[]
+    tempImages?: File[],
+    verified?: boolean,
+    reportId?: string
 }
 
 export default Review

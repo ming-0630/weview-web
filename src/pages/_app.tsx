@@ -14,12 +14,9 @@ import { useAuthStore } from '@/states/authStates';
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const { setCurrentUser, isLoggedIn } = useAuthStore()
-
-  // Fetch the initial auth state on each page transition
   useEffect(() => {
     if (isLoggedIn()) {
       const fetchInitialAuthState = async () => {
-        // Call your getInitialAuthState function here
         const response = await getUser();
 
         if (response && response.data) {
@@ -36,7 +33,6 @@ export default function App({ Component, pageProps }: AppProps) {
       withGlobalStyles
       withNormalizeCSS
       theme={{
-        /** Put your mantine theme override here */
         colorScheme: 'light',
         colors: {
           "main": [

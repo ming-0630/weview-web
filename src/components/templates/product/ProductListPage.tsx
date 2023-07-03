@@ -23,7 +23,7 @@ export interface SortProps {
 
 const ProductListPage = (props: ProductListPageProps) => {
     const [sortCategory, setSortCategory] = useState<SortProps>({ by: "name", direction: "asc" });
-    const [ratingRange, setRatingRange] = useState<[number, number]>([0, 5]);
+    // const [ratingRange, setRatingRange] = useState<[number, number]>([0, 5]);
 
     const [products, setProducts] = useState<Product[]>([]);
 
@@ -129,22 +129,15 @@ const ProductListPage = (props: ProductListPageProps) => {
         setPage(value);
     }
 
-    const handleRatingChange = (value: [number, number]) => {
-        setRatingRange(value);
-        console.log(value)
-    }
-
-    const handleFilter = () => {
-        // Api Call
-    }
+    // const handleRatingChange = (value: [number, number]) => {
+    //     setRatingRange(value);
+    //     console.log(value)
+    // }
 
     return (
         <div className="min-h-[calc(100vh_-_5rem)] p-10 bg-white">
-            <div className="flex flex-col w-[80vw] m-auto">
+            <div className="flex flex-col w-[60vw] m-auto">
                 <div className="flex justify-end items-center mb-5">
-                    {/* <Link href={""}>
-                        <div><ArrowLeftCircleIcon className="text-main w-12"></ArrowLeftCircleIcon></div>
-                    </Link> */}
                     <div className='text-main text-3xl xl:text-5xl font-medium drop-shadow-sm'>Product List</div>
                 </div>
                 <hr className="border-none h-1 bg-main/50 w-1/4 self-end rounded-full"></hr>
@@ -162,11 +155,11 @@ const ProductListPage = (props: ProductListPageProps) => {
                             >
                                 <option value={JSON.stringify({ by: "name", direction: "asc" })}>A to Z</option>
                                 <option value={JSON.stringify({ by: "name", direction: "desc" })}>Z to A</option>
-                                <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Highest Rating</option>
-                                <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Lowest Rating</option>
+                                <option value={JSON.stringify({ by: "rating", direction: "desc" })}>Highest Rating</option>
+                                <option value={JSON.stringify({ by: "rating", direction: "asc" })}>Lowest Rating</option>
                             </select>
                         </div>
-                        <div className="dropdown dropdown-end">
+                        {/* <div className="dropdown dropdown-end">
                             <label tabIndex={0} className="btn m-1 bg-main text-white border-none hover:bg-main hover:brightness-95">Filter</label>
                             <div tabIndex={0} className="dropdown-content rounded-lg menu bg-white text-main p-5 w-[20vw] border-main border-2 mt-2 
                             flex flex-col">
@@ -186,15 +179,17 @@ const ProductListPage = (props: ProductListPageProps) => {
                                     <button className="btn disabled:text-black disabled:opacity-70" onChange={handleFilter}>Submit</button>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
-                <div className="flex flex-wrap justify-around gap-5 min-h-[50vh]">
-                    {products.length <= 0 && <p className="self-center text-3xl">No products found</p>}
+                <div className="grid gap-10 min-h-[50vh]
+                grid-cols-[repeat(auto-fit,minmax(15rem,1fr))]
+                xl:grid-cols-[repeat(auto-fit,minmax(20rem,1fr))]">
+                    {products.length <= 0 && <p className="m-auto text-3xl">No products found</p>}
                     {products.map(product => {
                         return (
-                            <div className="my-5 w-[15rem] xl:w-[19rem] 3xl:basis-1/5 h-[20rem] xl:h-[23rem]" key={product.productId}>
+                            <div className="my-5 w-[15rem] xl:w-[20rem] h-[20rem] xl:h-[23rem]" key={product.productId}>
                                 <ProductCard product={product}
                                     onWatchlistClick={() => { handleOnWatchlistClick(product.productId!) }}
                                 ></ProductCard>

@@ -122,7 +122,6 @@ export function getUser() {
     const response = client.get(
         "user/getUser"
     ).then((res) => {
-        console.log(res)
         if (res.data && res.data.userImage) {
             const blob = base64StringToBlob(res.data.userImage);
             const img = URL.createObjectURL(blob);
@@ -202,3 +201,48 @@ export function redeemReward(rewardId: string) {
     });
     return response;
 }
+
+export function getUserProfile(userId: string) {
+    const response = client.get(
+        "user/getUserProfile", {
+        params: {
+            userId: userId
+        }
+    }
+    ).then((res) => {
+        if (res.data) {
+            if (res.data.userImage) {
+                const blob = base64StringToBlob(res.data.userImage);
+                const img = URL.createObjectURL(blob);
+                res.data.userImage = img;
+            }
+
+            res.data.reviews.forEach((review: any) => {
+                if (review.user.userImage) {
+                    const blob = base64StringToBlob(review.user.userImage);
+                    const img = URL.createObjectURL(blob);
+                    review.user.userImage = img;
+                }
+
+                if (review.images) {
+                    review.images.forEach((img: any, j: number) => {
+                        const blob = base64StringToBlob(img);
+                        const obj = URL.createObjectURL(blob);
+                        review.images[j] = obj;
+                    })
+                }
+            });
+        }
+        return res;
+    }).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response;
+}
+

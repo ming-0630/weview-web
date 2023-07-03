@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
 import { FileUpload, FileUploadHeaderTemplateOptions, FileUploadSelectEvent, FileUploadUploadEvent, ItemTemplateOptions, } from 'primereact/fileupload';
 import { ProgressBar } from 'primereact/progressbar';
@@ -18,12 +18,23 @@ const CustomFileUpload = (props: FileUploadProps) => {
     const toast = useRef<Toast>(null);
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef<FileUpload>(null);
+    const [isInitialized, setIsInitalized] = useState(false);
 
-    // Need internal files to keep track of index to remove from the parent prop,
-    // as the parent holds the string[] (blob) instead of File type while Component returns File as param
-    // when deleting
+    useEffect(() => {
+        if (props.files) {
+            fileUploadRef.current?.setFiles(props.files)
 
-    // const [internalFiles, setInternalFiles] = useState<File[]>([]);
+            let _totalSize = 0;
+            let newFiles = props.files;
+
+            for (let i = 0; i < newFiles.length; i++) {
+                _totalSize += newFiles[i].size || 0;
+            }
+
+            setTotalSize(_totalSize);
+            setIsInitalized(true)
+        }
+    }, [props.files])
 
     const onSelect = (e: FileUploadSelectEvent) => {
         // Calculate size used
@@ -38,40 +49,32 @@ const CustomFileUpload = (props: FileUploadProps) => {
 
 
         let chosenFiles = Array.prototype.slice.call(props.files);
-        // let internalChosenFiles = Array.prototype.slice.call(internalFiles);
 
         let newFilesArr = Array.prototype.slice.call(newFiles);
 
         newFilesArr.forEach((file) => {
             chosenFiles.push(file);
-            // internalChosenFiles.push(file)
         })
 
         props.setFiles(chosenFiles);
-        // setInternalFiles(internalChosenFiles);
     };
 
     const onRemove = (chosenFile: File, callback: Function) => {
         setTotalSize(totalSize - chosenFile.size);
 
         let chosenFiles = Array.prototype.slice.call(props.files);
-        // let internalChosenFiles = Array.prototype.slice.call(internalFiles);
-
-        // const indexToRemove = internalChosenFiles.findIndex(file => file == chosenFile);
-
+        console.log(chosenFiles)
         const indexToRemove = chosenFiles.findIndex(file => file == chosenFile);
-        // internalChosenFiles.splice(indexToRemove, 1)
+        console.log(indexToRemove)
         chosenFiles.splice(indexToRemove, 1)
 
         props.setFiles(chosenFiles)
-        // setInternalFiles(internalChosenFiles);
         callback();
     };
 
     const onClear = () => {
         setTotalSize(0);
         props.setFiles([]);
-        // setInternalFiles([]);
     };
 
     const headerTemplate = (options: FileUploadHeaderTemplateOptions) => {
@@ -130,7 +133,8 @@ const CustomFileUpload = (props: FileUploadProps) => {
         <div className={classNames('w-full overflow-y-auto max-h-[65vh]', props.containerClassName)}>
             <Toast ref={toast}></Toast>
 
-            <FileUpload ref={fileUploadRef} name="demo[]" url="/api/upload" accept="image/*" maxFileSize={10000000}
+            <FileUpload ref={fileUploadRef} accept="image/*" maxFileSize={10000000}
+
                 onSelect={onSelect} onError={onClear} onClear={onClear}
                 headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                 chooseOptions={chooseOptions} customUpload cancelOptions={cancelOptions}

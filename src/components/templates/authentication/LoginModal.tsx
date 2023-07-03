@@ -1,4 +1,3 @@
-// import { Button } from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import PasswordInput from "@/components/ui/PasswordInput";
 import User from "@/interfaces/userInterface";
@@ -90,7 +89,6 @@ const LoginModal = () => {
 
     return (
         <Modal isShow={isShow}
-            isLoading={isLoading}
             toggleModal={toggleModal}>
             <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <div className="p-5 w-[70vw] sm:w-[50vw] lg:w-[40vw] xl:w-[30vw]">

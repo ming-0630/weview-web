@@ -16,7 +16,7 @@ const RewardCard = (props: RewardCardProps) => {
     const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
 
     return (props.reward &&
-        <div className={classNames("border-main border-2 rounded-lg w-52 h-52 flex flex-col",
+        <div className={classNames("border-main border-2 rounded-lg w-[12vw] h-[30vh] flex flex-col",
             !props.isPreview && "hover:scale-105 cursor-pointer transition")}
             onClick={() => {
                 !props.isPreview &&
@@ -27,9 +27,9 @@ const RewardCard = (props: RewardCardProps) => {
                     })
             }}
         >
-            <div className="grow relative">
+            <div className="grow relative flex items-center justify-center">
                 <Image src={props.previewImage ? props.previewImage : (props.reward.image ?? WeViewLogo)}
-                    alt="Reward image" fill className="object-contain p-1" />
+                    alt="Reward image" fill className="object-contain p-3" />
             </div>
             <div className="basis-1/3 p-3 bg-main font-bold text-white">{props.reward.name}</div>
             <div className="rounded-b py-1 px-5 text-main w-full flex justify-between">

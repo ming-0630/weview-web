@@ -9,6 +9,7 @@ import { useGlobalStore } from "@/states/globalStates";
 import UploadProfilePicModal from "../templates/user/UploadProfilePicModal";
 import PointsSystemModal from "../templates/user/PointsSystemModal";
 import VerifyModal from "../templates/user/VerifyModal";
+import ReportModal from "../templates/review/ReportModal";
 
 // declare module '@mui/material/styles' {
 //     interface Theme {
@@ -62,11 +63,12 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
             <UploadProfilePicModal></UploadProfilePicModal>
             <PointsSystemModal></PointsSystemModal>
             <VerifyModal></VerifyModal>
+            <ReportModal></ReportModal>
             <NavBar>
                 <div className='w-full bg-white !scroll-smooth'>
                     {children}
                 </div>
-                <Footer height={50} className="bg-main-light w-full flex justify-end px-10 items-center">
+                <Footer height={50} className="bg-main-light w-full flex justify-end px-10 items-center z-10">
                     <div className="">{'© 2023 WeView | FYP for Gun Ming Fai'}</div>
                 </Footer>
             </NavBar>
