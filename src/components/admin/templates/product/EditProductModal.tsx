@@ -5,7 +5,7 @@ import Product from "@/interfaces/productInterface";
 import { editProduct, fetchProductToEdit } from "@/services/admin/services";
 import { useGlobalStore } from "@/states/globalStates";
 import CustomToastError from "@/utils/CustomToastError";
-import { Button, Input, Textarea } from "@mantine/core";
+import { Button, Input, Switch, Textarea } from "@mantine/core";
 import { YearPicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { toInteger } from "lodash";
@@ -13,24 +13,29 @@ import Image from 'next/image';
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import WeViewLogo from '/public/favicon.ico';
+import { checkFeaturedLimit } from "@/services/product/services";
 
 const EditProductModal = () => {
     const isShow = useGlobalStore((state) => state.editProductIsOpen)
     const toggleModal = useGlobalStore((state) => state.toggleEditProductIsOpen)
     const { editingProductId, refreshFunction, loadingHandler } = useGlobalStore();
-    const [product, setProduct] = useState<Product>()
+    const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
 
+    const [product, setProduct] = useState<Product>()
     const [images, setImages] = useState<File[]>([]);
     const [decade, setDecade] = useState(new Date());
 
     const getProduct = async () => {
         if (editingProductId) {
+            console.log(product)
             try {
                 loadingHandler.open();
                 const response = await fetchProductToEdit(editingProductId);
 
                 if (response && response.data) {
                     if (response.data) {
+                        console.log(response.data)
+                        console.log(response.data)
                         setProduct(response.data)
                         setImages(response.data.images.map((image: Blob, i: number) => {
                             let file = new File([image], "Image" + i + ".jpg", { type: 'image/jpeg' });
@@ -44,11 +49,6 @@ const EditProductModal = () => {
             }
         }
     }
-
-    useEffect(() => {
-        console.log(images)
-    }, [images])
-
 
     useEffect(() => {
         getProduct()
@@ -70,7 +70,8 @@ const EditProductModal = () => {
                 });
             }
 
-            if (!product.name || !product.description || !product.category || !product.releaseYear || images.length <= 0) {
+            if (!product.name || !product.description || !product.category ||
+                !product.releaseYear || images.length <= 0 || !product.minProductPriceRange || !product.maxProductPriceRange) {
                 CustomToastError("Empty Fields!")
                 return;
             }
@@ -80,23 +81,48 @@ const EditProductModal = () => {
             data.append("description", product.description);
             data.append("category", product.category.toString());
             data.append("releaseYear", product.releaseYear.toString());
+            data.append("minProductPriceRange", product.minProductPriceRange.toString());
+            data.append("maxProductPriceRange", product.maxProductPriceRange.toString());
+            data.append("isFeatured", (product.isFeatured ? product.isFeatured.toString() : "false"))
 
-            const response = await editProduct(data);
-
-            if (response && response.status == 200) {
-                if (refreshFunction) {
-                    refreshFunction();
+            if (product.isFeatured) {
+                const response = await checkFeaturedLimit();
+                if (response && response.data) {
+                    if (response.data.hasExceededFeaturedLimit) {
+                        loadingHandler.close();
+                        toggleModal();
+                        toggleConfirm({
+                            title: "Exceeded Limit!",
+                            description: "There are already 10 featured products! Are you sure you want to replace the oldest featured product?",
+                            onClickYes: () => { loadingHandler.open(); toggleModal(); editCurrentProduct(data); toggleConfirm(); },
+                            onClickNo: () => toggleModal()
+                        });
+                    } else {
+                        editCurrentProduct(data)
+                    }
                 }
-                toast.success("Edited product!");
-                resetFields();
-                toggleModal();
+            } else {
+                editCurrentProduct(data)
             }
 
-            for (var pair of data.entries()) {
-                console.log(pair[0] + ', ' + pair[1]);
-            }
+            // for (var pair of data.entries()) {
+            //     console.log(pair[0] + ', ' + pair[1]);
+            // }
         } finally {
             loadingHandler.close();
+        }
+    }
+
+    const editCurrentProduct = async (data: FormData) => {
+        const response = await editProduct(data);
+
+        if (response && response.status == 200) {
+            if (refreshFunction) {
+                refreshFunction();
+            }
+            toast.success("Edited product!");
+            resetFields();
+            toggleModal();
         }
     }
 
@@ -118,12 +144,12 @@ const EditProductModal = () => {
                 <div className="p-3">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         <div className="flex items-center">
-                            <div className="grow">
+                            <div className="basis-1/2">
                                 <Input placeholder="Name" value={product?.name} classNames={{ input: 'p-5' }}
                                     onChange={(e) => { setProduct({ ...product, name: e.target.value }) }}></Input>
                             </div>
 
-                            <div data-theme='cupcake' className="ml-10">
+                            <div data-theme='cupcake' className="ml-10 basis-1/2 flex justify-center">
                                 <select
                                     title="Sort by: "
                                     className="select select-sm xl:select-md border-2 border-main rounded-xl leading-none 
@@ -147,7 +173,7 @@ const EditProductModal = () => {
                                 value={product?.description}
                                 onChange={(e) => { setProduct({ ...product, description: e.target.value }) }}
                             ></Textarea>
-                            <div>
+                            <div className="basis-1/2 flex justify-center">
                                 <YearPicker
                                     date={decade}
                                     onDateChange={setDecade}
@@ -157,7 +183,29 @@ const EditProductModal = () => {
                                 />
                             </div>
                         </div>
+                        <div className="flex items-center gap-10">
+                            <div className="grow">
+                                <Input placeholder="Min Price"
+                                    value={product?.minProductPriceRange ? product.minProductPriceRange : ""} classNames={{ input: 'p-5' }}
+                                    type="number"
+                                    step="1"
+                                    onChange={(e) => { setProduct({ ...product, minProductPriceRange: toInteger(e.target.value) }) }}></Input>
+                            </div>
+                            <div className="grow">
+                                <Input placeholder="Max Price"
+                                    value={product?.maxProductPriceRange ? product.maxProductPriceRange : ""}
+                                    classNames={{ input: 'p-5' }}
+                                    type="number"
+                                    step="1"
+                                    onChange={(e) => { setProduct({ ...product, maxProductPriceRange: toInteger(e.target.value) }) }}></Input>
+                            </div>
 
+                        </div>
+                        <div className="flex justify-end">
+                            <Switch checked={product?.isFeatured} onChange={(event) => setProduct({ ...product, isFeatured: event.currentTarget.checked })}
+                                label={"Featured Product?"}
+                            />
+                        </div>
                         <div>
                             <FileUpload
                                 files={images}

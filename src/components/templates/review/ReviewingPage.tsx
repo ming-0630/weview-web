@@ -4,7 +4,7 @@ import ProductDetailsBg from "@/components/ui/ProductDetailsBg";
 import Product from "@/interfaces/productInterface";
 import Review from "@/interfaces/reviewInterface";
 import { getOneProduct } from "@/services/product/services";
-import { addReview } from "@/services/review/services";
+import { addReview, editReview } from "@/services/review/services";
 import { useAuthStore } from "@/states/authStates";
 import { useGlobalStore } from "@/states/globalStates";
 import CustomToastError from "@/utils/CustomToastError";
@@ -18,19 +18,23 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import ReviewBlock from "./ReviewBlock";
+import { base64StringToBlob } from "blob-util";
 
 
-interface ProductPageProps {
-    id: string | string[]
+interface ReviewingPageProps {
+    id?: string | string[]
+    review?: Review
 }
 
-const NewReviewPage = (props: ProductPageProps) => {
+const ReviewingPage = (props: ReviewingPageProps) => {
     const [product, setProduct] = useState<Product>();
     const [step, setStep] = useState(0);
 
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
-
+    const [isInitialized, setIsInitialized] = useState(false)
     const [hoverRating, setHoverRating] = useState(-1);
+    const { loggedInUser } = useAuthStore();
+
     const router = useRouter();
 
     const [review, setReview] = useState<Review>({
@@ -47,7 +51,12 @@ const NewReviewPage = (props: ProductPageProps) => {
     const getProduct = () => {
         loadingHandler.open();
         const fetchData = async () => {
-            let response = await getOneProduct(props.id.toString());
+            let response
+            if (props.id) {
+                response = await getOneProduct(props.id.toString());
+            } else if (props.review?.productId) {
+                response = await getOneProduct(props.review.productId.toString());
+            }
 
             if (response && response.data) {
                 setProduct(response.data);
@@ -59,10 +68,37 @@ const NewReviewPage = (props: ProductPageProps) => {
 
     // On Props change
     useEffect(() => {
-        if (props.id) {
+        if (props.review?.productId || props.id) {
             getProduct();
         }
-    }, [props])
+
+        if (props.review && !isInitialized) {
+            let review = { ...props.review }
+            if (review.user?.userImage) {
+                const blob = base64StringToBlob(review.user?.userImage);
+                const img = URL.createObjectURL(blob);
+                review.user.userImage = img;
+            }
+
+            if (review.images) {
+                review.tempImages = []
+                review.images.forEach((img: any, j: number) => {
+                    const blob = base64StringToBlob(img);
+                    let file = new File([blob], "Image" + j + ".jpg", { type: 'image/jpeg' });
+                    review.tempImages!.push(file);
+                })
+            }
+            setReview(review);
+            setIsInitialized(true)
+        }
+    }, [props.id, props.review])
+
+    useEffect(() => {
+        if (!loggedInUser) {
+            router.push("/").then(() => CustomToastError("You must be logged in to access reviewing page"))
+        }
+    }, [loggedInUser])
+
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -95,7 +131,6 @@ const NewReviewPage = (props: ProductPageProps) => {
                     data.append('uploadedImages', img)
                 });
             }
-
             data.append("title", review.title ?? "");
             data.append("description", review.description ?? "");
             data.append("rating", review.rating.toString());
@@ -106,14 +141,30 @@ const NewReviewPage = (props: ProductPageProps) => {
             // for (var pair of data.entries()) {
             //     console.log(pair[0] + ', ' + pair[1]);
             // }
+            if (props.review) {
+                // Means its for editing
+                data.append("reviewId", review.reviewId!)
 
-            const response = await addReview(data);
+                if (!review.reviewId) {
+                    CustomToastError("Missing reviewId!")
+                    return;
+                }
+                const response = await editReview(data);
 
-            if (response && response.status == 200) {
-                toast.success("Review created successfully!");
-                router.push({
-                    pathname: '/products/details/' + product.productId,
-                })
+                if (response && response.status == 200) {
+                    toast.success("Review edited successfully!");
+                    const url = "/products/details/" + review.productId + "#" + review.reviewId
+                    router.push(url)
+                }
+            } else {
+                const response = await addReview(data);
+
+                if (response && response.status == 200) {
+                    toast.success("Review created successfully!");
+                    router.push({
+                        pathname: '/products/details/' + product.productId,
+                    })
+                }
             }
         } catch (e) {
             console.log(e)
@@ -131,7 +182,6 @@ const NewReviewPage = (props: ProductPageProps) => {
     };
 
     const setImages = (images: File[]) => {
-        console.log(images)
         setReview({ ...review, tempImages: images })
     }
 
@@ -140,8 +190,6 @@ const NewReviewPage = (props: ProductPageProps) => {
             setStep(step);
             return;
         }
-
-        // Check fields 
 
         if (!review.description || !review.title || review.price == 0) {
             CustomToastError("Missing fields!")
@@ -159,7 +207,7 @@ const NewReviewPage = (props: ProductPageProps) => {
             <div className="relative flex text-white h-full">
                 <div className="flex flex-col p-16">
                     <div className="w-[30vw]">
-                        <div className="font-bold text-5xl 3xl:text-7xl self-start">Write a Review</div>
+                        <div className="font-bold text-5xl 3xl:text-7xl self-start">{review ? "Editing Review" : "Write a Review"}</div>
                         <hr className="border-none h-1 bg-white/50 rounded my-2"></hr>
                     </div>
 
@@ -313,6 +361,9 @@ const NewReviewPage = (props: ProductPageProps) => {
                         <div className="text-3xl mb-3 text-main">Preview</div>
                         <div className="text-main w-[50vw] overflow-y-auto max-h-[60vh] border border-main rounded-lg p-10 pb-3">
                             <ReviewBlock isPreview review={review} user={user}></ReviewBlock>
+                            {/* {review.images && review.images.map((image) => {
+                                return <Image src={image} alt={""} width={100} height={100}></Image>
+                            })} */}
                         </div>
                         <div className="flex w-full justify-between mt-5">
                             <div className="btn btn-primary text-white" onClick={() => { handleStep(2) }}>Prev</div>
@@ -325,4 +376,4 @@ const NewReviewPage = (props: ProductPageProps) => {
     );
 }
 
-export default NewReviewPage;
+export default ReviewingPage;

@@ -2,12 +2,33 @@ import CustomToastError from "@/utils/CustomToastError";
 import { base64StringToBlob } from "blob-util";
 import { client } from "../axiosClient";
 import { Comment } from './../../interfaces/commentInterface';
-import Report from "@/interfaces/reportInterface";
 
 export function addReview(props: FormData) {
 
     const response = client.post(
         "/review/add",
+        props,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        },
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+
+    return response
+}
+
+export function editReview(props: FormData) {
+    const response = client.post(
+        "/review/edit",
         props,
         {
             headers: {
@@ -131,6 +152,26 @@ export function fetchReviews(userId: string, pageNum: number, sortBy?: string, d
         return res;
     }).catch((err) => {
         console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+
+    return response
+}
+
+export function fetchOneReview(reviewId: string) {
+    const response = client.get(
+        "/review/getOneReview",
+        {
+            params: {
+                reviewId: reviewId
+            }
+        }
+    ).catch((err) => {
         if (err.response && err.response.data) {
             CustomToastError(err.response.data.message)
         } else {
@@ -304,6 +345,26 @@ export function addReport(data: FormData) {
     const response = client.post(
         "review/report/add",
         data
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response;
+}
+
+export function getReport(reportId: string) {
+    const response = client.get(
+        "review/report/get",
+        {
+            params: {
+                reportId: reportId
+            }
+        }
     ).catch((err) => {
         console.log(err)
         if (err.response && err.response.data) {

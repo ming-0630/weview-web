@@ -103,9 +103,7 @@ const RegisterModal = () => {
 
     return (
         <Modal isShow={isShow}
-            toggleModal={toggleModal}
-            isLoading={isLoading}
-        >
+            toggleModal={toggleModal}>
             <LoadingOverlay visible={isLoading} overlayBlur={2} />
             <div className="flex h-[75vh] w-full">
                 <div className="px-7 lg:px-10 py-7 flex flex-col h-full lg:w-1/2 overflow-y-auto">

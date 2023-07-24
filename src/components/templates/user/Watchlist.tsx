@@ -1,15 +1,16 @@
-import WatchlistCard from "@/components/layout/productCard/WatchlistCard"
+import WatchlistCard from "@/components/layout/productCard/WatchlistCard";
 import Product from "@/interfaces/productInterface";
-import { HeartIcon } from "@heroicons/react/24/outline"
-import { useDisclosure } from "@mantine/hooks";
-import { useEffect, useState } from "react";
-import { SortProps } from "../product/ProductListPage";
-import { Pagination } from "@mantine/core";
 import { addToWatchlist, fetchWatchlist } from "@/services/user/services";
-import useStore from "@/utils/useStore";
 import { useAuthStore } from "@/states/authStates";
-import { toast } from "react-toastify";
 import { useGlobalStore } from "@/states/globalStates";
+import useStore from "@/utils/useStore";
+import { HeartIcon } from "@heroicons/react/24/outline";
+import { Pagination } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { SortProps } from "../product/ProductListPage";
+import { useRouter } from "next/router";
+import CustomToastError from "@/utils/CustomToastError";
 
 const Watchlist = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -17,16 +18,17 @@ const Watchlist = () => {
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
-    const user = useStore(useAuthStore, (state) => state.loggedInUser)
+    const { loggedInUser } = useAuthStore()
 
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
+    const router = useRouter();
 
     const getWatchlist = async (page: number, sortCategory: SortProps) => {
-        if (user) {
+        if (loggedInUser) {
             loadingHandler.open();
             try {
                 const response = await fetchWatchlist(
-                    user?.id,
+                    loggedInUser?.id,
                     page,
                     sortCategory.by,
                     sortCategory.direction
@@ -48,8 +50,8 @@ const Watchlist = () => {
     }
 
     const handleOnWatchlistDelete = async (productId: string) => {
-        if (user) {
-            const response = await addToWatchlist(productId, user?.id)
+        if (loggedInUser) {
+            const response = await addToWatchlist(productId, loggedInUser?.id)
 
             if (response && response.status == 200) {
                 toast.success("Deleted from watchlist!")
@@ -63,9 +65,14 @@ const Watchlist = () => {
     }
 
     useEffect(() => {
-        setPage(1);
-        getWatchlist(1, sortCategory);
-    }, [sortCategory, user])
+        if (loggedInUser) {
+            setPage(1);
+            getWatchlist(1, sortCategory);
+        } else {
+            router.push("/").then(() => { CustomToastError("You need to be logged in to access watchlist!") })
+        }
+
+    }, [sortCategory, loggedInUser])
 
     // On page change
     useEffect(() => {
@@ -115,7 +122,7 @@ const Watchlist = () => {
                     }
                 </div>
 
-                <div className="mt-10 mx-auto">
+                <div className="my-10 mx-auto">
                     <Pagination value={page} onChange={handlePageChange} total={totalPage}
                         radius={'xl'}
                         boundaries={5}

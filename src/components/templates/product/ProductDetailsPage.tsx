@@ -4,7 +4,6 @@ import ProductDetailsBg from "@/components/ui/ProductDetailsBg";
 import RatingBreakdown from "@/components/ui/RatingBreakdown";
 import Product from "@/interfaces/productInterface";
 import Review from "@/interfaces/reviewInterface";
-import User from "@/interfaces/userInterface";
 import { getProductDetails } from "@/services/product/services";
 import { checkEligibility, fetchReviewData } from "@/services/review/services";
 import { addToWatchlist } from "@/services/user/services";
@@ -31,7 +30,6 @@ interface ProductDetailsPageProps {
 
 const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     const [product, setProduct] = useState<Product>();
-    const [currentUser, setCurrentUser] = useState<User>();
     const [reviewGraphData, setReviewGraphData] = useState<{ x: any, y: any }[]>([]);
     const [activeReviewDataTab, setActiveReviewDataTab] = useState<string | null>('1M');
 
@@ -41,11 +39,14 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     const { loggedInUser } = useAuthStore()
     const toggleLogin = useGlobalStore((state) => state.toggleLogin)
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
+    const [firstRender, setFirstRender] = useState(true);
 
     const router = useRouter();
     const getHashValue = () => {
         const hash = router.asPath.split('#')[1];
-        return hash;
+        if (hash != "review-section") {
+            return hash;
+        }
     };
     const reviewRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
@@ -59,19 +60,32 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
         Tooltip,
         Legend);
 
-    const getProduct = () => {
+    const getProduct = (reviewIdToGo?: string) => {
         const fetchData = async () => {
-            let response = await getProductDetails(props.id.toString(),
-                page,
-                sortCategory.by,
-                sortCategory.direction);
+            if (reviewIdToGo) {
+                let response = await getProductDetails(props.id.toString(),
+                    page,
+                    sortCategory.by,
+                    sortCategory.direction,
+                    reviewIdToGo);
 
-            if (response && response.data) {
-                setProduct(response.data);
+                if (response && response.data) {
+                    setProduct(response.data);
+                    setPage(response.data.currentReviewPage)
+                }
+            } else {
+                let response = await getProductDetails(props.id.toString(),
+                    page,
+                    sortCategory.by,
+                    sortCategory.direction);
+
+                if (response && response.data) {
+                    setProduct(response.data);
+                }
             }
         }
         loadingHandler.open();
-        fetchData().catch(console.error)
+        fetchData()
         loadingHandler.close();
     }
 
@@ -102,7 +116,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
 
     const handleAddReview = async () => {
         loadingHandler.open();
-        if (!currentUser) {
+        if (!loggedInUser) {
             CustomToastError("Please login to write a review");
             toggleLogin();
             loadingHandler.close();
@@ -110,7 +124,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
         }
 
         if (product) {
-            if (await checkEligibility(product.productId!, currentUser.id)) {
+            if (await checkEligibility(product.productId!, loggedInUser.id)) {
                 router.push('/products/reviews/add/' + product?.productId);
             }
         }
@@ -128,7 +142,11 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
 
     // On Props change
     useEffect(() => {
-        if (props.id) {
+        const id = getHashValue();
+        if (props.id && id && firstRender) {
+            getProduct(id);
+            setFirstRender(false)
+        } else if (props.id) {
             getProduct();
         }
     }, [props, page, sortCategory])
@@ -136,15 +154,6 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
     useEffect(() => {
         getReviewData();
     }, [product, activeReviewDataTab])
-
-    useEffect(() => {
-        if (currentUser?.id != loggedInUser?.id) {
-            setCurrentUser(loggedInUser);
-            if (props.id) {
-                getProduct();
-            }
-        }
-    }, [loggedInUser])
 
     useEffect(() => {
         const id = getHashValue();
@@ -158,14 +167,21 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
 
     const handleAddToWatchlist = async () => {
         loadingHandler.open()
-        if (currentUser) {
-            const response = await addToWatchlist(product?.productId!, currentUser?.id)
 
-            if (response && response.status == 200) {
-                toast.success("Added to watchlist")
-                getProduct()
-            }
+        if (!loggedInUser) {
+            CustomToastError("Please login to add product into watchlist");
+            toggleLogin();
+            loadingHandler.close();
+            return;
         }
+
+        const response = await addToWatchlist(product?.productId!, loggedInUser?.id)
+
+        if (response && response.status == 200) {
+            toast.success("Added to watchlist")
+            getProduct()
+        }
+
         loadingHandler.close()
     }
 
@@ -199,7 +215,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                             {
                                 product && product.rating ?
                                     <div className="flex flex-col gap-1 items-center">
-                                        <Rating defaultValue={product.rating}
+                                        <Rating value={product.rating}
                                             size="lg" readOnly={true} fractions={4} color="#143b31"
                                         ></Rating>
                                         <div className="text-xl"> {'(' + product?.ratingCount + ' ratings)'} </div>
@@ -256,11 +272,11 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                     Vestibulum sed ullamcorper neque. Nullam posuere vitae felis nec hendrerit. Suspendisse eget accumsan mauris, ac malesuada purus. Aenean et imperdiet lectus, at vulputate sapien. Integer in dui iaculis, dictum elit et, ullamcorper mi. Nam varius nulla aliquam vulputate lacinia. Curabitur vulputate urna et commodo feugiat. Nunc vel nibh eget arcu malesuada sodales vehicula ut tellus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam erat volutpat.
 
                     Ut nec sem ut nisi semper rutrum id non elit. Curabitur tellus lacus, mollis ut gravida at, accumsan ac arcu. Nunc sit amet mattis mauris. Sed venenatis massa at nulla placerat volutpat. In egestas venenatis ante, non varius quam porttitor ac. Quisque in elit felis. Ut consequat dictum est.
-                    <Link href=''>
+                    {/* <Link href=''>
                         <button className="btn mt-5 btn-ghost border-main border-2 px-5 hover:text-white hover:bg-main">
                             View Product Website
                         </button>
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
             <div className="w-full relative" id="review-section">
@@ -276,7 +292,7 @@ const ProductDetailsPage = (props: ProductDetailsPageProps) => {
                                     <div className="text-main font-bold text-6xl">{product && product.rating ?
                                         (Math.round(product.rating * 100) / 100).toFixed(2) : "No reviews yet!"}</div>
                                     {
-                                        product && product.rating && <Rating defaultValue={product.rating}
+                                        product && product.rating && <Rating value={product.rating}
                                             size="lg" readOnly fractions={4}></Rating>
                                     }
                                 </div>

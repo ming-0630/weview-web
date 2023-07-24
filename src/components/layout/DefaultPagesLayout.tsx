@@ -10,37 +10,17 @@ import UploadProfilePicModal from "../templates/user/UploadProfilePicModal";
 import PointsSystemModal from "../templates/user/PointsSystemModal";
 import VerifyModal from "../templates/user/VerifyModal";
 import ReportModal from "../templates/review/ReportModal";
-
-// declare module '@mui/material/styles' {
-//     interface Theme {
-//         palette: {
-//             primary: {
-//                 main: string;
-//                 contrastText: string;
-//             },
-//             secondary: {
-//                 main: string;
-//             }
-//         },
-//         typography: {
-//             fontFamily: string;
-//         }
-
-//     }
-// }
-// const theme = createTheme({
-//     palette: {
-//         primary: {
-//             main: '#40AF93',
-//             contrastText: '#FFFFFF'
-//         }
-//     }, typography: {
-//         fontFamily: 'Rubik',
-//     },
-// });
+import { useRouter } from "next/router";
+import InspectReportModal from "../admin/templates/report/InspectReportModal";
 
 const DefaultPageLayout = ({ children }: ScriptProps) => {
     const isLoading = useGlobalStore((state) => state.loading)
+
+    // if ((!isLoggedIn()  && typeof window !== "undefined" && hasLoggedOut) {
+    //     const router = useRouter();
+    //     router.push("/")
+    // }
+
     return (
         <main
             className='flex flex-col items-center justify-between font-sans text-black relative'>
@@ -64,6 +44,7 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
             <PointsSystemModal></PointsSystemModal>
             <VerifyModal></VerifyModal>
             <ReportModal></ReportModal>
+            <InspectReportModal></InspectReportModal>
             <NavBar>
                 <div className='w-full bg-white !scroll-smooth'>
                     {children}
@@ -78,3 +59,4 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
 }
 
 export default DefaultPageLayout;
+

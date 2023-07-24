@@ -9,11 +9,14 @@ import Image from 'next/image';
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import blankUserImage from '../../../assets/blank_user.png';
+import Review from "@/interfaces/reviewInterface";
+import { Badge } from "@mantine/core";
 
 export interface CommentBlockProps {
     className?: string;
     comment?: Comment;
-    refreshFunction?: (...args: any[]) => void
+    refreshFunction?: (...args: any[]) => void;
+    originalReview?: Review;
 }
 
 const CommentBlock = (props: CommentBlockProps) => {
@@ -38,7 +41,6 @@ const CommentBlock = (props: CommentBlockProps) => {
 
                 if (response && response.status == 200) {
                     toast.success("Deleted successfully");
-                    // window.location.reload();
                     if (props.refreshFunction) {
                         props.refreshFunction();
                     }
@@ -63,6 +65,7 @@ const CommentBlock = (props: CommentBlockProps) => {
                             alt="User Profile Pic" fill className='object-cover h-auto rounded-full'></Image>
                     </div>
                     <div className="text-main text-lg">{props.comment?.user && props.comment.user.username}</div>
+                    <div>{props.originalReview?.user?.id == props.comment?.user.id ? <Badge color="blue">OP</Badge> : ""}</div>
                 </div>
 
                 <div className="flex items-center gap-2">

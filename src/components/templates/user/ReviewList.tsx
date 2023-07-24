@@ -9,6 +9,7 @@ import Review from "@/interfaces/reviewInterface";
 import ReviewBlock from "../review/ReviewBlock";
 import { fetchReviews } from "@/services/review/services";
 import { useGlobalStore } from "@/states/globalStates";
+import Link from "next/link";
 
 const ReviewList = () => {
     const [reviews, setReviews] = useState<Review[]>([]);
@@ -101,11 +102,16 @@ const ReviewList = () => {
                     {
                         reviews.length > 0 ?
                             reviews.map((review) => {
-                                return <div className="border-b-2 border-main/40 pb-5" key={review.reviewId}>
+                                return <div className="border-b-2 border-main/40 pb-5 flex flex-col" key={review.reviewId}>
+                                    <Link href={"/products/details/" + review.productId + "#" + review.reviewId}
+                                        className="text-sm rounded border p-2 px-3 -mt-3 mb-3 border-main self-end hover:bg-gray-200">
+                                        View product
+                                    </Link>
                                     <ReviewBlock review={review} user={review.user}
                                         refreshFunction={() => {
                                             getReviews(page, sortCategory)
                                         }}></ReviewBlock>
+
                                 </div>
                             }) :
                             <div>No reviews yet!</div>

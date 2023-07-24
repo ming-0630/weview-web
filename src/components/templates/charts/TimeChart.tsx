@@ -3,6 +3,7 @@ import { ActionIcon, Tabs } from '@mantine/core';
 import { Line } from 'react-chartjs-2';
 import { Chart, BarElement, CategoryScale, Legend, LineElement, LinearScale, PointElement, TimeScale, Title, Tooltip, TimeSeriesScale, Filler } from 'chart.js';
 import dayjs from 'dayjs';
+import { Chart as PrimeChart } from 'primereact/chart';
 
 export interface TimeChartProps {
     data?: { x: any, y: any }[],
@@ -106,9 +107,11 @@ const TimeChart = (props: TimeChartProps) => {
                             x: {
                                 type: 'time',
                                 time: {
-                                    unit: 'day',
-                                    round: 'day'
-
+                                    unit: 'month',
+                                    round: 'day',
+                                    displayFormats: {
+                                        quarter: 'MMM YYYY',
+                                    }
                                 },
                                 ticks: {
                                     autoSkip: false,
@@ -133,44 +136,48 @@ const TimeChart = (props: TimeChartProps) => {
                     }}
                 ></Line>
             </Tabs.Panel>
-            <Tabs.Panel value="MAX" className='p-3'><Line
-                options={{
-                    responsive: true,
-                    scales: {
-                        y: {
-                            min: 0,
-                            max: 5,
-                        },
-                        x: {
-                            type: 'time',
-                            time: {
-                                unit: 'day',
-                                round: 'day'
-
+            <Tabs.Panel value="MAX" className='p-3'>
+                <Line
+                    options={{
+                        responsive: true,
+                        scales: {
+                            y: {
+                                min: 0,
+                                max: 5,
                             },
-                            ticks: {
-                                autoSkip: false,
-                                maxTicksLimit: 10
-                            }
-                        },
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'month',
+                                    round: 'day',
+                                    displayFormats: {
+                                        quarter: 'MMM YYYY',
+                                    }
+                                },
+                                ticks: {
+                                    autoSkip: false,
+                                    maxTicksLimit: 10
+                                }
+                            },
+                        }
                     }
-                }
-                }
-                datasetIdKey='id-Max'
-                data={{
-                    labels: props?.data?.map(row => row.x),
-                    datasets: [{
-                        label: 'Average Rating',
-                        data: props.data,
-                        fill: true,
-                        backgroundColor: 'RGBA(255, 195, 190, 0.4)',
-                        borderColor: '#F88379',
-                        tension: 0.1,
-                        pointRadius: 0
-                    }]
-                }}
-            ></Line></Tabs.Panel>
-        </Tabs >
+                    }
+                    datasetIdKey='id-Max'
+                    data={{
+                        labels: props?.data?.map(row => row.x),
+                        datasets: [{
+                            label: 'Average Rating',
+                            data: props.data,
+                            fill: true,
+                            backgroundColor: 'RGBA(255, 195, 190, 0.4)',
+                            borderColor: '#F88379',
+                            tension: 0.1,
+                            pointRadius: 0
+                        }]
+                    }}
+                ></Line>
+            </Tabs.Panel>
+        </Tabs>
     );
 }
 

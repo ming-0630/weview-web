@@ -35,7 +35,7 @@ export function fetchRewards(pageNum: number, sortBy?: string, direction?: strin
 
 export function addReward(props: FormData) {
     const response = client.post(
-        "/user/reward/add",
+        "/user/reward/admin/add",
         props,
         {
             headers: {
@@ -56,7 +56,7 @@ export function addReward(props: FormData) {
 
 export function editReward(props: FormData) {
     const response = client.post(
-        "/user/reward/edit",
+        "/user/reward/admin/edit",
         props,
         {
             headers: {
@@ -77,7 +77,7 @@ export function editReward(props: FormData) {
 
 export function getCodes(rewardId: string) {
     const response = client.get(
-        "/user/reward/getCodes",
+        "/user/reward/admin/getCodes",
         {
             params: {
                 rewardId: rewardId
@@ -97,7 +97,7 @@ export function getCodes(rewardId: string) {
 
 export function addCodes(rewardId: string, codes: string[]) {
     const response = client.post(
-        "/user/reward/addCodes",
+        "/user/reward/admin/addCodes",
         { rewardId, codes }
     ).catch((err) => {
         console.log(err)
@@ -113,7 +113,7 @@ export function addCodes(rewardId: string, codes: string[]) {
 
 export function fetchReports() {
     const response = client.get(
-        "/review/report/getAll",
+        "/review/report/admin/getAll",
     ).then((res) => {
         if (res.data) {
             res.data.forEach((reportList: any) => {
@@ -147,7 +147,7 @@ export function fetchReports() {
 
 export function reportAction(data: FormData) {
     const response = client.post(
-        "/review/report/action",
+        "/review/report/admin/action",
         data
     ).catch((err) => {
         console.log(err)
@@ -163,7 +163,7 @@ export function reportAction(data: FormData) {
 
 export function fetchAllProducts() {
     const response = client.get(
-        "/product/getAllUnpaged",
+        "/product/admin/getAllUnpaged",
     ).then((res) => {
         if (res.data && res.data.rewards) {
             res.data.rewards.forEach((reward: any) => {
@@ -187,7 +187,7 @@ export function fetchAllProducts() {
 
 export function fetchProductToEdit(productId: string) {
     const response = client.get(
-        "/product/getProductToEdit", {
+        "/product/admin/getProductToEdit", {
         params: {
             productId: productId
         }
@@ -216,7 +216,7 @@ export function addProduct(props: FormData) {
 
     console.table([...props]);
     const response = client.post(
-        "/product/add",
+        "/product/admin/add",
         props,
         {
             headers: {
@@ -238,7 +238,7 @@ export function addProduct(props: FormData) {
 
 export function editProduct(props: FormData) {
     const response = client.post(
-        "/product/edit",
+        "/product/admin/edit",
         props,
         {
             headers: {

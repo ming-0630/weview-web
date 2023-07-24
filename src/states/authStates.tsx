@@ -19,53 +19,6 @@ function removeTokensFromLocalStorage() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
 }
-// export interface AuthState {
-//     accessToken: string | null,
-//     refreshToken: string | null,
-//     isLoggedIn: () => boolean,
-//     login: (tokens: AuthTokens, user: User) => void,
-//     logout: () => void,
-//     loggedInUser?: User,
-//     // setLoggedInUser: (user: User) => void
-// }
-
-// export const useAuthStore = create<AuthState>()(
-//     persist(
-//         (set, get) => ({
-//             accessToken: typeof window !== "undefined" ? localStorage.getItem("accessToken") : null,
-//             refreshToken: typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null,
-//             isLoggedIn: () => !!get().accessToken,
-//             login: (tokens: AuthTokens, user: User) => {
-//                 setTokensToLocalStorage(tokens);
-//                 set((state) => ({
-//                     ...state,
-//                     accessToken: tokens.accessToken,
-//                     refreshToken: tokens.refreshToken,
-//                     loggedInUser: user
-//                 }));
-//             },
-//             logout: () => {
-//                 removeTokensFromLocalStorage();
-//                 set((state) => ({
-//                     ...state,
-//                     accessToken: null,
-//                     refreshToken: null,
-//                 }));
-//                 toast.success("Logout successful!")
-//             },
-//             loggedInUser: undefined
-//         }), {
-//         name: 'user-storage', // unique name
-//         onRehydrateStorage: (state) => {
-//             if (state && state.loggedInUser && state.loggedInUser.userImageBase64) {
-//                 const blob = base64StringToBlob(state.loggedInUser?.userImageBase64);
-//                 const img = URL.createObjectURL(blob);
-//                 state.loggedInUser.userImage = img;
-//             }
-//         }
-//     }
-//     )
-// )
 
 export interface AuthState {
     accessToken: string | null,
@@ -74,7 +27,7 @@ export interface AuthState {
     setTokens: (tokens: AuthTokens) => void,
     logout: () => void,
     loggedInUser?: User,
-    setCurrentUser: (user: User) => void
+    setCurrentUser: (user: User) => void,
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -97,9 +50,8 @@ export const useAuthStore = create<AuthState>()(
                     ...state,
                     accessToken: null,
                     refreshToken: null,
-                    loggedInUser: undefined
+                    loggedInUser: undefined,
                 }));
-                toast.success("Logout successful!")
             },
             setCurrentUser: (user: User) => {
                 set((state) => ({
@@ -107,7 +59,7 @@ export const useAuthStore = create<AuthState>()(
                     loggedInUser: user,
                 }));
             },
-            loggedInUser: undefined
+            loggedInUser: undefined,
         }), {
         name: 'user-storage', // unique name
     }

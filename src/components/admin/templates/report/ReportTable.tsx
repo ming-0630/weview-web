@@ -148,7 +148,7 @@ const ReportTable = () => {
                 <Column expander={allowExpansion} style={{ width: '5rem' }} />
                 <Column field='id' body={viewReviewTemplate} />
                 <Column field='reports' header="Number of Reports" sortable body={reportNumberTemplate} />
-                <Column field="latestReportDate" sortable filter header="Date Reported"
+                <Column field="latestReportDate" sortable header="Date Reported"
                     filterPlaceholder="Search" body={latestDateTemplate}
                 />
             </DataTable >

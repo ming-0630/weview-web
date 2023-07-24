@@ -10,6 +10,7 @@ export interface ConfirmModalProps {
     description?: string,
     children?: ReactNode,
     onClickYes?: (...args: any[]) => void
+    onClickNo?: (...args: any[]) => void
     isNotifying?: boolean
     isLoading?: boolean
 }
@@ -40,14 +41,17 @@ const ConfirmModal = () => {
                                 :
                                 <>
                                     <div className="btn btn-success mr-3" onClick={confirmDetails && confirmDetails.onClickYes}>yes</div>
-                                    <div className="btn btn-error" onClick={() => { toggleModal() }}>No</div>
+                                    <div className="btn btn-error" onClick={() => {
+                                        toggleModal();
+                                        (confirmDetails && confirmDetails.onClickNo) && confirmDetails.onClickNo()
+                                    }}>No</div>
                                 </>
                         }
                     </div>
                 </div>
 
             </div>
-        </Modal >
+        </Modal>
     )
 }
 

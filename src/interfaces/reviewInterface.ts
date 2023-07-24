@@ -16,7 +16,9 @@ export interface Review {
     images?: string[]
     tempImages?: File[],
     verified?: boolean,
-    reportId?: string
+    reportId?: string,
+    productId?: string,
+    sentimentScore?: number;
 }
 
 export default Review

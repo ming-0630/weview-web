@@ -1,4 +1,4 @@
-import { HomeIcon, CubeIcon, ArrowTrendingUpIcon, BoltIcon, ChartBarSquareIcon, ComputerDesktopIcon, DevicePhoneMobileIcon, MusicalNoteIcon, Squares2X2Icon } from "@heroicons/react/24/outline"
+import { HomeIcon, CubeIcon, ArrowTrendingUpIcon, BoltIcon, ChartBarSquareIcon, ComputerDesktopIcon, DevicePhoneMobileIcon, MusicalNoteIcon, Squares2X2Icon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline"
 import NavItem from "./NavItem"
 import WeViewLogo from '/public/favicon.ico';
 import NavItemCollapse from "./NavItemCollapse"
@@ -37,11 +37,6 @@ const SideNavItems = () => {
                 icon={<HomeIcon className='w-6 m-3'></HomeIcon>}
             ></NavItem>
             <NavItem
-                title='Trending / New Product'
-                href={'/temp-new-product-page'}
-                icon={<ArrowTrendingUpIcon className='w-6 m-3'></ArrowTrendingUpIcon>}
-            ></NavItem>
-            <NavItem
                 title='All Products'
                 href={'/products/all'}
                 icon={<CubeIcon className='w-6 m-3'></CubeIcon>}
@@ -75,10 +70,9 @@ const SideNavItems = () => {
                 ></NavItem>
             </NavItemCollapse>
             <NavItem
-                title='WeView for Business'
-                href={'/product-list-page'}
-                icon={<ChartBarSquareIcon className='w-6 m-3'></ChartBarSquareIcon>}
-                isNavItem
+                title='FAQ'
+                href={'/faq'}
+                icon={<QuestionMarkCircleIcon className='w-6 m-3'></QuestionMarkCircleIcon>}
             ></NavItem>
         </div>
     )

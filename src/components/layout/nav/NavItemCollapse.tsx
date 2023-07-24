@@ -1,6 +1,6 @@
 import { useGlobalStore } from "@/states/globalStates";
 import classNames from "classnames";
-import { ReactNode, RefObject, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 export interface NavItemProps {
     title: string;

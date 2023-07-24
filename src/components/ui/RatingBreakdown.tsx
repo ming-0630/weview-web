@@ -38,7 +38,7 @@ const ratingBreakdown = (props: ratingBreakdownProps) => {
                         <div className="flex items-center gap-3">
                             <progress className="progress progress-warning"
                                 value={ratingBreakdown["5Star"]} max={100}></progress>
-                            <div className="text-main text-sm w-10">
+                            <div className="text-main text-sm w-12">
                                 {Math.round(ratingBreakdown["5Star"])} %
                             </div>
                         </div>
@@ -48,7 +48,7 @@ const ratingBreakdown = (props: ratingBreakdownProps) => {
                         <div className="flex items-center gap-3">
                             <progress className="progress progress-warning"
                                 value={ratingBreakdown["4Star"]} max={100}></progress>
-                            <div className="text-main text-sm w-10">
+                            <div className="text-main text-sm w-12">
                                 {Math.round(ratingBreakdown["4Star"])} %
                             </div>
                         </div>
@@ -58,7 +58,7 @@ const ratingBreakdown = (props: ratingBreakdownProps) => {
                         <div className="flex items-center gap-3">
                             <progress className="progress progress-warning"
                                 value={ratingBreakdown["3Star"]} max={100}></progress>
-                            <div className="text-main text-sm w-10">
+                            <div className="text-main text-sm w-12">
                                 {Math.round(ratingBreakdown["3Star"])} %
                             </div>
                         </div>
@@ -68,7 +68,7 @@ const ratingBreakdown = (props: ratingBreakdownProps) => {
                         <div className="flex items-center gap-3">
                             <progress className="progress progress-warning"
                                 value={ratingBreakdown["2Star"]} max={100}></progress>
-                            <div className="text-main text-sm w-10">
+                            <div className="text-main text-sm w-12">
                                 {Math.round(ratingBreakdown["2Star"])} %
                             </div>
                         </div>
@@ -78,7 +78,7 @@ const ratingBreakdown = (props: ratingBreakdownProps) => {
                         <div className="flex items-center gap-3">
                             <progress className="progress progress-warning"
                                 value={ratingBreakdown["1Star"]} max={100}></progress>
-                            <div className="text-main text-sm w-10">
+                            <div className="text-main text-sm w-12">
                                 {Math.round(ratingBreakdown["1Star"])} %
                             </div>
                         </div>

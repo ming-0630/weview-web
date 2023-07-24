@@ -65,7 +65,6 @@ const AdminProduct = () => {
     };
 
     const editProductTemplate = (rowData: any) => {
-        console.log(rowData)
         return (
             <div className='flex justify-center'>
                 <PencilIcon className="w-5 text-gray-500 hover:text-yellow-500 cursor-pointer" onClick={() =>
@@ -88,12 +87,17 @@ const AdminProduct = () => {
                 globalFilterFields={['name', 'category', 'releaseYear']}>
                 <Column field="name" header="Name" sortable style={{ width: '20%' }}
                     filter
+                    showFilterMenu={false}
                     filterHeaderClassName="[&>div>div>input]:text-xs [&>div>div>input]:p-2" ></Column>
                 <Column field="category" header="Category" style={{ width: '20%' }}
                     filter
+                    showFilterMenu={false}
                     filterHeaderClassName="[&>div>div>input]:text-xs [&>div>div>input]:p-2" sortable></Column>
                 <Column field="description" header="Description"></Column>
-                <Column field="releaseYear" header="Year Released" filter sortable style={{ width: '15%' }}></Column>
+                <Column field="releaseYear" header="Year Released" filter sortable style={{ width: '15%' }}
+                    showFilterMenu={false}
+                    filterHeaderClassName="[&>div>div>input]:text-xs [&>div>div>input]:p-2"
+                ></Column>
                 <Column body={editProductTemplate} />
             </DataTable >
         </div>

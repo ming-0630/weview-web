@@ -1,15 +1,15 @@
 import Modal from "@/components/ui/Modal";
 import { addCodes, getCodes } from "@/services/admin/services";
 import { useGlobalStore } from "@/states/globalStates";
+import CustomToastError from "@/utils/CustomToastError";
 import { Button, Textarea } from "@mantine/core";
+import dayjs from "dayjs";
 import Image from 'next/image';
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import CodeTable, { Code } from "./CodeTable";
 import WeViewLogo from '/public/favicon.ico';
-import { forEach } from "lodash";
-import dayjs from "dayjs";
-import CustomToastError from "@/utils/CustomToastError";
-import { toast } from "react-toastify";
+import { Chips, ChipsChangeEvent } from "primereact/chips";
 
 const EditCodeModal = () => {
     const isShow = useGlobalStore((state) => state.editCodeIsOpen)
@@ -17,7 +17,7 @@ const EditCodeModal = () => {
     const { editingReward, loadingHandler } = useGlobalStore();
 
     const [codes, setCodes] = useState<Code[]>([]);
-    const [newCodes, setNewCodes] = useState("");
+    const [newCodes, setNewCodes] = useState<string[]>([]);
 
     const fetchCodes = async () => {
         if (editingReward) {
@@ -42,22 +42,15 @@ const EditCodeModal = () => {
         loadingHandler.open();
         try {
             if (editingReward && editingReward.id) {
-                if (!newCodes) {
+                if (!newCodes || newCodes.length <= 0) {
                     CustomToastError("Code field cannot be empty!")
                     return;
                 }
-
-                const resultArray = convertStringToArray(newCodes);
-                if (!resultArray) {
-                    CustomToastError("Invalid String format!")
-                    return;
-                }
-
-                const response = await addCodes(editingReward.id, resultArray);
+                const response = await addCodes(editingReward.id, newCodes);
 
                 if (response && response.status == 200) {
                     toast.success("Added code");
-                    setNewCodes("");
+                    setNewCodes([]);
                     fetchCodes();
                 }
             }
@@ -67,16 +60,16 @@ const EditCodeModal = () => {
         }
     }
 
-    const convertStringToArray = (string: string) => {
-        const regex = /^[a-zA-Z0-9]+(?:;\s?[a-zA-Z0-9]+)*$/;
+    // const convertStringToArray = (string: string) => {
+    //     const regex = /^[a-zA-Z0-9]+(?:,\s?[a-zA-Z0-9]+)*$/;
 
-        if (!regex.test(string)) {
-            // String does not fulfill the desired format
-            return null;
-        }
-        const arr = string.replace(/\s/g, '').split(';');
-        return arr;
-    }
+    //     if (!regex.test(string)) {
+    //         // String does not fulfill the desired format
+    //         return null;
+    //     }
+    //     const arr = string.replace(/\s/g, '').split(',');
+    //     return arr;
+    // }
 
     useEffect(() => {
         if (editingReward) {
@@ -97,8 +90,11 @@ const EditCodeModal = () => {
                 <div className="flex flex-col mt-5">
                     <div className="flex flex-col">
                         <div className="ml-1">Insert new codes</div>
-                        <Textarea placeholder="Codes should be seperated by ';'" value={newCodes}
-                            onChange={(e) => { setNewCodes(e.target.value) }} ></Textarea>
+                        <div className="card p-fluid mt-3">
+                            <Chips value={newCodes} onChange={(e: ChipsChangeEvent) => setNewCodes(e.value!)} separator=","
+                                placeholder="Insert codes here"
+                                tooltip="Press 'Enter' to add code" />
+                        </div>
                     </div>
                     <div className="flex gap-3 self-end">
                         <Button className="bg-main w-24 mt-3" onClick={handleSubmit}>Add</Button>

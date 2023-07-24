@@ -11,7 +11,7 @@ const AdminSideNavBar = () => {
     return (
         <div className='bg-white-plain w-[15vw] p-5 shadow flex flex-col z-10'>
             <NavItem
-                title='All Products'
+                title='Products'
                 href={'/admin/products'}
                 icon={<CubeIcon className='w-6 m-3'></CubeIcon>}
             ></NavItem>
@@ -31,7 +31,7 @@ const AdminSideNavBar = () => {
                     description: "Are you sure you want to logout?",
                     onClickYes: () => {
                         loadingHandler.open();
-                        router.push("/");
+                        router.push("/admin");
                         toggleConfirm();
                         logout();
                         loadingHandler.close();

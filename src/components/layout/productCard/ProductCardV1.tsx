@@ -62,7 +62,6 @@ const ProductCardV1 = (props: ProductCardProps) => {
                                 {<HeartIcon className='w-9 hidden group-hover:block'></HeartIcon>}
                             </div>
                     }
-
                 </div>
             </div>
         </Link >

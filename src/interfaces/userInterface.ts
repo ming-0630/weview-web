@@ -11,6 +11,7 @@ interface User {
     reviews?: Review[];
     totalUpvotes?: number;
     totalDownvotes?: number;
+    totalReviews: number;
 }
 
 export default User

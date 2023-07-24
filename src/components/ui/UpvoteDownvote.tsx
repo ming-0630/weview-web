@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import classNames from "classnames";
 import CustomToastError from "@/utils/CustomToastError";
 import { debounce } from "lodash";
+import { useGlobalStore } from "@/states/globalStates";
 
 export interface UpvoteDownvoteProps {
     reviewId?: string,
@@ -21,6 +22,7 @@ const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
     const { loggedInUser } = useAuthStore();
     const [voteCount, setVoteCount] = useState(0)
     const [currentVote, setCurrentVote] = useState<VoteType | null>(null)
+    const toggleLogin = useGlobalStore((state) => state.toggleLogin)
 
     useEffect(() => {
         if (props.initialVotes || props.initialVotes == 0) {
@@ -36,9 +38,11 @@ const UpvoteDownvote = (props: UpvoteDownvoteProps) => {
 
     const handleVote = (vote: VoteType) => {
         if (!loggedInUser) {
-            CustomToastError("Please login to continue");
+            CustomToastError("Please login to write a review");
+            toggleLogin();
             return;
         }
+
         if (vote == VoteType.UPVOTE as VoteType) {
             if (currentVote &&
                 (VoteType[currentVote.toString() as keyof typeof VoteType] == VoteType.UPVOTE as VoteType)

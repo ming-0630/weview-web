@@ -1,15 +1,15 @@
 import ProductCard from "@/components/layout/productCard/ProductCardV1";
 import Category from "@/enums/categoryEnum";
-import { useEffect, useState } from "react";
-import { getAllProductPreview, getCategoryPreview, getSearchProduct } from "@/services/product/services";
 import Product from "@/interfaces/productInterface";
-import { Pagination, RangeSlider, } from "@mantine/core";
-import useStore from "@/utils/useStore";
+import { getAllProductPreview, getCategoryPreview, getSearchProduct } from "@/services/product/services";
+import { addToWatchlist } from "@/services/user/services";
 import { useAuthStore } from "@/states/authStates";
 import { useGlobalStore } from "@/states/globalStates";
-import { addToWatchlist } from "@/services/user/services";
-import { toast } from "react-toastify";
 import CustomToastError from "@/utils/CustomToastError";
+import useStore from "@/utils/useStore";
+import { Pagination } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface ProductListPageProps {
     category?: string | string[];
@@ -129,14 +129,9 @@ const ProductListPage = (props: ProductListPageProps) => {
         setPage(value);
     }
 
-    // const handleRatingChange = (value: [number, number]) => {
-    //     setRatingRange(value);
-    //     console.log(value)
-    // }
-
     return (
         <div className="min-h-[calc(100vh_-_5rem)] p-10 bg-white">
-            <div className="flex flex-col w-[60vw] m-auto">
+            <div className="flex flex-col w-[70vw] xl:w-[60vw] m-auto">
                 <div className="flex justify-end items-center mb-5">
                     <div className='text-main text-3xl xl:text-5xl font-medium drop-shadow-sm'>Product List</div>
                 </div>
@@ -185,11 +180,12 @@ const ProductListPage = (props: ProductListPageProps) => {
 
                 <div className="grid gap-10 min-h-[50vh]
                 grid-cols-[repeat(auto-fit,minmax(15rem,1fr))]
-                xl:grid-cols-[repeat(auto-fit,minmax(20rem,1fr))]">
+                2xl:grid-cols-[repeat(auto-fit,minmax(18rem,1fr))]
+                3xl:grid-cols-[repeat(auto-fit,minmax(20rem,1fr))]">
                     {products.length <= 0 && <p className="m-auto text-3xl">No products found</p>}
                     {products.map(product => {
                         return (
-                            <div className="my-5 w-[15rem] xl:w-[20rem] h-[20rem] xl:h-[23rem]" key={product.productId}>
+                            <div className="my-5 w-[15rem] 2xl:w-[18rem] 3xl:w-[20rem] h-[20rem] 2xl:h-[23rem]" key={product.productId}>
                                 <ProductCard product={product}
                                     onWatchlistClick={() => { handleOnWatchlistClick(product.productId!) }}
                                 ></ProductCard>

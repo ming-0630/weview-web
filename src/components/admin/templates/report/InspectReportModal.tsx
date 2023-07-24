@@ -19,9 +19,15 @@ const InspectReportModal = () => {
     const [reason, setReason] = useState<string[]>([]);
 
     useEffect(() => {
+        console.log(inspectingReport)
         if (inspectingReport) {
+
             setAction(inspectingReport?.action ?? null);
             setReason(inspectingReport?.reportReasons ?? []);
+
+            if (inspectingReport.description) {
+                setDescription(inspectingReport.description)
+            }
         }
     }, [inspectingReport])
 
@@ -37,6 +43,7 @@ const InspectReportModal = () => {
         description: string;
     }
 
+    // eslint-disable-next-line react/display-name
     const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
         ({ image, label, description, ...others }: ItemProps, ref) => (
             <div ref={ref} {...others}>
@@ -57,7 +64,6 @@ const InspectReportModal = () => {
 
     const handleSubmit = async () => {
         loadingHandler.open();
-        console.log(inspectingReport)
         try {
             if (inspectingReport) {
                 const report = new FormData();
@@ -109,16 +115,10 @@ const InspectReportModal = () => {
         }
     }
 
-    useEffect(() => {
-        if (inspectingReport && inspectingReport.description) {
-            setDescription(inspectingReport.description)
-        }
-    }, [inspectingReport])
-
     return (
         <Modal isShow={isShow}
             toggleModal={() => { resetFields(); toggleModal(undefined) }}>
-            <div className="p-8 w-[30vw] flex flex-col">
+            <div className="p-8 w-[35vw] flex flex-col">
                 <div className="flex items-center ml-4">
                     <div className='w-10 h-10 relative'>
                         <Image src={WeViewLogo} alt='WeView Logo' fill />
@@ -144,9 +144,10 @@ const InspectReportModal = () => {
                     </Checkbox.Group>
                     <Textarea placeholder="Additional Description" defaultValue={inspectingReport?.description}
                         value={description}
-                        classNames={{ input: 'h-40' }}
+                        classNames={{ input: 'h-[30vh]' }}
                         onChange={(e) => { setDescription(e.target.value) }}
                         className="mt-5"
+                        disabled={inspectingReport?.action == "ACCEPTED"}
                     ></Textarea>
                     <div className="flex items-center justify-between mt-3">
                         <Select value={action} onChange={setAction} data={selectOptions} label={"Admin Action"} itemComponent={SelectItem}
@@ -154,6 +155,7 @@ const InspectReportModal = () => {
                         <Button className="mt-3 bg-main self-end" variant='filled'
                             onClick={handleSubmit}
                             disabled={inspectingReport?.action != "REVIEWING"}
+                            hidden={inspectingReport?.action == "ACCEPTED"}
                         >Submit</Button>
                     </div>
 

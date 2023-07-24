@@ -17,12 +17,11 @@ const Modal = (props: ModalProps) => {
             <input type="checkbox" className="modal-toggle" readOnly checked={props.isShow} />
             <div className="modal">
                 <LoadingOverlay visible={loading} overlayBlur={2} />
-                <div className={"modal-box relative bg-white p-0 max-w-[80vw] w-fit"}>
+                <div className={"modal-box relative bg-white p-0 max-w-[80vw] 2xl:max-w-[70vw] w-fit"}>
                     <XMarkIcon className={classNames(
                         "cursor-pointer absolute right-6 top-4 hover:text-red-500 w-6 stroke-[2]",
                         loading && "hidden"
                     )} onClick={props.toggleModal}></XMarkIcon>
-                    {/* <label className="border-0  bg-transparent font-extrabold" >✕</label> */}
                     {props.children}
                 </div>
             </div>

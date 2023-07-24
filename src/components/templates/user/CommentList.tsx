@@ -100,15 +100,16 @@ const CommentList = () => {
                         comments.length > 0 ?
                             comments.map((comment) => {
                                 return <div className="border-b-2 border-main/40 pb-5 flex flex-col" key={comment.commentId}>
+                                    <Link href={"/products/details/" + comment.productId + "/#" + comment.reviewId}
+                                        className="text-sm mr-8 rounded border p-2 px-3 -mt-3 border-main self-end hover:bg-gray-200">
+                                        View parent review
+                                    </Link>
                                     <CommentBlock comment={comment}
                                         refreshFunction={() => {
                                             getComments(page, sortCategory);
                                         }}
                                     ></CommentBlock>
-                                    <Link href={"/products/details/" + comment.productId + "/#" + comment.reviewId}
-                                        className="text-sm mr-8 rounded border p-2 px-3 -mt-3 border-main self-end">
-                                        View parent review
-                                    </Link>
+
                                 </div>
                             }) :
                             <div>No comments yet!</div>

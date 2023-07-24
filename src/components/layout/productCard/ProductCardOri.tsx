@@ -1,47 +1,33 @@
-import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { PlusCircleIcon as PlusCircleIconFilled, StarIcon } from '@heroicons/react/24/solid';
-import Image, { StaticImageData } from 'next/image';
-import { useState } from 'react';
 import Product from '@/interfaces/productInterface';
-import classNames from 'classnames';
 import { addToWatchlist } from '@/services/user/services';
-import useStore from '@/utils/useStore';
 import { useAuthStore } from '@/states/authStates';
-import CustomToastError from '@/utils/CustomToastError';
 import { useGlobalStore } from '@/states/globalStates';
+import CustomToastError from '@/utils/CustomToastError';
+import useStore from '@/utils/useStore';
+import { HeartIcon } from '@heroicons/react/24/outline';
+import { StarIcon, HeartIcon as HeartIconFilled } from '@heroicons/react/24/solid';
+import classNames from 'classnames';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export interface ProductCardProps {
     product: Product
-    image: StaticImageData
-    hasBorder?: boolean
+    onWatchlistClick: (...args: any[]) => void
 }
 
 const ProductCardOri = (props: ProductCardProps) => {
-    const outlinePlus = <PlusCircleIcon className='w-9'></PlusCircleIcon>
-    const filledPlus = <PlusCircleIconFilled className='w-9'></PlusCircleIconFilled>
-    const [icon, setIcon] = useState(outlinePlus)
-
-    const user = useStore(useAuthStore, (state) => state.loggedInUser)
-    const toggleLogin = useGlobalStore((state) => state.toggleLogin)
-
-    const handleOnWatchlistClick = async () => {
-        if (user) {
-            const response = await addToWatchlist(props.product.productId!, user?.id)
-        } else {
-            CustomToastError("Please login to add to watchlist");
-            toggleLogin();
-            return;
-        }
-    }
-
 
     return (
-        <div className={classNames('text-white-plain w-full flex flex-col hover:scale-105 transition cursor-pointer rounded-2xl overflow-hidden',
-            'bg-main from-main to-white-plain to-40% drop-shadow-xl',
-            props.hasBorder && 'border-0 border-main'
+        <Link href={"/products/details/" + props.product.productId} className={classNames("text-white-plain w-full h-full flex flex-col",
+            "hover:scale-105 transition cursor-pointer rounded-2xl overflow-hidden block",
+            'bg-main drop-shadow-xl',
+            "w-[15rem] 2xl:w-[17rem] h-[20rem] 2xl:h-[22rem]"
         )}>
-            <div className='p-3 flex-1 flex justify-center bg-white-plain'>
-                <Image src={props.image} alt="Product Name" className='w-[45%] my-8 m-auto' />
+            <div className='flex flex-grow justify-center bg-white-plain items-center'>
+                <div className='relative w-[80%] h-[80%] '>
+                    <Image src={props.product.coverImage ? props.product.coverImage : ""}
+                        alt="Product Name" fill className=' object-contain' />
+                </div>
             </div>
             <div className='p-5 relative'>
                 <div className='flex justify-between items-start'>
@@ -52,19 +38,41 @@ const ProductCardOri = (props: ProductCardProps) => {
                     <div className='flex flex-col items-end'>
                         <div className='flex items-center'>
                             <StarIcon className='w-5 h-5 mr-1 mb-1'></StarIcon>
-                            {/* <span className='text-lg'>{props.product.rating ? (Math.round(props.product.rating * 100) / 100).toFixed(2) : "0.00"}</span> */}
-                            <span className='text-lg'>{"0.00"}</span>
+                            {props.product.rating ?
+                                <div className='flex gap-1'>
+                                    <span>
+                                        {props.product.rating?.toFixed(2)}
+                                    </span>
+                                    <span>{" (" + props.product.ratingCount + ")"}</span>
+                                </div>
+                                : "-"}
                         </div>
-                        <div className='rounded-full inline-block cursor-pointer mt-3'
-                            onClick={handleOnWatchlistClick}
-                            onMouseEnter={() => { setIcon(filledPlus) }}
-                            onMouseLeave={() => { setIcon(outlinePlus) }}>
-                            {icon}
+                        <div className='mt-4'>
+                            {
+                                props.product.watchlisted ?
+                                    <div className='rounded-full inline-block cursor-pointer text-white self-end group'
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            props.onWatchlistClick();
+                                        }}>
+                                        {<HeartIconFilled className='w-7 group-hover:opacity-80'></HeartIconFilled>}
+                                    </div>
+                                    : <div className='rounded-full inline-block cursor-pointer text-white self-end group'
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            props.onWatchlistClick();
+                                        }}>
+
+                                        {<HeartIcon className='w-7 group-hover:hidden'></HeartIcon>}
+                                        {<HeartIconFilled className='w-7 hidden group-hover:block'></HeartIconFilled>}
+                                    </div>
+                            }
                         </div>
+
                     </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }
 

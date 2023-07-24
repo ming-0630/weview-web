@@ -8,10 +8,11 @@ import Image from 'next/image';
 import { useState } from "react";
 import WeViewLogo from '/public/favicon.ico';
 import { toast } from "react-toastify";
+import { Chips, ChipsChangeEvent } from "primereact/chips";
 
 export interface CreateReward {
     name: string,
-    codes: string,
+    codes: string[],
     points: string,
 }
 
@@ -24,7 +25,7 @@ const NewRewardModal = () => {
 
     const [formData, setFormData] = useState<CreateReward>({
         name: "",
-        codes: "",
+        codes: [],
         points: ""
     });
 
@@ -37,21 +38,16 @@ const NewRewardModal = () => {
                 return;
             }
 
-            if (!formData.name || !formData.codes || !formData.points) {
+            if (!formData.name || !formData.codes || !formData.points || formData.codes.length <= 0) {
                 CustomToastError("Empty Fields!")
                 return;
             }
 
-            const resultArray = convertStringToArray(formData.codes);
-            if (!resultArray) {
-                CustomToastError("Invalid String format!")
-                return;
-            }
 
             data.append('uploadedImage', images[0])
             data.append("name", formData.name);
             data.append("points", formData.points);
-            resultArray.forEach((value) => {
+            formData.codes.forEach((value) => {
                 data.append('codes', value);
             });
 
@@ -71,16 +67,6 @@ const NewRewardModal = () => {
 
     }
 
-    const convertStringToArray = (string: string) => {
-        const regex = /^[a-zA-Z0-9]+(?:;\s?[a-zA-Z0-9]+)*$/;
-
-        if (!regex.test(string)) {
-            // String does not fulfill the desired format
-            return null;
-        }
-        const arr = string.replace(/\s/g, '').split(';');
-        return arr;
-    }
 
     return (
         <Modal isShow={isShow}
@@ -97,8 +83,12 @@ const NewRewardModal = () => {
                         onChange={(e) => { setFormData({ ...formData, name: e.target.value }) }} ></Input>
                     <Input placeholder="Points Needed" type="number" value={formData?.points}
                         onChange={(e) => { setFormData({ ...formData, points: e.target.value }) }} ></Input>
-                    <Textarea placeholder="Codes should be seperated by ';'" value={formData?.codes}
-                        onChange={(e) => { setFormData({ ...formData, codes: e.target.value }) }} ></Textarea>
+                    <div className="card p-fluid">
+                        <Chips value={formData?.codes} onChange={(e: ChipsChangeEvent) => { setFormData({ ...formData, codes: e.value! }) }} separator=","
+                            placeholder="Insert codes here"
+                            className="[&>ul>li>input]:!text-sm [&>ul>li>input]:!font-normal"
+                            tooltip="Press 'Enter' to add code" />
+                    </div>
                     <div className="pt-5">
                         <FileUpload
                             files={images}

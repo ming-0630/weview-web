@@ -36,7 +36,7 @@ export function createAxiosClient(props: axiosClientProps) {
 
     client.interceptors.request.use(
         (config) => {
-            if (config.authorization !== false) {
+            if (config.authorization !== false && !isRefreshing) {
                 const token = props.getCurrentAccessToken();
 
                 if (token) {
@@ -54,12 +54,10 @@ export function createAxiosClient(props: axiosClientProps) {
     client.interceptors.response.use(
         (response) => {
             // Any status code that lie within the range of 2xx cause this function to trigger
-            // Do something with response data
             return response;
         },
         (error) => {
             const originalRequest = error.config;
-            // In "axios": "^1.1.3" there is an issue with headers, and this is the workaround.
             originalRequest.headers = JSON.parse(
                 JSON.stringify(originalRequest.headers || {})
             );
@@ -97,6 +95,7 @@ export function createAxiosClient(props: axiosClientProps) {
                 return client
                     .post(props.refreshTokenUrl, {
                         refreshToken: refreshToken,
+
                     })
                     .then((res) => {
                         const tokens = {
@@ -122,7 +121,6 @@ export function createAxiosClient(props: axiosClientProps) {
                 return handleError(error);
             }
             // Any status codes that falls outside the range of 2xx cause this function to trigger
-            // Do something with response error
             return Promise.reject(error);
         }
     );

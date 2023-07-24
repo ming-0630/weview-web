@@ -1,35 +1,44 @@
 import Modal from "@/components/ui/Modal";
 import Category from "@/enums/categoryEnum";
 import { useGlobalStore } from "@/states/globalStates";
-import { Button, Input, Textarea } from "@mantine/core";
+import { Button, Input, NumberInput, Switch, Textarea } from "@mantine/core";
 import { YearPicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import Image from 'next/image';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import WeViewLogo from '/public/favicon.ico';
 import FileUpload from "@/components/ui/FileUpload";
 import { toast } from "react-toastify";
 import CustomToastError from "@/utils/CustomToastError";
 import { addProduct } from "@/services/admin/services";
+import { toInteger } from "lodash";
+import { checkFeaturedLimit } from "@/services/product/services";
 
 export interface CreateProduct {
     name: string,
     category: Category,
     releaseYear: number,
     description: string,
+    minProductPriceRange?: string,
+    maxProductPriceRange?: string,
+    isFeatured: boolean;
 }
 
 const NewProductModal = () => {
     const isShow = useGlobalStore((state) => state.newProductIsOpen)
     const toggleModal = useGlobalStore((state) => state.toggleNewProductIsOpen)
     const { refreshFunction, loadingHandler } = useGlobalStore();
+    const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
 
     const [images, setImages] = useState<File[]>([]);
     const [formData, setFormData] = useState<CreateProduct>({
         name: "",
         category: 0,
         releaseYear: dayjs().year(),
-        description: ""
+        description: "",
+        minProductPriceRange: undefined,
+        maxProductPriceRange: undefined,
+        isFeatured: false
     });
 
     const handleSubmit = async (e: any) => {
@@ -43,7 +52,8 @@ const NewProductModal = () => {
                 });
             }
 
-            if (!formData.name || !formData.description || formData.category == 0 || images.length <= 0) {
+            if (!formData.name || !formData.description || formData.category == 0 || images.length <= 0
+                || !formData.minProductPriceRange || !formData.maxProductPriceRange) {
                 CustomToastError("Empty Fields!")
                 return;
             }
@@ -52,16 +62,28 @@ const NewProductModal = () => {
             data.append("description", formData.description);
             data.append("category", Category[formData.category]);
             data.append("releaseYear", formData.releaseYear.toString());
+            data.append("minProductPriceRange", formData.minProductPriceRange.toString());
+            data.append("maxProductPriceRange", formData.maxProductPriceRange.toString());
+            data.append("isFeatured", formData.isFeatured.toString())
 
-            const response = await addProduct(data);
-
-            if (response && response.status == 200) {
-                if (refreshFunction) {
-                    refreshFunction();
+            if (formData.isFeatured) {
+                const response = await checkFeaturedLimit();
+                if (response && response.data) {
+                    if (response.data.hasExceededFeaturedLimit) {
+                        loadingHandler.close();
+                        toggleModal();
+                        toggleConfirm({
+                            title: "Exceeded Limit!",
+                            description: "There are already 10 featured products! Are you sure you want to replace the oldest featured product?",
+                            onClickYes: () => { loadingHandler.open(); toggleModal(); addProduct(data); toggleConfirm(); },
+                            onClickNo: () => toggleModal()
+                        });
+                    } else {
+                        addNewProduct(data)
+                    }
                 }
-                toast.success("Added product!");
-                resetFields();
-                toggleModal();
+            } else {
+                addNewProduct(data)
             }
 
             // for (var pair of data.entries()) {
@@ -72,13 +94,28 @@ const NewProductModal = () => {
         }
     }
 
+    const addNewProduct = async (data: FormData) => {
+        const response = await addProduct(data);
+
+        if (response && response.status == 200) {
+            if (refreshFunction) {
+                refreshFunction();
+            }
+            toast.success("Added product!");
+            resetFields();
+        }
+    }
+
     const resetFields = () => {
         setImages([]);
         setFormData({
             name: "",
             category: 0,
             releaseYear: dayjs().year(),
-            description: ""
+            description: "",
+            minProductPriceRange: undefined,
+            maxProductPriceRange: undefined,
+            isFeatured: false
         })
     }
 
@@ -95,12 +132,12 @@ const NewProductModal = () => {
                 <div className="p-3">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         <div className="flex items-center">
-                            <div className="grow">
+                            <div className="basis-1/2">
                                 <Input placeholder="Name" value={formData?.name} classNames={{ input: 'p-5' }}
                                     onChange={(e) => { setFormData({ ...formData, name: e.target.value }) }}></Input>
                             </div>
 
-                            <div data-theme='cupcake' className="ml-10">
+                            <div data-theme='cupcake' className="ml-10 basis-1/2 flex justify-center">
                                 <select
                                     title="Sort by: "
                                     className="select select-sm xl:select-md border-2 border-main rounded-xl leading-none 
@@ -125,7 +162,7 @@ const NewProductModal = () => {
                                 value={formData?.description}
                                 onChange={(e) => { setFormData({ ...formData, description: e.target.value }) }}
                             ></Textarea>
-                            <div>
+                            <div className="basis-1/2 flex justify-center">
                                 <YearPicker value={dayjs().year(formData.releaseYear).toDate()} onChange={e => {
                                     setFormData({ ...formData, releaseYear: dayjs(e).year() })
                                 }}
@@ -133,7 +170,29 @@ const NewProductModal = () => {
                                 />
                             </div>
                         </div>
-
+                        <div className="flex items-center gap-10">
+                            <div className="grow">
+                                <Input placeholder="Min Price"
+                                    value={formData.minProductPriceRange ? formData.minProductPriceRange : ""}
+                                    classNames={{ input: 'p-5' }}
+                                    type="number"
+                                    step="1"
+                                    onChange={(e) => { setFormData({ ...formData, minProductPriceRange: e.target.value }) }}></Input>
+                            </div>
+                            <div className="grow">
+                                <Input placeholder="Max Price"
+                                    value={formData.maxProductPriceRange ? formData.maxProductPriceRange : ""}
+                                    classNames={{ input: 'p-5' }}
+                                    type="number"
+                                    step="1"
+                                    onChange={(e) => { setFormData({ ...formData, maxProductPriceRange: e.target.value }) }}></Input>
+                            </div>
+                        </div>
+                        <div className="flex justify-end">
+                            <Switch checked={formData.isFeatured} onChange={(event) => setFormData({ ...formData, isFeatured: event.currentTarget.checked })}
+                                label={"Featured Product?"}
+                            />
+                        </div>
                         <div>
                             <FileUpload
                                 files={images}

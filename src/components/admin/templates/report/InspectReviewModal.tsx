@@ -20,7 +20,7 @@ const InspectReviewModal = () => {
                     <div className="text-2xl text-main ml-4">{"Inspect Review"}</div>
                 </div>
                 <div className="flex flex-col mt-5">
-                    <div className="border border-main p-5 rounded-lg">
+                    <div className="border border-main p-5 rounded-lg bg-white-plain">
                         <ReviewBlock
                             isPreview
                             review={inspectingReview}

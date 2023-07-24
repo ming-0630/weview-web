@@ -62,13 +62,6 @@ const AdminReward = () => {
                     )
                 }}></Column >
             </DataTable >
-            <div className="self-center mt-10">
-                <Pagination value={page} onChange={handlePageChange} total={totalPage}
-                    radius={'xl'}
-                    boundaries={5}
-                    classNames={{ control: 'border-transparent' }}
-                />
-            </div>
         </div >
     )
 }

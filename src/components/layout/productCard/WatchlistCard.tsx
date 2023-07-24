@@ -1,12 +1,7 @@
-import ProductListPage from "@/components/templates/product/ProductListPage"
 import Product from "@/interfaces/productInterface"
-import { addToWatchlist } from "@/services/user/services"
-import { useAuthStore } from "@/states/authStates"
-import useStore from "@/utils/useStore"
 import { StarIcon, TrashIcon } from "@heroicons/react/24/outline"
 import Image from "next/image"
 import Link from "next/link"
-import { toast } from "react-toastify"
 
 export interface WatchlistCardProps {
     product: Product
@@ -16,7 +11,7 @@ export interface WatchlistCardProps {
 const WatchlistCard = (props: WatchlistCardProps) => {
     return (
         <Link href={"/products/details/" + props.product.productId}
-            className="border border-main relative h-[20vh] p-5 flex w-full border-b-0 last:border-b hover:bg-gray-200">
+            className="border border-main relative h-[20vh] p-5 flex w-full border-b-0 last:border-b hover:bg-gray-200 first:rounded-t-xl last:rounded-b-xl">
             <div className="basis-1/3 relative">
                 <Image src={props.product.coverImage!} fill alt="Product Name" className='w-[45%] object-contain' />
             </div>

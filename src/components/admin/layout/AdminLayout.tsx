@@ -10,8 +10,19 @@ import EditRewardModal from "../templates/reward/EditRewardModal";
 import NewRewardModal from "../templates/reward/NewRewardModal";
 import EditProductModal from "../templates/product/EditProductModal";
 import NewProductModal from "../templates/product/NewProductModal";
+import ConfirmModal from "@/components/templates/authentication/ConfirmModal";
+import { useAuthStore } from "@/states/authStates";
+import { useRouter } from "next/router";
+import CustomToastError from "@/utils/CustomToastError";
 
 const DefaultPageLayout = ({ children }: ScriptProps) => {
+    const { loggedInUser, isLoggedIn } = useAuthStore()
+    const router = useRouter();
+
+    if ((!isLoggedIn() || !loggedInUser?.role.includes("ROLE_ADMIN")) && typeof window !== "undefined") {
+        router.push("/admin").then(() => CustomToastError("You must be an admin to access this page!"))
+    }
+
     const isLoading = useGlobalStore((state) => state.loading)
 
     return (
@@ -30,6 +41,7 @@ const DefaultPageLayout = ({ children }: ScriptProps) => {
                 theme="light"
             />
             <LoadingOverlay visible={isLoading} overlayBlur={2} className="h-screen fixed w-full" />
+            <ConfirmModal></ConfirmModal>
             <NewRewardModal></NewRewardModal>
             <EditRewardModal></EditRewardModal>
             <EditCodeModal></EditCodeModal>

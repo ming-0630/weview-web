@@ -1,10 +1,9 @@
-import { PencilIcon } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Input } from "@mantine/core";
+import { FilterMatchMode } from "primereact/api";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { useEffect, useState } from "react";
-import { FilterMatchMode } from "primereact/api";
-import { Input } from "@mantine/core";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 
 export interface Code {
     id: string,

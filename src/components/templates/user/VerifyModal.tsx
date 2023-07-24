@@ -4,11 +4,13 @@ import { Button, Input } from "@mantine/core";
 import Image from 'next/image';
 import WeViewLogo from '/public/favicon.ico';
 import { useEffect, useState } from "react";
-import { getVerificationCode, verifyCode } from "@/services/user/services";
+import { getUser, getVerificationCode, verifyCode } from "@/services/user/services";
 import { toast } from "react-toastify";
 import PhoneInputWithCountrySelect from "react-phone-number-input";
 import { E164Number } from "libphonenumber-js/types";
 import CustomToastError from "@/utils/CustomToastError";
+import { useAuthStore } from "@/states/authStates";
+import { base64StringToBlob } from "blob-util";
 
 const VerifyModal = () => {
     const isShow = useGlobalStore((state) => state.verifyIsOpen)
@@ -20,6 +22,8 @@ const VerifyModal = () => {
 
     const [isCooldown, setIsCooldown] = useState(false);
     const [cooldownTime, setCooldownTime] = useState(60);
+
+    const { setCurrentUser } = useAuthStore()
 
     useEffect(() => {
         let timerId: any;
@@ -37,18 +41,18 @@ const VerifyModal = () => {
 
     const handleSendCode = async () => {
         if (phone) {
-            setHasSentCode(true)
-            setIsCooldown(true);
-            setTimeout(() => {
-                setIsCooldown(false);
-                setCooldownTime(60);
-            }, 60000);
-
             const response = await getVerificationCode(phone?.toString());
-            if (response) {
+            if (response && response.status == 200) {
                 toast(response.data)
+                setSentPhone(phone);
+                setHasSentCode(true)
+                setIsCooldown(true);
+                setTimeout(() => {
+                    setIsCooldown(false);
+                    setCooldownTime(60);
+                }, 60000);
             }
-            setSentPhone(phone);
+
         } else {
             CustomToastError("Empty phone number!")
         }
@@ -58,8 +62,20 @@ const VerifyModal = () => {
     const handleSubmitCode = async () => {
         if (code) {
             const response = await verifyCode(sentPhone, code);
-            if (response) {
-                toast(response.data)
+            if (response && response.data && response.data.message) {
+                if (response.data.message == "This user's verification has been completed successfully!") {
+                    toast.success(response.data.message)
+                    if (response.data.user && response.data.user.userImage) {
+                        const blob = base64StringToBlob(response.data.user.userImage);
+                        const img = URL.createObjectURL(blob);
+                        response.data.user.userImage = img
+                    }
+                    setCurrentUser(response.data.user)
+                    resetFields();
+                    toggleModal();
+                } else {
+                    CustomToastError(response.data.message)
+                }
             }
         } else {
             CustomToastError("Empty code field!")
@@ -86,9 +102,6 @@ const VerifyModal = () => {
                 <div className="p-3 flex flex-col">
                     <div className="mb-3">Verify your account to unlock important features!</div>
                     <div className="flex items-center">
-                        {/* <Input placeholder="Phone number" className="grow" value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                        ></Input> */}
                         <PhoneInputWithCountrySelect value={phone} onChange={setPhone}
                             defaultCountry="MY"
                             className="[&>input]:p-3 grow"
@@ -100,14 +113,17 @@ const VerifyModal = () => {
                             hasSentCode ? 'Resend Code' : 'Send Code'
                         )}</Button>
                     </div>
+                    {
+                        hasSentCode &&
+                        <div className="flex flex-col mt-3 w-[25%] self-center">
+                            <Input placeholder="Code" className="grow" value={code}
+                                onChange={(e) => setCode(e.target.value)} ></Input>
+                            <Button className="mt-3 bg-main" variant='filled'
+                                onClick={handleSubmitCode}
+                            >Submit</Button>
+                        </div>
+                    }
 
-                    <div className="flex flex-col mt-3 w-[25%] self-center">
-                        <Input placeholder="Code" className="grow" value={code}
-                            onChange={(e) => setCode(e.target.value)} ></Input>
-                        <Button className="mt-3 bg-main" variant='filled'
-                            onClick={handleSubmitCode}
-                        >Submit</Button>
-                    </div>
                 </div>
 
             </div>

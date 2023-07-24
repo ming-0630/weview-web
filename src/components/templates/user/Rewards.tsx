@@ -20,6 +20,7 @@ const Rewards = () => {
     const [totalPage, setTotalPage] = useState(1);
 
     const toggleConfirm = useGlobalStore((state) => state.toggleConfirm)
+    const toggleVerify = useGlobalStore((state) => state.toggleVerify)
     const loadingHandler = useGlobalStore((state) => state.loadingHandler)
 
     const { loggedInUser, setCurrentUser } = useAuthStore();
@@ -31,6 +32,14 @@ const Rewards = () => {
             if (loggedInUser?.points < toInteger(reward.points)) {
                 CustomToastError("Insufficient points!")
                 toggleConfirm();
+                loadingHandler.close();
+                return;
+            }
+
+            if (!loggedInUser?.isVerified) {
+                CustomToastError("You must be verified to redeem a reward!")
+                toggleConfirm();
+                toggleVerify();
                 loadingHandler.close();
                 return;
             }

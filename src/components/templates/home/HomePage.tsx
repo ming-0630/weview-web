@@ -4,7 +4,7 @@ import Category from "@/enums/categoryEnum";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
-import { ReactElement } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import allCategory from '../../../assets/all.jpg';
 import computerCategory from '../../../assets/computers.jpg';
 import homeCategory from '../../../assets/home.jpg';
@@ -12,7 +12,15 @@ import musicCategory from '../../../assets/music.jpg';
 import smartphone from '../../../assets/smartphone 1.png';
 import smartphoneCategory from '../../../assets/smartphone.jpg';
 import Carousel from "../../ui/Carousell";
-import CategoriesImage from "./Categories/CategoriesImage";
+import CategoriesImage from "./categories/CategoriesImage";
+import Product from "@/interfaces/productInterface";
+import { useGlobalStore } from "@/states/globalStates";
+import { getAllFeaturedProducts } from "@/services/product/services";
+import useStore from "@/utils/useStore";
+import { useAuthStore } from "@/states/authStates";
+import { addToWatchlist } from "@/services/user/services";
+import { toast } from "react-toastify";
+import CustomToastError from "@/utils/CustomToastError";
 
 const page1 = (
     <div className='flex h-[calc(100vh_-_5rem)]'>
@@ -38,44 +46,25 @@ const page1 = (
     </div>
 )
 
-const trendingProducts: ReactElement[] = [];
-const testProduct = (index: number) => {
-    return {
-        name: 'iPhone 14 Pro ' + index,
-        type: Category.SMARTPHONES,
-        rating: 0
-    }
-}
+// const trendingProducts: ReactElement[] = [];
+// const testProduct = (index: number) => {
+//     return {
+//         name: 'iPhone 14 Pro ' + index,
+//         type: Category.SMARTPHONES,
+//         rating: 0
+//     }
+// }
 
-for (let index = 0; index < 10; index++) {
-    trendingProducts.push(
-        <Link href={"/product-details-page"} className="mx-5 p-3 w-72" key={index}>
-            <ProductCard product={testProduct(index)} image={smartphone}></ProductCard>
-        </Link>)
+// for (let index = 0; index < 10; index++) {
+//     trendingProducts.push(
+//         <Link href={"/product-details-page"} className="mx-5 p-3 w-72" key={index}>
+//             <ProductCard product={testProduct(index)} image={smartphone}></ProductCard>
+//         </Link>)
 
-}
-
-const page2 = (<div className='flex flex-col items-center m-auto py-32 w-11/12 xl:w-5/6'>
-    <div className='flex flex-col w-full items-center'>
-        <span className='text-5xl'>Trending</span>
-        <span className='text-xl mt-5 text-black/60'>{"Find out what's the recent buzz"}</span>
-    </div>
-
-    <div className='flex flex-col justify-center w-full h-3/5 pt-16'>
-        <Carousel align='start' slidesToScroll={1}>
-            {trendingProducts}
-        </Carousel>
-    </div>
-    <div className='flex w-full justify-end mr-16 pt-12'>
-        <div className='cursor-pointer flex text-xl'>
-            <span>View All</span> <ChevronRightIcon className='w-5 ml-2' ></ChevronRightIcon>
-        </div>
-    </div>
-</div>
-)
+// }
 
 const page3 = (
-    <div className='flex flex-col w-5/6 items-center m-auto h-screen'>
+    <div className='flex flex-col w-5/6 items-center m-auto h-[calc(100vh_-_5rem)]'>
         <div className='flex flex-col w-full items-center'>
             <span className='text-5xl'>Categories</span>
         </div>
@@ -129,6 +118,70 @@ const page3 = (
 )
 
 const HomePage = () => {
+    const [products, setProducts] = useState<Product[]>()
+    const loadingHandler = useGlobalStore((state) => state.loadingHandler)
+    const user = useStore(useAuthStore, (state) => state.loggedInUser)
+    const toggleLogin = useGlobalStore((state) => state.toggleLogin)
+
+    useEffect(() => {
+        getFeaturedProducts()
+    }, [])
+
+    const handleOnWatchlistClick = async (productId: string) => {
+        loadingHandler.open();
+        if (user) {
+            const response = await addToWatchlist(productId, user?.id)
+            if (response && response.status == 200 && response.data) {
+                toast.success(response.data);
+                getFeaturedProducts();
+            }
+        } else {
+            CustomToastError("Please login to add to watchlist");
+            loadingHandler.close();
+            toggleLogin();
+            return;
+        }
+        loadingHandler.close();
+    }
+
+    const getFeaturedProducts = async () => {
+        try {
+            loadingHandler.open();
+            const response = await getAllFeaturedProducts();
+
+            if (response && response.data) {
+                setProducts(response.data)
+            }
+        } finally {
+            loadingHandler.close()
+        }
+    }
+
+    const page2 = (<div className='flex flex-col items-center m-auto py-32 w-11/12 xl:w-5/6'>
+        <div className='flex flex-col w-full items-center'>
+            <span className='text-5xl'>Featured</span>
+            <span className='text-xl mt-5 text-black/60'>{"Find out what's the recent buzz"}</span>
+        </div>
+
+        <div className='flex flex-col justify-center w-full h-3/5 pt-16'>
+            <Carousel align='start' slidesToScroll={1}>
+                {products?.map((product) => {
+                    return (
+                        <div className="p-5" key={product.productId}>
+                            <ProductCard product={product}
+                                onWatchlistClick={() => handleOnWatchlistClick(product.productId!)}></ProductCard>
+                        </div>
+                    )
+                })}
+            </Carousel>
+        </div>
+        <div className='flex w-full justify-end mr-16 pt-12'>
+            <div className='cursor-pointer flex text-xl'>
+                <span>View All</span> <ChevronRightIcon className='w-5 ml-2' ></ChevronRightIcon>
+            </div>
+        </div>
+    </div>
+    )
 
     return (
         <div>

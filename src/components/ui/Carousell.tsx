@@ -76,7 +76,7 @@ const Carousel = ({ children, hasButtons, className, ...options }: Props) => {
         <div className={classNames("overflow-hidden w-full h-full flex items-center justify-center", className)} ref={emblaRef}>
           {/* 3. The inner div must have a display:flex property */}
           {/* 4. We pass the children as-is so that the outside component can style it accordingly */}
-          <div className="flex w-full">{children}</div>
+          <div className="flex w-full mx-5">{children}</div>
         </div>
 
         <div>

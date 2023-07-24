@@ -101,7 +101,7 @@ export function getSearchProduct(keyword: string, category: Category, pageNum: n
 }
 
 export function getProductDetails(id: string, pageNum?: number,
-    sortBy?: string, direction?: string) {
+    sortBy?: string, direction?: string, reviewId?: string) {
     const response = client.get(
         "/product/details",
         {
@@ -109,7 +109,8 @@ export function getProductDetails(id: string, pageNum?: number,
                 id: id,
                 reviewPageNum: pageNum,
                 reviewSortBy: sortBy,
-                reviewDirection: direction
+                reviewDirection: direction,
+                reviewId: reviewId
             }
         },
     ).then((res) => {
@@ -185,6 +186,45 @@ export function getOneProduct(id: string) {
                 const obj = URL.createObjectURL(blob);
                 res.data.images[i] = obj;
             })
+        }
+        return res;
+    }).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response
+}
+
+export function checkFeaturedLimit() {
+    const response = client.get(
+        "/product/admin/add/checkFeaturedLimit",
+    ).catch((err) => {
+        console.log(err)
+        if (err.response && err.response.data) {
+            CustomToastError(err.response.data.message)
+        } else {
+            CustomToastError(err)
+        }
+
+    });
+    return response
+}
+
+export function getAllFeaturedProducts() {
+    const response = client.get(
+        "/product/getAllFeaturedProducts",
+    ).then((res) => {
+        if (res.data) {
+            res.data.forEach((product: any) => {
+                const blob = base64StringToBlob(product.coverImage);
+                const img = URL.createObjectURL(blob);
+                product.coverImage = img;
+            });
         }
         return res;
     }).catch((err) => {

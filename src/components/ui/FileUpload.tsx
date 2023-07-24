@@ -12,13 +12,13 @@ export interface FileUploadProps {
     files: File[];
     setFiles: (...args: any[]) => void;
     containerClassName?: string;
+    isSingle?: boolean;
 }
 
 const CustomFileUpload = (props: FileUploadProps) => {
     const toast = useRef<Toast>(null);
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef<FileUpload>(null);
-    const [isInitialized, setIsInitalized] = useState(false);
 
     useEffect(() => {
         if (props.files) {
@@ -32,7 +32,6 @@ const CustomFileUpload = (props: FileUploadProps) => {
             }
 
             setTotalSize(_totalSize);
-            setIsInitalized(true)
         }
     }, [props.files])
 
@@ -138,7 +137,7 @@ const CustomFileUpload = (props: FileUploadProps) => {
                 onSelect={onSelect} onError={onClear} onClear={onClear}
                 headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
                 chooseOptions={chooseOptions} customUpload cancelOptions={cancelOptions}
-                multiple
+                multiple={props.isSingle ? false : true}
                 contentClassName="min-h-[30vh] flex justify-center w-full [&>*:nth-child(3)]:w-full" />
         </div>
     )

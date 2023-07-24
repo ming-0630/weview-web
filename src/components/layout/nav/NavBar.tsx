@@ -7,6 +7,7 @@ import SideNavBar from './SideNavBar';
 import Head from 'next/head';
 import { useGlobalStore } from '@/states/globalStates';
 import OutsideAlerter from '@/utils/OutsideAlerter';
+import Link from 'next/link';
 
 export interface NavBarProps {
     children?: ReactNode;
@@ -38,9 +39,9 @@ const NavBar = (props: NavBarProps) => {
 
                 <div className='flex h-full'>
                     <div className='flex-1 pl-20 flex items-center'>
-                        <a href="http://localhost:3000" target="_blank" rel="noreferrer" className='block w-16'>
+                        <Link href="/" className='block w-16'>
                             <Image src={WeViewLogo} className='w-10' alt='WeView Logo' />
-                        </a>
+                        </Link>
                     </div>
 
                     <div className='flex-1 pr-20 flex justify-end items-center'>

@@ -22,7 +22,10 @@ export interface Product {
     unverifiedReview?: Review,
     reviewStartDate?: Date,
     reviewEndDate?: Date,
-    ratings?: number[]
+    ratings?: number[],
+    minProductPriceRange?: number,
+    maxProductPriceRange?: number,
+    isFeatured?: boolean
 }
 
 export default Product
